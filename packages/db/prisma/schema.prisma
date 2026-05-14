@@ -1,0 +1,41 @@
+// This is the Prisma schema file.
+// It defines the database tables and fields for the blog app.
+
+generator client {
+  provider = "prisma-client-js" // creates the Prisma client used in the code
+}
+
+datasource db {
+  provider = "sqlite" // uses SQLite as the database
+  url      = env("DATABASE_URL") // gets the database URL from the .env file
+}
+
+// Post table stores each blog post.
+model Post {
+  id          Int      @id @default(autoincrement()) // unique post id, automatically increases
+  urlId       String   @unique // unique URL name for the post
+  title       String // title of the blog post
+  content     String // full blog content
+  description String // short summary of the post
+  imageUrl    String // image URL for the post
+  category    String // post category
+  tags        String // tags stored as comma-separated text
+  date        DateTime @default(now()) // post date, automatically set to current date
+  views       Int      @default(0) // number of views, starts at 0
+  active      Boolean  @default(true) // controls if the post is visible or hidden
+  Likes       Like[] // one post can have many likes
+}
+
+// Like table stores likes for posts.
+model Like {
+  postId Int // id of the post being liked
+  userIP String // identifies the user who liked the post
+
+  // connects this like to a post.
+  // If the post is deleted, its likes are also deleted.
+  Post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  // makes postId + userIP the combined primary key.
+  // This prevents the same user from liking the same post more than once.
+  @@id([postId, userIP])
+}
