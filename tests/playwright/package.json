@@ -1,0 +1,28 @@
+{
+  "name": "@repo/playwright",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start:web": "pnpm --filter web start --port 3001",
+    "start:admin": "pnpm --filter admin start --port 3002",
+    "test-1": "pnpm playwright test --grep \"@a1\"",
+    "test-2": "pnpm playwright test --grep \"@a2\"",
+    "test-3": "pnpm playwright test --grep \"@a3\"",
+    "ui": "pnpm playwright test --ui",
+    "dev:test-1": "pnpm playwright test --ui --grep \"@a1\"",
+    "dev:test-2": "pnpm playwright test --ui --grep \"@a1|@a2\"",
+    "dev:test-3": "pnpm playwright test --ui --grep \"@a1|@a2|@a3\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^22.7.9"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.50.0",
+    "@repo/db": "workspace:*",
+    "dotenv": "^16.4.5"
+  }
+}

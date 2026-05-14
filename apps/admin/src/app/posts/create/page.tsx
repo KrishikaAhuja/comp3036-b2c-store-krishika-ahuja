@@ -1,0 +1,53 @@
+import { isLoggedIn } from "../../../utils/auth";
+import UpdateForm from "../../post/[urlId]/UpdateForm";
+import pageStyles from "../../page.module.css";
+
+export default async function Page() {
+  const loggedIn = await isLoggedIn();
+
+  if (!loggedIn) {
+    return (
+      <main className={pageStyles.main}>
+        <h1 className={pageStyles.title}>Sign in to your account</h1>
+
+        <form
+          action="/api/login"
+          method="post"
+          className={pageStyles.form}
+        >
+          <label htmlFor="password" className={pageStyles.label}>
+            Password
+          </label>
+
+          <input
+            id="password"
+            name="password"
+            type="password"
+            className={pageStyles.input}
+          />
+
+          <button type="submit" className={pageStyles.button}>
+            Sign In
+          </button>
+        </form>
+      </main>
+    );
+  }
+//fake blank post object coz UpdateForm expects a full Post
+  const emptyPost = {
+    id: 0, //This is what UpdateForm uses to detect that it is creating a new post instead of updating an existing one.
+    title: "",
+    description: "",
+    content: "",
+    tags: "",
+    imageUrl: "",
+    date: new Date(),
+    category: "",
+    active: false,
+    urlId: "",
+    views: 0,
+    likes: 0,
+  };
+
+  return <UpdateForm post={emptyPost} />; //render as new-post mode
+}

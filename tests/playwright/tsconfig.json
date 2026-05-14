@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "esModuleInterop": true,
+    "module": "es2015",
+    "moduleResolution": "Bundler",
+    "target": "es5",
+    "lib": ["es2015", "dom"],
+    "types": ["node"],
+    "typeRoots": ["node_modules/@types", "./support"],
+    "jsx": "preserve"
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
+}
