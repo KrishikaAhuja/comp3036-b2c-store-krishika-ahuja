@@ -5,11 +5,11 @@ export function BlogList({ posts }: { posts: Post[] }) {
   const activePosts = posts.filter((post) => post.active);
 
   if (activePosts.length === 0) {
-    return <div className="py-6">0 Posts</div>;
+    return <div className="py-6">0 Products</div>;
   }
 
   return (
-    <div className="py-6">
+    <div className="grid gap-6 py-6 sm:grid-cols-2 xl:grid-cols-3">
       {activePosts.map((post) => (
         <BlogListItem key={post.id} post={post} />
       ))}

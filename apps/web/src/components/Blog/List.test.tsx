@@ -35,7 +35,7 @@ export const post2: Post = {
 
 test("renders 0 posts when no posts are present", async () => {
   const { getByText } = render(<BlogList posts={[]} />);
-  await expect.element(getByText("0 Posts")).toBeInTheDocument();
+  await expect.element(getByText("0 Products")).toBeInTheDocument();
 });
 
 test("renders all posts", async () => {
