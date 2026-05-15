@@ -12,18 +12,20 @@ datasource db {
 
 // Post table stores each blog post.
 model Post {
-  id          Int      @id @default(autoincrement()) // unique post id, automatically increases
-  urlId       String   @unique // unique URL name for the post
-  title       String // title of the blog post
-  content     String // full blog content
-  description String // short summary of the post
-  imageUrl    String // image URL for the post
-  category    String // post category
-  tags        String // tags stored as comma-separated text
-  date        DateTime @default(now()) // post date, automatically set to current date
-  views       Int      @default(0) // number of views, starts at 0
-  active      Boolean  @default(true) // controls if the post is visible or hidden
-  Likes       Like[] // one post can have many likes
+  id            Int      @id @default(autoincrement()) // unique post id, automatically increases
+  urlId         String   @unique // unique URL name for the post
+  title         String // title of the blog post
+  content       String // full blog content
+  description   String // short summary of the post
+  imageUrl      String // image URL for the post
+  category      String // post category
+  tags          String // tags stored as comma-separated text
+  priceAud      Int      @default(0) // product price in AUD
+  stockQuantity Int      @default(0) // available product stock
+  date          DateTime @default(now()) // post date, automatically set to current date
+  views         Int      @default(0) // number of views, starts at 0
+  active        Boolean  @default(true) // controls if the post is visible or hidden
+  Likes         Like[] // one post can have many likes
 }
 
 // Like table stores likes for posts.
@@ -33,7 +35,7 @@ model Like {
 
   // connects this like to a post.
   // If the post is deleted, its likes are also deleted.
-  Post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  Post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   // makes postId + userIP the combined primary key.
   // This prevents the same user from liking the same post more than once.

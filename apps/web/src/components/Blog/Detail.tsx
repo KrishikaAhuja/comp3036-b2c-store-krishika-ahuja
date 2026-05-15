@@ -11,6 +11,18 @@ function formatDate(date: Date) {
   }).format(new Date(date));
 }
 
+function formatPrice(post: Post) {
+  return new Intl.NumberFormat("en-AU", {
+    style: "currency",
+    currency: "AUD",
+    maximumFractionDigits: 0,
+  }).format(post.priceAud ?? Math.max(post.views, 1));
+}
+
+function getStockQuantity(post: Post) {
+  return post.stockQuantity ?? post.likes;
+}
+
 // main component to display full product details
 export async function BlogDetail({ post }: { post: Post }) {
 
@@ -52,6 +64,15 @@ export async function BlogDetail({ post }: { post: Post }) {
           {post.category}
         </p>
 
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-2xl font-semibold text-[var(--text)]">
+            {formatPrice(post)}
+          </p>
+          <p className="rounded-full bg-green-50 px-3 py-1 text-sm font-semibold text-green-700 dark:bg-green-950 dark:text-green-300">
+            {getStockQuantity(post)} in stock
+          </p>
+        </div>
+
         {/* tags section */}
         <div className="flex flex-wrap gap-2">
           {post.tags.split(",").map((tag) => (
@@ -71,7 +92,7 @@ export async function BlogDetail({ post }: { post: Post }) {
           dangerouslySetInnerHTML={{ __html: content }} // injects HTML (from markdown)
         />
 
-        {/* views and likes section */}
+        {/* views and saves section */}
         <div className="flex gap-5 rounded-xl bg-gray-50 px-4 py-3 text-sm font-medium text-[var(--text-secondary)] dark:bg-gray-800">
           <p>{post.views} customer views</p>
           <p>{post.likes} saved</p>

@@ -14,7 +14,11 @@ function formatPrice(post: Post) {
     style: "currency",
     currency: "AUD",
     maximumFractionDigits: 0,
-  }).format(Math.max(post.views, 1));
+  }).format(post.priceAud ?? Math.max(post.views, 1));
+}
+
+function getStockQuantity(post: Post) {
+  return post.stockQuantity ?? post.likes;
 }
 
 export function BlogListItem({ post }: { post: Post }) {
@@ -69,7 +73,7 @@ export function BlogListItem({ post }: { post: Post }) {
         </div>
 
         <div className="mt-auto flex items-center justify-between gap-4 border-t border-gray-200 pt-4 text-sm text-[var(--text-secondary)] dark:border-gray-700">
-          <p>{post.views} customer views</p>
+          <p>{getStockQuantity(post)} in stock</p>
           <p>{post.likes} saved</p>
         </div>
 

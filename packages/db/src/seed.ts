@@ -24,6 +24,8 @@ export async function seed() {
         category: post.category, // category name
         description: post.description, // short description
         imageUrl: post.imageUrl, // image URL
+        priceAud: post.priceAud ?? 0, // product price in AUD
+        stockQuantity: post.stockQuantity ?? 0, // available stock
         tags: post.tags
           .split(",") // split tags by comma
           .map((p) => p.trim()) // remove spaces
