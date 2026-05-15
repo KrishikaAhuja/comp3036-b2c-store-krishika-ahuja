@@ -1,4 +1,4 @@
-import type { Post } from "@repo/db/data"; // imports the Post type (structure of a blog post)
+import type { Post } from "@repo/db/data"; // temporary product data shape
 import { marked } from "marked"; // library to convert markdown → HTML
 import Link from "next/link"; // used for navigation between pages
 
@@ -11,7 +11,7 @@ function formatDate(date: Date) {
   }).format(new Date(date));
 }
 
-// main component to display full blog post details
+// main component to display full product details
 export async function BlogDetail({ post }: { post: Post }) {
 
   // converts markdown content into HTML so it can be displayed properly
@@ -22,7 +22,8 @@ export async function BlogDetail({ post }: { post: Post }) {
       data-test-id={`blog-post-${post.id}`} // used for testing
       className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-900"
     >
-      {/* blog image */}
+      {/* product image */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={post.imageUrl}
         alt={post.title}
@@ -33,10 +34,10 @@ export async function BlogDetail({ post }: { post: Post }) {
 
         {/* formatted date */}
         <p className="text-sm font-medium text-[var(--text-secondary)]">
-          {formatDate(post.date)}
+          Listed {formatDate(post.date)}
         </p>
 
-        {/* blog title with link to itself */}
+        {/* product title with link to itself */}
         <h1>
           <Link
             href={`/post/${post.urlId}`}
@@ -72,13 +73,13 @@ export async function BlogDetail({ post }: { post: Post }) {
 
         {/* views and likes section */}
         <div className="flex gap-5 rounded-xl bg-gray-50 px-4 py-3 text-sm font-medium text-[var(--text-secondary)] dark:bg-gray-800">
-          <p>{post.views} views</p>
-          <p>{post.likes} likes</p>
+          <p>{post.views} customer views</p>
+          <p>{post.likes} saved</p>
         </div>
 
         {/* hidden element used only for testing (not visible to users) */}
         <span className="hidden" data-testid="like-button">
-          Like
+          Save item
         </span>
       </div>
     </article>

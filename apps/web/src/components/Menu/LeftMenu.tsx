@@ -10,13 +10,13 @@ export async function LeftMenu({ posts }: { posts: Post[] }) {
       <div className="rounded-2xl border border-gray-200 bg-[var(--background)] p-6 shadow-sm dark:border-gray-700">
         <div className="mb-8">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600">
-            Blog
+            Store
           </p>
           <h1 className="mt-2 text-2xl font-bold text-[var(--text)]">
-            Top Links and blog name
+            Product Catalog
           </h1>
           <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-            Browse posts by category, date, and tag.
+            Browse products by category, release date, and collection.
           </p>
         </div>
 

@@ -20,7 +20,7 @@ export default async function Page({
   return (
     <AppLayout>
       {filteredPosts.length === 0 ? (
-        <div>0 Posts</div>
+        <div>0 Products</div>
       ) : (
         <Main posts={filteredPosts} />
       )}

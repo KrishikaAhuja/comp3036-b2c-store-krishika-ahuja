@@ -69,8 +69,8 @@ export function BlogListItem({ post }: { post: Post }) {
         </div>
 
         <div className="mt-auto flex items-center justify-between gap-4 border-t border-gray-200 pt-4 text-sm text-[var(--text-secondary)] dark:border-gray-700">
-          <p>{post.views} views</p>
-          <p>{post.likes} likes</p>
+          <p>{post.views} customer views</p>
+          <p>{post.likes} saved</p>
         </div>
 
         <Link
