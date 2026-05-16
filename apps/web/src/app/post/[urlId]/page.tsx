@@ -67,22 +67,22 @@ export default async function Page({
     (like) => like.userIP === "test-ip"
   );
 
-  // Shows the product detail page with save count, views count, and product content.
+  // Shows the product detail page with stock-watch count, views count, and product content.
   return (
     <AppLayout>
       <div className="space-y-6">
-        {/* Top row showing like button, like count, and views count */}
+        {/* Top row showing stock watch button, watch count, and views count */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {/* Like button receives the post id and whether it is already liked */}
+            {/* Like button receives the post id and whether it is already being watched */}
             <LikeButton
               postId={updatedPost.id}
               initialLiked={isLiked}
             />
 
-            {/* Shows total likes for this post */}
+            {/* Shows total stock watches for this post */}
             <div className="rounded-xl bg-gray-100 px-4 py-2 font-semibold text-green-700 shadow-sm dark:bg-green-900 dark:text-green-300">
-              Saved: {displayPost.likes}
+              Stock watchers: {displayPost.likes}
             </div>
           </div>
 

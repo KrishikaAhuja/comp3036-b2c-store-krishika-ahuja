@@ -15,5 +15,7 @@ test("renders product card data", async () => {
   await expect.element(getByText("#World")).toBeVisible();
   await expect.element(getByText("01 Oct 2024")).toBeVisible();
   await expect.element(getByText("30 in stock")).toBeVisible();
-  await expect.element(getByText("30 saved")).toBeVisible();
+  await expect.element(getByText("30 watching stock")).toBeVisible();
+  await expect.element(getByText("Add to Cart")).toBeVisible();
+  await expect.element(getByText("View Product")).toBeVisible();
 });

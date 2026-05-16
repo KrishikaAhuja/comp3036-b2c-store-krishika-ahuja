@@ -1,5 +1,6 @@
 import type { Post } from "@repo/db/data";
 import Link from "next/link";
+import { AddToCartButton } from "../Cart/AddToCartButton";
 
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat("en-GB", {
@@ -15,6 +16,10 @@ function formatPrice(post: Post) {
     currency: "AUD",
     maximumFractionDigits: 0,
   }).format(post.priceAud ?? Math.max(post.views, 1));
+}
+
+function getProductPrice(post: Post) {
+  return post.priceAud ?? Math.max(post.views, 1);
 }
 
 function getStockQuantity(post: Post) {
@@ -74,15 +79,26 @@ export function BlogListItem({ post }: { post: Post }) {
 
         <div className="mt-auto flex items-center justify-between gap-4 border-t border-gray-200 pt-4 text-sm text-[var(--text-secondary)] dark:border-gray-700">
           <p>{getStockQuantity(post)} in stock</p>
-          <p>{post.likes} saved</p>
+          <p>{post.likes} watching stock</p>
         </div>
 
-        <Link
-          href={`/post/${post.urlId}`}
-          className="mt-1 inline-flex h-10 items-center justify-center rounded-md bg-[var(--foreground)] px-4 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
-        >
-          View Product
-        </Link>
+        <div className="mt-1 grid gap-2 sm:grid-cols-2">
+          <AddToCartButton
+            product={{
+              id: post.id,
+              urlId: post.urlId,
+              title: post.title,
+              price: getProductPrice(post),
+              imageUrl: post.imageUrl,
+            }}
+          />
+          <Link
+            href={`/post/${post.urlId}`}
+            className="inline-flex h-10 items-center justify-center rounded-md bg-[var(--foreground)] px-4 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
+          >
+            View Product
+          </Link>
+        </div>
       </div>
     </article>
   );

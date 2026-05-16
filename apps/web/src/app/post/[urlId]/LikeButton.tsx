@@ -41,7 +41,7 @@ export default function LikeButton({
         liked ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"
       } ${loading ? "cursor-not-allowed opacity-60" : ""}`}
     >
-      {loading ? "Updating..." : liked ? "Saved" : "Save item"}
+      {loading ? "Updating..." : liked ? "Watching stock" : "Watch stock"}
     </button>
   );
 }

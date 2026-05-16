@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { CartNavLink } from "../Cart/CartNavLink";
 import ThemeSwitch from "../Themes/ThemeSwitcher";
 
 function debounce<T extends (...args: Any[]) => Any>(fn: T, delay = 300) {
@@ -37,7 +38,8 @@ export function TopMenu({ query }: { query?: string }) {
       />
     </form>
 
-    <div className="flex items-center justify-end">
+    <div className="flex items-center justify-end gap-3">
+      <CartNavLink />
       <ThemeSwitch />
     </div>
 

@@ -95,12 +95,12 @@ export async function BlogDetail({ post }: { post: Post }) {
         {/* views and saves section */}
         <div className="flex gap-5 rounded-xl bg-gray-50 px-4 py-3 text-sm font-medium text-[var(--text-secondary)] dark:bg-gray-800">
           <p>{post.views} customer views</p>
-          <p>{post.likes} saved</p>
+          <p>{post.likes} watching stock</p>
         </div>
 
         {/* hidden element used only for testing (not visible to users) */}
         <span className="hidden" data-testid="like-button">
-          Save item
+          Stock watch action
         </span>
       </div>
     </article>
