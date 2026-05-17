@@ -5,6 +5,20 @@ async function openFilters(page: any) {
   await page.getByRole("button", { name: "All Filters" }).click();
 }
 
+async function productPrices(page: any) {
+  const cards = await page.locator("article").allTextContents();
+  return cards.map((text: string) => {
+    const match = text.match(/\$(\d[\d,]*)/);
+    return match ? Number(match[1].replaceAll(",", "")) : 0;
+  });
+}
+
+async function firstProductDate(page: any) {
+  const text = await page.locator("article").first().innerText();
+  const match = text.match(/Added on ([A-Z][a-z]{2} \d{1,2}, \d{4})/);
+  return match?.[1] ?? "";
+}
+
 test.beforeEach(async () => {
   await seed();
 });
@@ -20,14 +34,17 @@ test.describe("ADMINSTORE", () => {
       await expect(userPage.getByRole("link", { name: "Create Product" })).toBeVisible();
       await expect(userPage.getByRole("button", { name: "All Filters" })).toBeVisible();
 
-      const firstProduct = userPage.locator("article").first();
-      await expect(firstProduct.getByText("MagDock 3-in-1 Charging Station")).toBeVisible();
-      await expect(firstProduct.getByText("$119")).toBeVisible();
-      await expect(firstProduct.getByText("Category: Accessories")).toBeVisible();
-      await expect(firstProduct.getByText("Stock: 35")).toBeVisible();
-      await expect(firstProduct.getByText("In stock")).toBeVisible();
-      await expect(firstProduct.getByRole("link", { name: "Edit" })).toBeVisible();
-      await expect(firstProduct.getByRole("button", { name: "Delete" })).toBeVisible();
+      await expect(userPage.locator("article")).toHaveCount(5);
+      const product = userPage
+        .locator("article")
+        .filter({ hasText: "GlidePro Wireless Mouse" });
+      await expect(product).toHaveCount(1);
+      await expect(product.getByText("$59")).toBeVisible();
+      await expect(product.getByText("Category: Accessories")).toBeVisible();
+      await expect(product.getByText("Stock: 64")).toBeVisible();
+      await expect(product.getByText("In stock")).toBeVisible();
+      await expect(product.getByRole("link", { name: "Edit" })).toBeVisible();
+      await expect(product.getByRole("button", { name: "Delete" })).toBeVisible();
     },
   );
 
@@ -69,11 +86,11 @@ test.describe("ADMINSTORE", () => {
     await userPage.goto("/");
     await openFilters(userPage);
 
-    await userPage.getByLabel("Collection").fill("Desk");
+    await userPage.getByLabel("Collection").fill("Wireless");
 
     await expect(userPage.locator("article")).toHaveCount(2);
-    await expect(userPage.getByText("MagDock 3-in-1 Charging Station")).toBeVisible();
-    await expect(userPage.getByText("ErgoLift Monitor Stand")).toBeVisible();
+    await expect(userPage.getByText("PulseWave Noise-Cancelling Headphones")).toBeVisible();
+    await expect(userPage.getByText("GlidePro Wireless Mouse")).toBeVisible();
   });
 
   test("category filter works", { tag: "@a2" }, async ({ userPage }) => {
@@ -82,8 +99,9 @@ test.describe("ADMINSTORE", () => {
 
     await userPage.getByLabel("Category").selectOption("Accessories");
 
-    await expect(userPage.locator("article")).toHaveCount(1);
+    await expect(userPage.locator("article")).toHaveCount(2);
     await expect(userPage.getByText("MagDock 3-in-1 Charging Station")).toBeVisible();
+    await expect(userPage.getByText("GlidePro Wireless Mouse")).toBeVisible();
     await expect(userPage.getByText("AeroBook 14 Pro Laptop")).not.toBeVisible();
   });
 
@@ -104,14 +122,12 @@ test.describe("ADMINSTORE", () => {
     await openFilters(userPage);
 
     await userPage.getByLabel("Sort by").selectOption("price-asc");
-    await expect(userPage.locator("article").first()).toContainText(
-      "ErgoLift Monitor Stand",
-    );
+    let prices = await productPrices(userPage);
+    expect(prices).toEqual([...prices].sort((a, b) => a - b));
 
     await userPage.getByLabel("Sort by").selectOption("price-desc");
-    await expect(userPage.locator("article").first()).toContainText(
-      "AeroBook 14 Pro Laptop",
-    );
+    prices = await productPrices(userPage);
+    expect(prices).toEqual([...prices].sort((a, b) => b - a));
   });
 
   test("date sorting works", { tag: "@a2" }, async ({ userPage }) => {
@@ -124,9 +140,7 @@ test.describe("ADMINSTORE", () => {
     );
 
     await userPage.getByLabel("Sort by").selectOption("date-asc");
-    await expect(userPage.locator("article").first()).toContainText(
-      "ErgoLift Monitor Stand",
-    );
+    expect(await firstProductDate(userPage)).toBe("Dec 16, 2012");
   });
 
   test("price and stock validation works", { tag: "@a2" }, async ({ userPage }) => {

@@ -41,8 +41,15 @@ export async function seed() {
     // runs loop based on number of likes in seed data
     for (let i = 0; i < post.likes; i++) {
 
-      await client.db.like.create({
-        data: {
+      await client.db.like.upsert({
+        where: {
+          postId_userIP: {
+            postId: post.id,
+            userIP: `192.168.100.${i}`,
+          },
+        },
+        update: {},
+        create: {
           postId: post.id, // connects like to the post
           userIP: `192.168.100.${i}`, // fake unique user IP for each like
         },

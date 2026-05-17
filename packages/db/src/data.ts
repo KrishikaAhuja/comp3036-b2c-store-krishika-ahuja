@@ -127,29 +127,29 @@ export const posts: Post[] = [
   },
   {
     id: 4,
-    title: "ErgoLift Monitor Stand",
+    title: "GlidePro Wireless Mouse",
     urlId: "visual-basic-is-the-future",
     description:
-      "A sturdy aluminium monitor stand that raises your display to a comfortable height while creating extra storage space on your desk.",
+      "A quiet wireless mouse with adjustable DPI, ergonomic thumb support, and long battery life for everyday work and study.",
     content: productContent({
       overview:
-        "ErgoLift helps keep office setups cleaner and more ergonomic with a wide platform for monitors, laptops, and compact all-in-one displays.",
+        "GlidePro is designed for comfortable all-day navigation with a sculpted shell, smooth tracking, and reliable wireless connectivity for laptops, desktops, and tablets.",
       features: [
-        "Supports monitors up to 27 inches",
-        "Anodised aluminium finish",
-        "Open shelf space for keyboard, notebook, or accessories",
-        "Non-slip silicone feet protect desk surfaces",
+        "Adjustable 800 to 3200 DPI tracking",
+        "Quiet-click left and right buttons",
+        "2.4GHz USB receiver with low-latency connection",
+        "Up to 18 months of battery life from one AA battery",
       ],
       warranty:
-        "Includes a 12-month warranty and ships in recyclable packaging.",
+        "Includes a 12-month warranty and ships with a USB receiver and starter battery.",
     }),
     imageUrl:
-      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=1200&q=80",
     date: new Date("Dec 16, 2012"),
-    category: "Office",
-    priceAud: 79,
+    category: "Accessories",
+    priceAud: 59,
     stockQuantity: 64,
-    tags: "Desk Setup,Ergonomics",
+    tags: "Mouse,Wireless",
     views: 96,
     likes: 12,
     active: false,
