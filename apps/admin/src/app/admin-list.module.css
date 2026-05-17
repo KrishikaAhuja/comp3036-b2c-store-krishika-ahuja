@@ -38,8 +38,7 @@
 }
 
 .logoutButton,
-.createButton,
-.statusButton {
+.createButton {
   border: none;
   border-radius: 12px;
   padding: 12px 16px;
@@ -69,19 +68,102 @@
   background: #1d4ed8;
 }
 
-.filtersCard {
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.filterButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
   background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 18px;
-  padding: 20px;
-  margin-bottom: 28px;
-  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+  color: #0f172a;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+}
+
+.filterButton:hover {
+  border-color: #2563eb;
+  color: #1d4ed8;
+}
+
+.drawerBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  border: none;
+  background: rgba(15, 23, 42, 0.35);
+  cursor: default;
+}
+
+.filtersDrawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  width: min(360px, 88vw);
+  height: 100vh;
+  overflow-y: auto;
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  padding: 22px;
+  box-shadow: 16px 0 36px rgba(15, 23, 42, 0.18);
+  transform: translateX(-105%);
+  transition: transform 0.2s ease;
+}
+
+.filtersDrawerOpen {
+  transform: translateX(0);
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.filtersTitle {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.closeButton {
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #0f172a;
+  width: 38px;
+  height: 38px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.closeButton:hover {
+  border-color: #2563eb;
+  color: #1d4ed8;
 }
 
 .filtersGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.productsPanel {
+  min-width: 0;
 }
 
 .fieldGroup {
@@ -123,9 +205,9 @@
 
 .postsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 320px);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 24px;
-  justify-content: start; /* or center if you prefer */
+  justify-content: start;
 }
 
 .card {
@@ -182,22 +264,61 @@
   line-height: 1.5;
 }
 
+.price {
+  margin: 0;
+  color: #111827;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
 .cardFooter {
   padding: 0 18px 18px;
   margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.statusButton {
-  background: #e5e7eb;
-  color: #111827;
+.statusRow,
+.actionRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.statusActive {
-  background: #dcfce7;
-  color: #166534;
+.stockBadge {
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
-.statusInactive {
+.editButton,
+.visibilityButton,
+.deleteButton {
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.editButton {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.visibilityButton {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.deleteButton {
   background: #fee2e2;
   color: #991b1b;
 }

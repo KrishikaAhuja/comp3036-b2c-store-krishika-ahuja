@@ -22,26 +22,26 @@ test.describe("ADMIN UPDATE SCREEN", () => {
   );
 
   test(
-    "Update post form",
+    "Update product form",
     {
       tag: "@a2",
     },
     async ({ userPage }) => {
       await userPage.goto("/post/no-front-end-framework-is-the-best");
 
-      const saveButton = await userPage.getByText("Save");
+      const saveButton = userPage.getByRole("button", { name: "Save" });
 
       // UPDATE SCREEN > There must be the following fields which must be validated for errors:
 
-      // UPDATE SCREEN > Title
+      // UPDATE SCREEN > Product Name
 
-      await userPage.getByLabel("Title").clear();
+      await userPage.getByLabel("Product Name").clear();
       await saveButton.click();
 
-      await expect(userPage.getByText("Title is required")).toBeVisible();
-      await userPage.getByLabel("Title").fill("New title");
+      await expect(userPage.getByText("Product name is required")).toBeVisible();
+      await userPage.getByLabel("Product Name").fill("New product");
       await saveButton.click();
-      await expect(userPage.getByText("Title is required")).not.toBeVisible();
+      await expect(userPage.getByText("Product name is required")).toBeHidden();
 
       // UPDATE SCREEN > Description
 
@@ -53,7 +53,7 @@ test.describe("ADMIN UPDATE SCREEN", () => {
       await saveButton.click();
       await expect(
         userPage.getByText("Description is required"),
-      ).not.toBeVisible();
+      ).toBeHidden();
 
       // cannot be longer than 200
       await userPage.getByLabel("Description").fill("a".repeat(201));
@@ -70,17 +70,17 @@ test.describe("ADMIN UPDATE SCREEN", () => {
         userPage.getByText(
           "Description is too long. Maximum is 200 characters",
         ),
-      ).not.toBeVisible();
+      ).toBeHidden();
 
-      // UPDATE SCREEN > Content
+      // UPDATE SCREEN > Product Details
 
-      await userPage.getByLabel("Content").clear();
+      await userPage.getByLabel("Product Details").clear();
       await saveButton.click();
 
-      await expect(userPage.getByText("Content is required")).toBeVisible();
-      await userPage.getByLabel("Content").fill("New Description");
+      await expect(userPage.getByText("Product details are required")).toBeVisible();
+      await userPage.getByLabel("Product Details").fill("New product details");
       await saveButton.click();
-      await expect(userPage.getByText("Content is required")).not.toBeVisible();
+      await expect(userPage.getByText("Product details are required")).toBeHidden();
 
       // UPDATE SCREEN > Image
 
@@ -101,26 +101,26 @@ test.describe("ADMIN UPDATE SCREEN", () => {
       await saveButton.click();
       await expect(
         userPage.getByText("Image URL is required"),
-      ).not.toBeVisible();
+      ).toBeHidden();
 
-      // UPDATE SCREEN > Tag Lists
+      // UPDATE SCREEN > Collections
 
-      await userPage.getByLabel("Tags").clear();
+      await userPage.getByLabel("Collections").clear();
       await saveButton.click();
 
       await expect(
-        userPage.getByText("At least one tag is required"),
+        userPage.getByText("At least one collection is required"),
       ).toBeVisible();
-      await userPage.getByLabel("Tags").fill("Tag");
+      await userPage.getByLabel("Collections").fill("Collection");
       await saveButton.click();
       await expect(
-        userPage.getByText("At least one tag is required"),
-      ).not.toBeVisible();
+        userPage.getByText("At least one collection is required"),
+      ).toBeHidden();
     },
   );
 
   test(
-    "Save post form",
+    "Save product form",
     {
       tag: "@a3",
     },
@@ -128,27 +128,31 @@ test.describe("ADMIN UPDATE SCREEN", () => {
       await seed();
       await userPage.goto("/post/no-front-end-framework-is-the-best");
 
-      // BACKEND / ADMIN / UPDATE SCREEN > Logged in user can save changes to database, if the form is validated
+      // BACKEND / ADMIN / UPDATE SCREEN > Logged in user can save product changes to database, if the form is validated
 
-      await userPage.getByLabel("Title").fill("New title");
+      await userPage.getByLabel("Product Name").fill("New product");
       await userPage.getByLabel("Description").fill("New Description");
-      await userPage.getByLabel("Content").fill("New Content");
+      await userPage.getByLabel("Product Details").fill("New Content");
       await userPage
         .getByLabel("Image URL")
         .fill("http://example.com/image.jpg");
-      await userPage.getByLabel("Tags").fill("Tag");
+      await userPage.getByLabel("Collections").fill("Collection");
+      await userPage.getByLabel("Price").fill("499");
+      await userPage.getByLabel("Stock Quantity").fill("14");
       await userPage.getByText("Save").click();
 
       await expect(
-        userPage.getByText("Post updated successfully"),
+        userPage.getByText("Product saved successfully"),
       ).toBeVisible();
 
       // check if the changes are there
       await userPage.goto("/");
 
       const article = await userPage.locator("article").first();
-      await expect(article.getByText("New title")).toBeVisible();
-      await expect(article.getByText("Tag")).toBeVisible();
+      await expect(article.getByText("New product")).toBeVisible();
+      await expect(article.getByText("Collection")).toBeVisible();
+      await expect(article.getByText("$499")).toBeVisible();
+      await expect(article.getByText("Stock: 14")).toBeVisible();
       await expect(article.locator("img")).toHaveAttribute(
         "src",
         "http://example.com/image.jpg",
@@ -157,7 +161,7 @@ test.describe("ADMIN UPDATE SCREEN", () => {
   );
 
   test(
-    "Create post form",
+    "Create product form",
     {
       tag: "@a3",
     },
@@ -165,32 +169,36 @@ test.describe("ADMIN UPDATE SCREEN", () => {
       await seed();
       await userPage.goto("/posts/create");
 
-      // BACKEND / ADMIN / UPDATE SCREEN > Logged in user can create a new post to the database, if the form is validated
+      // BACKEND / ADMIN / UPDATE SCREEN > Logged in user can create a new product to the database, if the form is validated
 
-      await userPage.getByLabel("Title").fill("New title");
-      await userPage.getByLabel("Category").fill("React");
+      await userPage.getByLabel("Product Name").fill("New product");
+      await userPage.getByLabel("Category").fill("Accessories");
       await userPage.getByLabel("Description").fill("New Description");
-      await userPage.getByLabel("Content").fill("New Content");
+      await userPage.getByLabel("Product Details").fill("New Content");
       await userPage
         .getByLabel("Image URL")
         .fill("http://example.com/image.jpg");
-      await userPage.getByLabel("Tags").fill("Tag");
+      await userPage.getByLabel("Collections").fill("Collection");
+      await userPage.getByLabel("Price").fill("129");
+      await userPage.getByLabel("Stock Quantity").fill("8");
       await userPage.getByText("Save").click();
 
       await expect(
-        userPage.getByText("Post updated successfully"),
+        userPage.getByText("Product saved successfully"),
       ).toBeVisible();
 
       // check if the changes are there
       await userPage.goto("/");
 
       const article = await userPage.locator("article").first();
-      await expect(article.getByText("New title")).toBeVisible();
-      await expect(article.locator('a:has-text("New title")')).toHaveAttribute(
+      await expect(article.getByText("New product")).toBeVisible();
+      await expect(article.locator('a:has-text("New product")')).toHaveAttribute(
         "href",
-        "/post/new-title",
+        "/post/new-product",
       );
-      await expect(article.getByText("Tag")).toBeVisible();
+      await expect(article.getByText("Collection")).toBeVisible();
+      await expect(article.getByText("$129")).toBeVisible();
+      await expect(article.getByText("Stock: 8")).toBeVisible();
       await expect(article.locator("img")).toHaveAttribute(
         "src",
         "http://example.com/image.jpg",
@@ -212,7 +220,7 @@ test.describe("ADMIN UPDATE SCREEN", () => {
       await expect(userPage.getByTestId("content-preview")).toBeVisible();
       await expect(
         await userPage.getByTestId("content-preview").innerHTML(),
-      ).toContain("<strong>sint voluptas</strong>");
+      ).toContain("<h2>Key features</h2>");
       await expect(userPage.getByText("Close Preview")).toBeVisible();
     },
   );
@@ -227,7 +235,7 @@ test.describe("ADMIN UPDATE SCREEN", () => {
 
       // UPDATE SCREEN > When the preview is closed, the cursor must be in the same position as before opening the preview.
 
-      let textBox = await userPage.getByLabel("Content");
+      let textBox = await userPage.getByLabel("Product Details");
       await textBox.evaluate((element: HTMLTextAreaElement) => {
         element.focus();
         element.setSelectionRange(20, 20);
@@ -237,7 +245,7 @@ test.describe("ADMIN UPDATE SCREEN", () => {
       await userPage.getByText("Preview").click();
       await userPage.getByText("Close Preview").click();
 
-      textBox = await userPage.getByLabel("Content");
+      textBox = await userPage.getByLabel("Product Details");
       const { selectionStart, selectionEnd } = await textBox.evaluate(
         (textarea: HTMLTextAreaElement) => {
           return {
@@ -266,7 +274,7 @@ test.describe("ADMIN UPDATE SCREEN", () => {
       await expect(
         await userPage.getByTestId("image-preview").getAttribute("src"),
       ).toBe(
-        "https://plus.unsplash.com/premium_photo-1661517706036-a48d5fc8f2f5?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+        "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=1200&q=80",
       );
     },
   );
@@ -285,7 +293,7 @@ test.describe("ADMIN UPDATE SCREEN", () => {
         userPage.getByText("Please fix the errors before saving"),
       ).not.toBeVisible();
 
-      await userPage.getByLabel("Title").clear();
+      await userPage.getByLabel("Product Name").clear();
       await userPage.getByText("Save").click();
       await expect(
         userPage.getByText("Please fix the errors before saving"),

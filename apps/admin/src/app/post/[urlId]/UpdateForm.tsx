@@ -12,6 +12,11 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
   const [tags, setTags] = useState(post.tags); // Current tags
   const [imageUrl, setImageUrl] = useState(post.imageUrl); // Current image URL
   const [category, setCategory] = useState(post.category); // Current category
+  const [priceAud, setPriceAud] = useState(String(post.priceAud ?? 0));
+  const [stockQuantity, setStockQuantity] = useState(
+    String(post.stockQuantity ?? 0),
+  );
+  const [active, setActive] = useState(Boolean(post.active));
   const [success, setSuccess] = useState(""); // Success message after saving
 
   const [errors, setErrors] = useState<Record<string, string>>({}); // Field validation errors
@@ -25,7 +30,7 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
   function validate() { // Checks form before saving
     const newErrors: Record<string, string> = {}; // Stores errors
 
-    if (!title.trim()) newErrors.title = "Title is required"; // Title required
+    if (!title.trim()) newErrors.title = "Product name is required";
     if (!category.trim()) newErrors.category = "Category is required"; // Category required
 
     if (!description.trim()) { // Description required
@@ -35,8 +40,18 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
         "Description is too long. Maximum is 200 characters";
     }
 
-    if (!content.trim()) newErrors.content = "Content is required"; // Content required
-    if (!tags.trim()) newErrors.tags = "At least one tag is required"; // Tags required
+    if (!content.trim()) newErrors.content = "Product details are required";
+    if (!tags.trim()) newErrors.tags = "At least one collection is required";
+
+    const parsedPrice = Number(priceAud);
+    if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
+      newErrors.priceAud = "Price must be 0 or more";
+    }
+
+    const parsedStock = Number(stockQuantity);
+    if (!Number.isInteger(parsedStock) || parsedStock < 0) {
+      newErrors.stockQuantity = "Stock must be a whole number 0 or more";
+    }
 
     if (!imageUrl.trim()) { // Image URL required
       newErrors.imageUrl = "Image URL is required";
@@ -71,6 +86,9 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
         tags,
         imageUrl,
         category,
+        priceAud: Number(priceAud),
+        stockQuantity: Number(stockQuantity),
+        active,
       }),
     });
 
@@ -79,7 +97,7 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
       return;
     }
 
-    setSuccess("Post updated successfully"); // Show success message
+    setSuccess("Product saved successfully"); // Show success message
     setSaveError(""); // Clear error message
   }
 
@@ -109,14 +127,14 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
         <div className={styles.card}>
           <div className={styles.headerRow}>
             <h1 className={styles.title}>
-              {isNewPost ? "Create Post" : "Update Post"}
+              {isNewPost ? "Create Product" : "Update Product"}
             </h1>
           </div>
 
           <div className={styles.form}>
             <div className={styles.fieldGroup}>
               <label htmlFor="title" className={styles.label}>
-                Title
+                Product Name
               </label>
               <input
                 id="title"
@@ -161,7 +179,7 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
 
             <div className={styles.fieldGroup}>
               <label htmlFor="content" className={styles.label}>
-                Content
+                Product Details
               </label>
 
               {!showPreview ? (
@@ -195,7 +213,7 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
 
             <div className={styles.fieldGroup}>
               <label htmlFor="tags" className={styles.label}>
-                Tags
+                Collections
               </label>
               <input
                 id="tags"
@@ -205,6 +223,51 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
               />
               {errors.tags && <p className={styles.error}>{errors.tags}</p>}
             </div>
+
+            <div className={styles.fieldGroup}>
+              <label htmlFor="priceAud" className={styles.label}>
+                Price
+              </label>
+              <input
+                id="priceAud"
+                type="number"
+                min="0"
+                step="1"
+                value={priceAud}
+                onChange={(e) => setPriceAud(e.target.value)}
+                className={styles.input}
+              />
+              {errors.priceAud && (
+                <p className={styles.error}>{errors.priceAud}</p>
+              )}
+            </div>
+
+            <div className={styles.fieldGroup}>
+              <label htmlFor="stockQuantity" className={styles.label}>
+                Stock Quantity
+              </label>
+              <input
+                id="stockQuantity"
+                type="number"
+                min="0"
+                step="1"
+                value={stockQuantity}
+                onChange={(e) => setStockQuantity(e.target.value)}
+                className={styles.input}
+              />
+              {errors.stockQuantity && (
+                <p className={styles.error}>{errors.stockQuantity}</p>
+              )}
+            </div>
+
+            <label className={styles.checkboxRow}>
+              <input
+                type="checkbox"
+                checked={active}
+                onChange={(e) => setActive(e.target.checked)}
+              />
+              Active in store
+            </label>
 
             <div className={styles.fieldGroup}>
               <label htmlFor="imageUrl" className={styles.label}>

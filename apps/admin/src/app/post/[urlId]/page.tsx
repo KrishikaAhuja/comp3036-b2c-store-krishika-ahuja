@@ -44,7 +44,7 @@ export default async function Page({ // This page receives a dynamic route param
 
   // If no matching post exists, show fallback
   if (!post) {
-    return <main>Post not found</main>;
+    return <main>Product not found</main>;
   }
 
   // Send the database post into the update form

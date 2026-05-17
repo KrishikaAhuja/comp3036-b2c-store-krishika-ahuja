@@ -43,10 +43,12 @@ export const test = base.extend<MyFixtures>({
   //   await context.close();
   // },
   userPage: async ({ browser }, use) => {
-    const context = await browser.newContext({
-      storageState: ".auth/user.json",
-    });
+    const context = await browser.newContext();
     const userPage = await context.newPage(); //  new UserPage(await context.newPage());
+    await userPage.goto("/");
+    await userPage.getByLabel("Password", { exact: true }).fill("123");
+    await userPage.getByText("Sign In", { exact: true }).click();
+    await userPage.getByText("Product Management", { exact: true }).waitFor();
     await use(userPage);
     await context.close();
   },

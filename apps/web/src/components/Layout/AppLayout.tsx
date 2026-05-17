@@ -1,13 +1,15 @@
 import type { PropsWithChildren } from "react";
-import { posts } from "@repo/db/data";
 import { Content } from "../Content";
 import { LeftMenu } from "../Menu/LeftMenu";
 import { TopMenu } from "./TopMenu";
+import { getActiveProducts } from "@/functions/products";
 
 export async function AppLayout({
   children,
   query,
 }: PropsWithChildren<{ query?: string }>) {
+  const posts = await getActiveProducts();
+
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--text)]">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">

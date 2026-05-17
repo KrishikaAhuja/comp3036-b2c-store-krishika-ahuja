@@ -42,3 +42,4 @@ yarn-error.log*
 *storybook.log
 
 __screenshots__
+tests/playwright/debug.log

@@ -34,7 +34,7 @@ test.describe("ADMIN HOME SCREEN", () => {
       await page.getByLabel("Password", { exact: true }).fill("123");
       await page.getByText("Sign In", { exact: true }).click();
 
-      await expect(page.getByText("Admin of Full Stack Blog")).toBeVisible();
+      await expect(page.getByText("Product Management")).toBeVisible();
 
       // HOME SCREEN > Use a cookie to remember the signed-in state.
       const cookies = await page.context().cookies();
@@ -64,11 +64,11 @@ test.describe("ADMIN HOME SCREEN", () => {
 
       // shows title
       await expect(
-        userPage.getByText("Admin of Full Stack Blog", { exact: true }),
+        userPage.getByText("Product Management", { exact: true }),
       ).toBeVisible();
 
       // LIST SCREEN > Article list is only accessible to logged-in users.
-      await expect(await userPage.locator("article").count()).toBe(4);
+      await expect(await userPage.locator("article").count()).toBe(5);
     },
   );
 });
