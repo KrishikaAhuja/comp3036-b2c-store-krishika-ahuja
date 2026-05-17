@@ -69,6 +69,9 @@ export async function PUT(req: NextRequest) {
       tags: body.tags,
       imageUrl: body.imageUrl,
       category: body.category,
+      priceAud: Math.max(0, Math.floor(Number(body.priceAud) || 0)),
+      stockQuantity: Math.max(0, Math.floor(Number(body.stockQuantity) || 0)),
+      active: Boolean(body.active),
       date: new Date(),
     },
   });
@@ -89,7 +92,9 @@ export async function POST(req: NextRequest) {
       tags: body.tags,
       imageUrl: body.imageUrl,
       category: body.category,
-      active: true,
+      priceAud: Math.max(0, Math.floor(Number(body.priceAud) || 0)),
+      stockQuantity: Math.max(0, Math.floor(Number(body.stockQuantity) || 0)),
+      active: Boolean(body.active),
     },
   });
 

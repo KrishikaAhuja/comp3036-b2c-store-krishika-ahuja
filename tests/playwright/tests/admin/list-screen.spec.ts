@@ -11,14 +11,14 @@ test.describe("ADMIN LIST SCREEN", () => {
   });
 
   test(
-    "Show all posts",
+    "Show all products",
     {
       tag: "@a2",
     },
     async ({ userPage }) => {
       await userPage.goto("/");
 
-      await expect(await userPage.locator("article").count()).toBe(4);
+      await expect(await userPage.locator("article").count()).toBe(5);
     },
   );
 
@@ -30,20 +30,20 @@ test.describe("ADMIN LIST SCREEN", () => {
     async ({ userPage }) => {
       await userPage.goto("/");
 
-      // LIST SCREEN > On the top is a filter screen that allows to filter posts by Title or content
-      await userPage.getByLabel("Filter by Content:").fill("Boost");
+      // LIST SCREEN > On the top is a filter screen that allows to filter products by name or details
+      await userPage.getByLabel("Filter by Product:").fill("AeroBook");
       await expect(await userPage.locator("article").count()).toBe(1);
       await expect(
-        userPage.getByText("Boost your conversion rate"),
+        userPage.getByText("AeroBook 14 Pro Laptop"),
       ).toBeVisible();
 
-      await userPage.getByLabel("Filter by Content:").fill("post2");
+      await userPage.getByLabel("Filter by Product:").fill("headphones");
       await expect(
-        userPage.getByText("Better front ends with Fatboy Slim"),
+        userPage.getByText("PulseWave Noise-Cancelling Headphones"),
       ).toBeVisible();
 
-      await userPage.getByLabel("Filter by Content:").clear();
-      await expect(await userPage.locator("article").count()).toBe(4);
+      await userPage.getByLabel("Filter by Product:").clear();
+      await expect(await userPage.locator("article").count()).toBe(5);
     },
   );
 
@@ -55,16 +55,16 @@ test.describe("ADMIN LIST SCREEN", () => {
     async ({ userPage }) => {
       await userPage.goto("/");
 
-      // LIST SCREEN > On the top is a filter screen that allows to filter posts by tags
-      await userPage.getByLabel("Filter by Tag:").fill("Front");
+      // LIST SCREEN > On the top is a filter screen that allows to filter products by collection
+      await userPage.getByLabel("Filter by Collection:").fill("Desk");
       await expect(await userPage.locator("article").count()).toBe(2);
       await expect(
-        userPage.getByText("Better front ends with Fatboy Slim"),
+        userPage.getByText("MagDock 3-in-1 Charging Station"),
       ).toBeVisible();
       await expect(
-        userPage.getByText("No front end framework is the best"),
+        userPage.getByText("ErgoLift Monitor Stand"),
       ).toBeVisible();
-      await userPage.getByLabel("Filter by Tag:").clear();
+      await userPage.getByLabel("Filter by Collection:").clear();
     },
   );
 
@@ -76,18 +76,18 @@ test.describe("ADMIN LIST SCREEN", () => {
     async ({ userPage }) => {
       await userPage.goto("/");
 
-      // LIST SCREEN > On the top is a filter screen that allows to filter posts by date
+      // LIST SCREEN > On the top is a filter screen that allows to filter products by date
       await userPage
-        .getByLabel("Filter by Date Created:")
+        .getByLabel("Filter by Date Added:")
         .pressSequentially("01012022");
-      await expect(await userPage.locator("article").count()).toBe(2);
+      await expect(await userPage.locator("article").count()).toBe(3);
       await expect(
-        userPage.getByText("Boost your conversion rate"),
+        userPage.getByText("AeroBook 14 Pro Laptop"),
       ).toBeVisible();
       await expect(
-        userPage.getByText("No front end framework is the best"),
+        userPage.getByText("Vertex RGB Mechanical Keyboard"),
       ).toBeVisible();
-      await userPage.getByLabel("Filter by Date Created:").clear();
+      await userPage.getByLabel("Filter by Date Added:").clear();
     },
   );
 
@@ -100,13 +100,13 @@ test.describe("ADMIN LIST SCREEN", () => {
       await userPage.goto("/");
 
       // LIST SCREEN > On the top is a filter screen that allows to filter by visibility
-      await userPage.getByLabel("Filter by Tag:").fill("Front");
+      await userPage.getByLabel("Filter by Collection:").fill("RGB");
       await userPage
-        .getByLabel("Filter by Date Created:")
+        .getByLabel("Filter by Date Added:")
         .pressSequentially("01012022");
       await expect(await userPage.locator("article").count()).toBe(1);
       await expect(
-        userPage.getByText("No front end framework is the best"),
+        userPage.getByText("Vertex RGB Mechanical Keyboard"),
       ).toBeVisible();
     },
   );
@@ -126,33 +126,39 @@ test.describe("ADMIN LIST SCREEN", () => {
       let articles = await userPage.locator("article").all();
 
       expect(await articles[0].innerText()).toContain(
-        "Better front ends with Fatboy Slim",
+        "AeroBook 14 Pro Laptop",
       );
       expect(await articles[1].innerText()).toContain(
-        "Boost your conversion rate",
+        "ErgoLift Monitor Stand",
       );
       expect(await articles[2].innerText()).toContain(
-        "No front end framework is the best",
+        "MagDock 3-in-1 Charging Station",
       );
       expect(await articles[3].innerText()).toContain(
-        "Visual Basic is the future",
+        "PulseWave Noise-Cancelling Headphones",
+      );
+      expect(await articles[4].innerText()).toContain(
+        "Vertex RGB Mechanical Keyboard",
       );
 
       // title-desc
       await userPage.getByLabel("Sort By:").selectOption("title-desc");
       articles = await userPage.locator("article").all();
 
-      expect(await articles[3].innerText()).toContain(
-        "Better front ends with Fatboy Slim",
-      );
-      expect(await articles[2].innerText()).toContain(
-        "Boost your conversion rate",
+      expect(await articles[0].innerText()).toContain(
+        "Vertex RGB Mechanical Keyboard",
       );
       expect(await articles[1].innerText()).toContain(
-        "No front end framework is the best",
+        "PulseWave Noise-Cancelling Headphones",
       );
-      expect(await articles[0].innerText()).toContain(
-        "Visual Basic is the future",
+      expect(await articles[2].innerText()).toContain(
+        "MagDock 3-in-1 Charging Station",
+      );
+      expect(await articles[3].innerText()).toContain(
+        "ErgoLift Monitor Stand",
+      );
+      expect(await articles[4].innerText()).toContain(
+        "AeroBook 14 Pro Laptop",
       );
 
       // title-asc
@@ -160,16 +166,19 @@ test.describe("ADMIN LIST SCREEN", () => {
       articles = await userPage.locator("article").all();
 
       expect(await articles[1].innerText()).toContain(
-        "Better front ends with Fatboy Slim",
+        "PulseWave Noise-Cancelling Headphones",
       );
       expect(await articles[2].innerText()).toContain(
-        "Boost your conversion rate",
+        "AeroBook 14 Pro Laptop",
       );
       expect(await articles[3].innerText()).toContain(
-        "No front end framework is the best",
+        "Vertex RGB Mechanical Keyboard",
       );
       expect(await articles[0].innerText()).toContain(
-        "Visual Basic is the future",
+        "ErgoLift Monitor Stand",
+      );
+      expect(await articles[4].innerText()).toContain(
+        "MagDock 3-in-1 Charging Station",
       );
 
       // title-desc
@@ -177,16 +186,19 @@ test.describe("ADMIN LIST SCREEN", () => {
       articles = await userPage.locator("article").all();
 
       expect(await articles[2].innerText()).toContain(
-        "Better front ends with Fatboy Slim",
+        "AeroBook 14 Pro Laptop",
       );
       expect(await articles[1].innerText()).toContain(
-        "Boost your conversion rate",
+        "Vertex RGB Mechanical Keyboard",
       );
       expect(await articles[0].innerText()).toContain(
-        "No front end framework is the best",
+        "MagDock 3-in-1 Charging Station",
       );
       expect(await articles[3].innerText()).toContain(
-        "Visual Basic is the future",
+        "PulseWave Noise-Cancelling Headphones",
+      );
+      expect(await articles[4].innerText()).toContain(
+        "ErgoLift Monitor Stand",
       );
     },
   );
@@ -199,18 +211,21 @@ test.describe("ADMIN LIST SCREEN", () => {
     async ({ userPage }) => {
       await userPage.goto("/");
 
-      // LIST SCREEN > The list post item displays the image, title of the post and metadata
+      // LIST SCREEN > The list product item displays the image, name and metadata
       const article = await userPage.locator("article").first();
       await expect(
-        article.getByText("No front end framework is the best"),
+        article.getByText("MagDock 3-in-1 Charging Station"),
       ).toBeVisible();
       await expect(article.locator("img").first()).toBeVisible();
 
-      // LIST SCREEN > The list post items display metadata such as category, tags, and "active" status
-      await expect(article.getByText("#Front-End, #Dev Tools")).toBeVisible();
-      await expect(article.getByText("Posted on Dec 16, 2024")).toBeVisible();
-      await expect(article.getByText("React")).toBeVisible();
+      // LIST SCREEN > The list product items display metadata such as category, collections, stock, and active status
+      await expect(article.getByText("#Chargers, #Desk Setup")).toBeVisible();
+      await expect(article.getByText("Added on Aug 8, 2025")).toBeVisible();
+      await expect(article.getByText("Category: Accessories")).toBeVisible();
+      await expect(article.getByText("$119")).toBeVisible();
+      await expect(article.getByText("Stock: 35")).toBeVisible();
       await expect(article.getByText("Active")).toBeVisible();
+      await expect(article.getByText("In stock")).toBeVisible();
 
       // LIST SCREEN > The active status is a button that, on click, just displays a message
       await expect(article.locator('button:has-text("Active")')).toBeVisible();
@@ -225,8 +240,8 @@ test.describe("ADMIN LIST SCREEN", () => {
     async ({ userPage }) => {
       await userPage.goto("/");
 
-      // LIST SCREEN > Clicking on the title takes the user to the MODIFY SCREEN, allowing the user to modify the current post
-      await userPage.getByText("No front end framework is the best").click();
+      // LIST SCREEN > Clicking on the title takes the user to the MODIFY SCREEN, allowing the user to modify the current product
+      await userPage.getByText("Vertex RGB Mechanical Keyboard").click();
       await expect(userPage).toHaveURL(
         "/post/no-front-end-framework-is-the-best",
       );
@@ -234,24 +249,24 @@ test.describe("ADMIN LIST SCREEN", () => {
   );
 
   test(
-    "Move to create post screen",
+    "Move to create product screen",
     {
       tag: "@a2",
     },
     async ({ userPage }) => {
       await userPage.goto("/");
 
-      // LIST SCREEN > There is a button to create new posts
-      await expect(userPage.getByText("Create Post")).toBeVisible();
+      // LIST SCREEN > There is a button to create new products
+      await expect(userPage.getByText("Create Product")).toBeVisible();
 
-      // LIST SCREEN > Clicking on the "Create Post" button takes the user to the CREATE SCREEN
-      await userPage.locator('a:has-text("Create Post")').click();
+      // LIST SCREEN > Clicking on the "Create Product" button takes the user to the CREATE SCREEN
+      await userPage.locator('a:has-text("Create Product")').click();
       await expect(userPage).toHaveURL("/posts/create");
     },
   );
 
   test(
-    "Can activate / deactivate posts",
+    "Can activate / deactivate products",
     {
       tag: "@a3",
     },
@@ -259,7 +274,7 @@ test.describe("ADMIN LIST SCREEN", () => {
       await seed();
       await userPage.goto("/");
 
-      //  BACKEND / ADMIN / LIST SCREEN > Logged in user can activate / deactivate a post clicking on the activate button, automatically saving changes
+      //  BACKEND / ADMIN / LIST SCREEN > Logged in user can activate / deactivate a product clicking on the activate button, automatically saving changes
 
       let article = await userPage.locator("article").first();
       await expect(article.locator('button:has-text("Active")')).toBeVisible();

@@ -39,6 +39,14 @@ export default function AdminList({ posts }: { posts: any[] }) {
       .join(", ");
   }
 
+  function formatPrice(value: number | null | undefined) {
+    return new Intl.NumberFormat("en-AU", {
+      style: "currency",
+      currency: "AUD",
+      maximumFractionDigits: 0,
+    }).format(value ?? 0);
+  }
+
   // filtering + sorting logic
   // useMemo avoids recalculating unless values change (performance)
   const filtered = useMemo(() => {
@@ -120,7 +128,7 @@ export default function AdminList({ posts }: { posts: any[] }) {
 
         {/* page header */}
         <div className={styles.header}>
-          <h1 className={styles.title}>Admin of Full Stack Blog</h1>
+          <h1 className={styles.title}>Product Management</h1>
 
           <div className={styles.headerActions}>
             {/* logout button → deletes auth cookie and redirects */}
@@ -137,7 +145,7 @@ export default function AdminList({ posts }: { posts: any[] }) {
 
             {/* navigate to create post page */}
             <a href="/posts/create" className={styles.createButton}>
-              Create Post
+              Create Product
             </a>
           </div>
         </div>
@@ -149,35 +157,35 @@ export default function AdminList({ posts }: { posts: any[] }) {
             {/* content search */}
             <div className={styles.fieldGroup}>
               <label htmlFor="content" className={styles.label}>
-                Filter by Content:
+                Filter by Product:
               </label>
               <input
                 id="content"
                 value={content}
                 onChange={(e) => setContent(e.target.value)} // updates state
                 className={styles.input}
-                placeholder="Search title, description, content..."
+                placeholder="Search name, description, details..."
               />
             </div>
 
             {/* tag filter */}
             <div className={styles.fieldGroup}>
               <label htmlFor="tag" className={styles.label}>
-                Filter by Tag:
+                Filter by Collection:
               </label>
               <input
                 id="tag"
                 value={tag}
                 onChange={(e) => setTag(e.target.value)}
                 className={styles.input}
-                placeholder="Enter a tag"
+                placeholder="Enter a collection"
               />
             </div>
 
             {/* date filter */}
             <div className={styles.fieldGroup}>
               <label htmlFor="date" className={styles.label}>
-                Filter by Date Created:
+                Filter by Date Added:
               </label>
               <input
                 id="date"
@@ -191,7 +199,7 @@ export default function AdminList({ posts }: { posts: any[] }) {
             {/* visibility filter */}
             <div className={styles.fieldGroup}>
               <label htmlFor="visibility" className={styles.label}>
-                Visibility:
+                Product Status:
               </label>
               <select
                 id="visibility"
@@ -200,7 +208,7 @@ export default function AdminList({ posts }: { posts: any[] }) {
                 className={styles.select}
               >
                 <option value="">All</option>
-                <option value="active">Active</option>
+                <option value="active">Active / in store</option>
                 <option value="inactive">Inactive</option>
               </select>
             </div>
@@ -217,8 +225,8 @@ export default function AdminList({ posts }: { posts: any[] }) {
                 className={styles.select}
               >
                 <option value="">None</option>
-                <option value="title-asc">Title A-Z</option>
-                <option value="title-desc">Title Z-A</option>
+                <option value="title-asc">Name A-Z</option>
+                <option value="title-desc">Name Z-A</option>
                 <option value="date-asc">Oldest First</option>
                 <option value="date-desc">Newest First</option>
               </select>
@@ -229,13 +237,13 @@ export default function AdminList({ posts }: { posts: any[] }) {
 
         {/* number of results */}
         <p className={styles.resultsText}>
-          Showing {filtered.length} post{filtered.length === 1 ? "" : "s"}
+          Showing {filtered.length} product{filtered.length === 1 ? "" : "s"}
         </p>
 
         {/* if no posts match */}
         {filtered.length === 0 ? (
           <div className={styles.emptyState}>
-            No posts matched your filters.
+            No products matched your filters.
           </div>
         ) : (
           <div className={styles.postsGrid}>
@@ -254,30 +262,54 @@ export default function AdminList({ posts }: { posts: any[] }) {
 
                   <div className={styles.cardBody}>
                     <h2 className={styles.cardTitle}>{p.title}</h2>
+                    <p className={styles.price}>{formatPrice(p.priceAud)}</p>
                     <p className={styles.meta}>{formatTags(p.tags)}</p>
                     <p className={styles.meta}>
-                      Posted on {formatPostedDate(p.date)}
+                      Added on {formatPostedDate(p.date)}
                     </p>
-                    <p className={styles.meta}>{p.category}</p>
+                    <p className={styles.meta}>Category: {p.category}</p>
+                    <p className={styles.meta}>Stock: {p.stockQuantity ?? 0}</p>
                   </div>
                 </a>
 
-                {/* activate/deactivate post */}
                 <div className={styles.cardFooter}>
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      await fetch(`/api/posts/${p.id}`, {
-                        method: "PATCH", // toggles active status
-                      });
-                      window.location.reload(); // reload to update UI
-                    }}
-                    className={`${styles.statusButton} ${
-                      p.active ? styles.statusActive : styles.statusInactive
-                    }`}
-                  >
-                    {p.active ? "Active" : "Inactive"}
-                  </button>
+                  <div className={styles.statusRow}>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        await fetch(`/api/posts/${p.id}`, {
+                          method: "PATCH", // toggles active status
+                        });
+                        window.location.reload(); // reload to update UI
+                      }}
+                      className={`${styles.statusButton} ${
+                        p.active ? styles.statusActive : styles.statusInactive
+                      }`}
+                    >
+                      {p.active ? "Active" : "Inactive"}
+                    </button>
+                    <span className={styles.stockBadge}>
+                      {(p.stockQuantity ?? 0) > 0 ? "In stock" : "Out of stock"}
+                    </span>
+                  </div>
+
+                  <div className={styles.actionRow}>
+                    <a href={`/post/${p.urlId}`} className={styles.editButton}>
+                      Edit
+                    </a>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        await fetch(`/api/posts/${p.id}`, {
+                          method: "DELETE",
+                        });
+                        window.location.reload();
+                      }}
+                      className={styles.deleteButton}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
 
               </article>

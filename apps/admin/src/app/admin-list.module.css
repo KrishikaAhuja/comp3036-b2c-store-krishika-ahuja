@@ -182,14 +182,62 @@
   line-height: 1.5;
 }
 
+.price {
+  margin: 0;
+  color: #111827;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
 .cardFooter {
   padding: 0 18px 18px;
   margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .statusButton {
   background: #e5e7eb;
   color: #111827;
+}
+
+.statusRow,
+.actionRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.stockBadge {
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.editButton,
+.deleteButton {
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.editButton {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.deleteButton {
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 .statusActive {

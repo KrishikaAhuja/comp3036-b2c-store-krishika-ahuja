@@ -30,3 +30,18 @@ export async function PATCH(
 
   return NextResponse.json(updated);
 }
+
+// Deletes one product while keeping the existing posts API route.
+export async function DELETE(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> },
+) {
+  const { id } = await context.params;
+  const postId = Number(id);
+
+  await client.db.post.delete({
+    where: { id: postId },
+  });
+
+  return NextResponse.json({ ok: true });
+}
