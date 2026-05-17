@@ -26,7 +26,6 @@ export function CartNavLink() {
     <Link
       href="/cart"
       className="inline-flex h-11 items-center justify-center rounded-xl border border-gray-200 px-4 text-sm font-semibold text-[var(--text)] transition hover:border-blue-500 hover:text-blue-600 dark:border-gray-700"
-      aria-label={`Cart with ${count} items`}
     >
       Cart ({count})
     </Link>

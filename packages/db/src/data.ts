@@ -43,7 +43,7 @@ export const posts: Post[] = [
     title: "AeroBook 14 Pro Laptop",
     urlId: "boost-your-conversion-rate",
     description:
-      "A lightweight 14-inch productivity laptop with a bright display, fast SSD storage, and all-day battery life for work, study, and travel.",
+      "A lightweight 14-inch productivity laptop with a bright display, fast SSD storage, and all-day battery life for desk work, study, and travel.",
     content: productContent({
       overview:
         "The AeroBook 14 Pro is built for everyday productivity with a slim aluminium chassis, responsive keyboard, and enough performance for multitasking across documents, browser tabs, video calls, and creative apps.",

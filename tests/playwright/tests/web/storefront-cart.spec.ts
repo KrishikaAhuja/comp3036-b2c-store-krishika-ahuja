@@ -2,7 +2,8 @@ import { expect, test } from "./fixtures";
 
 test.describe("STOREFRONT", () => {
   test.beforeEach(async ({ page }) => {
-    await page.addInitScript(() => {
+    await page.goto("/");
+    await page.evaluate(() => {
       window.localStorage.clear();
     });
   });
@@ -92,7 +93,7 @@ test.describe("STOREFRONT", () => {
       await expect(page).toHaveURL("/cart");
       await expect(page.getByText("AeroBook 14 Pro Laptop")).toBeVisible();
       await expect(page.getByText("$1,299").first()).toBeVisible();
-      await expect(page.getByText("Total")).toBeVisible();
+      await expect(page.getByText("Total", { exact: true })).toBeVisible();
       await expect(page.getByText("$1,299").last()).toBeVisible();
       await expect(
         page.getByRole("button", {
@@ -112,7 +113,7 @@ test.describe("STOREFRONT", () => {
         .click();
 
       await expect(page.getByRole("link", { name: "Cart (2)" })).toBeVisible();
-      await expect(page.getByText("$2,598")).toBeVisible();
+      await expect(page.getByText("$2,598", { exact: true })).toBeVisible();
     },
   );
 
