@@ -1,5 +1,5 @@
 import { AppLayout } from "@/components/Layout/AppLayout"; // imports the main page layout
-import { BlogDetail } from "@/components/Blog/Detail"; // imports the component that shows full blog details
+import { BlogDetail } from "@/components/Blog/Detail"; // imports the component that shows full product details
 import { client } from "@repo/db/client"; // imports the database client
 import LikeButton from "./LikeButton"; // imports the like button component
 import { cookies } from "next/headers"; // used to read cookies from the request
@@ -8,8 +8,8 @@ import { cookies } from "next/headers"; // used to read cookies from the request
 // This is important because views and likes can change.
 export const dynamic = "force-dynamic";
 
-// This is the blog detail page.
-// It receives urlId from the URL, for example /post/my-blog-title.
+// This is the product detail page.
+// It receives urlId from the existing /post route.
 export default async function Page({
   params,
 }: {
@@ -29,7 +29,7 @@ export default async function Page({
   if (!post || !post.active) {
     return (
       <AppLayout>
-        <div>Article not found</div>
+        <div>Product not found</div>
       </AppLayout>
     );
   }
@@ -67,32 +67,32 @@ export default async function Page({
     (like) => like.userIP === "test-ip"
   );
 
-  // Shows the blog detail page with like count, views count, and the post content.
+  // Shows the product detail page with stock-watch count, views count, and product content.
   return (
     <AppLayout>
       <div className="space-y-6">
-        {/* Top row showing like button, like count, and views count */}
+        {/* Top row showing stock watch button, watch count, and views count */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {/* Like button receives the post id and whether it is already liked */}
+            {/* Like button receives the post id and whether it is already being watched */}
             <LikeButton
               postId={updatedPost.id}
               initialLiked={isLiked}
             />
 
-            {/* Shows total likes for this post */}
+            {/* Shows total stock watches for this post */}
             <div className="rounded-xl bg-gray-100 px-4 py-2 font-semibold text-green-700 shadow-sm dark:bg-green-900 dark:text-green-300">
-              ❤️ {displayPost.likes}
+              Stock watchers: {displayPost.likes}
             </div>
           </div>
 
           {/* Shows total views for this post */}
           <div className="rounded-xl bg-gray-100 px-5 py-2.5 font-semibold text-gray-700 shadow-sm dark:bg-gray-800 dark:text-gray-300">
-            👁 Views: {updatedPost.views}
+            Product views: {updatedPost.views}
           </div>
         </div>
 
-        {/* Shows the actual blog title, image, description, and content */}
+        {/* Shows the product title, image, description, and content */}
         <BlogDetail post={displayPost} />
       </div>
     </AppLayout>

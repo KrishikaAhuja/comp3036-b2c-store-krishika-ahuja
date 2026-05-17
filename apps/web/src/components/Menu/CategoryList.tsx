@@ -6,7 +6,13 @@ import { LinkList } from "./LinkList";
 export function CategoryList({ posts }: { posts: Post[] }) {
   const baseCategories = categories(posts);
 
-  const ALL_CATEGORIES = ["React", "Node", "Mongo", "DevOps"];
+  const ALL_CATEGORIES = [
+    "Electronics",
+    "Accessories",
+    "Audio",
+    "Office",
+    "Gaming",
+  ];
 
   const items = ALL_CATEGORIES.map((name) => {
     const existing = baseCategories.find((c) => c.name === name);

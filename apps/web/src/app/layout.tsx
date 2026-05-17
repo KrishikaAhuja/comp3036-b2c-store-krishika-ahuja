@@ -15,8 +15,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Full-Stack Blog",
-  description: "Blog about full stack development",
+  title: "Full-Stack Store",
+  description: "Storefront for full stack products",
 };
 
 export default async function RootLayout({
@@ -28,7 +28,7 @@ export default async function RootLayout({
   const theme = serverCookies.get("theme")?.value || "light";
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" data-theme={theme} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -41,7 +41,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body>
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

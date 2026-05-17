@@ -31,7 +31,7 @@ test.describe("HOME SCREEN", () => {
     async ({ page }) => {
       await page.goto("/");
 
-      await expect(await page.locator("article").count()).toBe(3);
+      await expect(await page.locator("article").count()).toBe(4);
     },
   );
 
@@ -43,12 +43,12 @@ test.describe("HOME SCREEN", () => {
     async ({ page }) => {
       await page.goto("/");
 
-      // HOME SCREEN > User must see the list of blog post categories, where each category points to UI showing only posts of that category
+      // HOME SCREEN > User must see the list of product categories, where each category points to UI showing only products in that category
 
-      await checkItem(page, "Category / React", "/category/react");
-      await checkItem(page, "Category / Node", "/category/node");
-      await checkItem(page, "Category / Mongo", "/category/mongo");
-      await checkItem(page, "Category / DevOps", "/category/devops");
+      await checkItem(page, "Category / Electronics", "/category/electronics", 1);
+      await checkItem(page, "Category / Audio", "/category/audio", 1);
+      await checkItem(page, "Category / Gaming", "/category/gaming", 1);
+      await checkItem(page, "Category / Accessories", "/category/accessories", 1);
     },
   );
 
@@ -60,13 +60,14 @@ test.describe("HOME SCREEN", () => {
     async ({ page }) => {
       await page.goto("/");
 
-      // HOME SCREEN > User must see the history of blog posts, showing month and year, where each moth, year tuple points to UI showing only posts of that category
+      // HOME SCREEN > User must see product arrivals by month and year
 
-      await checkItem(page, "History / December, 2024", "/history/2024/12", 1);
-      await checkItem(page, "History / April, 2022", "/history/2022/4", 1);
-      await checkItem(page, "History / March, 2020", "/history/2020/3", 1);
+      await checkItem(page, "Arrivals / August, 2025", "/history/2025/8", 1);
+      await checkItem(page, "Arrivals / December, 2024", "/history/2024/12", 1);
+      await checkItem(page, "Arrivals / April, 2022", "/history/2022/4", 1);
+      await checkItem(page, "Arrivals / March, 2020", "/history/2020/3", 1);
 
-      // HOME SCREEN > Tags and history items shown are only considered from active posts
+      // HOME SCREEN > Collections and arrivals shown are only considered from active products
 
       await expect(page.getByText("December, 2012")).not.toBeVisible();
     },
@@ -80,16 +81,16 @@ test.describe("HOME SCREEN", () => {
     async ({ page }) => {
       await page.goto("/");
 
-      // HOME SCREEN > User must see the list of blog post tags, where each tag points to UI showing only posts of that category
+      // HOME SCREEN > User must see the list of product collections, where each collection points to matching products
 
-      await checkItem(page, "Tag / Back-End", "/tags/back-end", 1);
-      await checkItem(page, "Tag / Front-End", "/tags/front-end", 2);
-      await checkItem(page, "Tag / Optimisation", "/tags/optimisation", 1);
-      await checkItem(page, "Tag / Dev Tools", "/tags/dev-tools", 1);
+      await checkItem(page, "Collection / Laptops", "/tags/laptops", 1);
+      await checkItem(page, "Collection / Productivity", "/tags/productivity", 1);
+      await checkItem(page, "Collection / Headphones", "/tags/headphones", 1);
+      await checkItem(page, "Collection / Desk Setup", "/tags/desk-setup", 1);
 
-      // HOME SCREEN > Tags and history items shown are only considered from active posts
+      // HOME SCREEN > Collections and arrivals shown are only considered from active products
 
-      await expect(page.getByText("Mainframes")).not.toBeVisible();
+      await expect(page.getByText("Ergonomics")).not.toBeVisible();
     },
   );
 
@@ -104,25 +105,28 @@ test.describe("HOME SCREEN", () => {
       const item = await page.getByTestId("blog-post-1");
       await expect(item).toBeVisible();
 
-      // HOME SCREEN > The list shows the following items:
+      // HOME SCREEN > The product list shows the following items:
       // - short description
       // - date
       // - image
       // - tags
-      // - likes
-      // - views
+      // - price
+      // - stock
 
-      await expect(item.getByText("Boost your conversion rate")).toBeVisible();
+      await expect(item.getByText("AeroBook 14 Pro Laptop")).toBeVisible();
       await expect(
-        item.getByText("Boost your conversion rate"),
+        item.getByText("AeroBook 14 Pro Laptop"),
       ).toHaveAttribute("href", "/post/boost-your-conversion-rate");
 
-      await expect(item.getByText("Node")).toBeVisible();
-      await expect(item.getByText("#Back-End")).toBeVisible();
-      await expect(item.getByText("#Databases")).toBeVisible();
+      await expect(item.getByText("Electronics")).toBeVisible();
+      await expect(item.getByText("#Laptops")).toBeVisible();
+      await expect(item.getByText("#Productivity")).toBeVisible();
       await expect(item.getByText("18 Apr 2022")).toBeVisible();
-      await expect(item.getByText("320 views")).toBeVisible();
-      await expect(item.getByText("3 likes")).toBeVisible();
+      await expect(item.getByText("$1,299")).toBeVisible();
+      await expect(item.getByText("18 in stock")).toBeVisible();
+      await expect(
+        item.getByRole("button", { name: "Add to Cart" }),
+      ).toBeVisible();
     },
   );
 
@@ -161,10 +165,10 @@ test.describe("HOME SCREEN", () => {
     async ({ page }) => {
       await page.goto("/");
 
-      // HOME SCREEN > There is a search functionality that filters blogs based on string found in title or description
+      // HOME SCREEN > There is a search functionality that filters products based on string found in title or description
 
-      await page.getByPlaceholder("Search").fill("Fatboy");
-      await expect(page).toHaveURL("/search?q=Fatboy");
+      await page.getByPlaceholder("Search products...").fill("keyboard");
+      await expect(page).toHaveURL("/search?q=keyboard");
     },
   );
 });

@@ -16,7 +16,7 @@ test.describe("HISTORY SCREEN", () => {
 
       await expect(page.getByTestId("blog-post-3")).toBeVisible();
       await expect(
-        page.getByText("No front end framework is the best"),
+        page.getByText("Vertex RGB Mechanical Keyboard"),
       ).toBeVisible();
     },
   );
@@ -29,12 +29,12 @@ test.describe("HISTORY SCREEN", () => {
     async ({ page }) => {
       await page.goto("/history/2024/1");
 
-      // HISTORY SCREEN > Displays "0 Posts" when search does not find anything
+      // HISTORY SCREEN > Displays "0 Products" when search does not find anything
 
       const articles = await page.locator('[data-test-id^="blog-post-"]');
       await expect(articles).toHaveCount(0);
 
-      await expect(page.getByText("0 Posts")).toBeVisible();
+      await expect(page.getByText("0 Products")).toBeVisible();
     },
   );
 });

@@ -16,7 +16,7 @@ export async function TagList({
   }[];
 
   return (
-    <LinkList title="Tags">
+    <LinkList title="Collections">
       {postTags.map((item) => (
         <SummaryItem
           key={item.name}
@@ -24,7 +24,7 @@ export async function TagList({
           count={item.count}
           isSelected={selectedTag === item.name}
           link={`/tags/${item.name.toLowerCase().replaceAll(" ", "-")}`}
-          title={`Tag / ${item.name}`}
+          title={`Collection / ${item.name}`}
         />
       ))}
     </LinkList>

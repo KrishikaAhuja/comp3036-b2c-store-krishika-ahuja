@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { CartNavLink } from "../Cart/CartNavLink";
 import ThemeSwitch from "../Themes/ThemeSwitcher";
 
 function debounce<T extends (...args: Any[]) => Any>(fn: T, delay = 300) {
@@ -32,12 +33,13 @@ export function TopMenu({ query }: { query?: string }) {
         type="search"
         defaultValue={query}
         onChange={handleSearch}
-        placeholder="Search posts..."
+        placeholder="Search products..."
         className="w-full rounded-xl border border-gray-200 bg-[var(--background)] px-4 py-3 text-sm text-[var(--text)] outline-none placeholder:text-[var(--text-secondary)] focus:border-blue-500 dark:border-gray-700"
       />
     </form>
 
-    <div className="flex items-center justify-end">
+    <div className="flex items-center justify-end gap-3">
+      <CartNavLink />
       <ThemeSwitch />
     </div>
 

@@ -7,9 +7,9 @@ test.describe("SEARCH SCREEN", () => {
       tag: "@a1",
     },
     async ({ page }) => {
-      await page.goto("/search?q=Fat");
+      await page.goto("/search?q=headphones");
 
-      // SEARCH SCREEN > Displays results based on search string stored in the query string (e.g. /search?q=Fat)
+      // SEARCH SCREEN > Displays results based on search string stored in the query string (e.g. /search?q=headphones)
 
       // console.log(await page.innerHTML("body"));
 
@@ -18,7 +18,7 @@ test.describe("SEARCH SCREEN", () => {
 
       await expect(page.getByTestId("blog-post-2")).toBeVisible();
       await expect(
-        page.getByText("Better front ends with Fatboy Slim"),
+        page.getByText("PulseWave Noise-Cancelling Headphones"),
       ).toBeVisible();
     },
   );
@@ -29,21 +29,21 @@ test.describe("SEARCH SCREEN", () => {
       tag: "@a1",
     },
     async ({ page }) => {
-      await page.goto("/search?q=front");
+      await page.goto("/search?q=desk");
 
-      // SEARCH SCREEN > Displays results based on search string stored in the query string (e.g. /search?q=Fat)
+      // SEARCH SCREEN > Displays results based on search string stored in the query string (e.g. /search?q=desk)
 
       const articles = await page.locator('[data-test-id^="blog-post-"]');
       await expect(articles).toHaveCount(2);
 
-      await expect(page.getByTestId("blog-post-2")).toBeVisible();
+      await expect(page.getByTestId("blog-post-1")).toBeVisible();
       await expect(
-        page.getByText("Better front ends with Fatboy Slim"),
+        page.getByText("AeroBook 14 Pro Laptop"),
       ).toBeVisible();
 
-      await expect(page.getByTestId("blog-post-3")).toBeVisible();
+      await expect(page.getByTestId("blog-post-5")).toBeVisible();
       await expect(
-        page.getByText("No front end framework is the best"),
+        page.getByText("MagDock 3-in-1 Charging Station"),
       ).toBeVisible();
     },
   );
@@ -56,12 +56,12 @@ test.describe("SEARCH SCREEN", () => {
     async ({ page }) => {
       await page.goto("/search?q=abc");
 
-      // SEARCH SCREEN > Displays "0 Posts" when search does not find anything
+      // SEARCH SCREEN > Displays "0 Products" when search does not find anything
 
       const articles = await page.locator('[data-test-id^="blog-post-"]');
       await expect(articles).toHaveCount(0);
 
-      await expect(page.getByText("0 Posts")).toBeVisible();
+      await expect(page.getByText("0 Products")).toBeVisible();
     },
   );
 });

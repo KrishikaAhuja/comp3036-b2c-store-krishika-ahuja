@@ -31,7 +31,7 @@ export async function HistoryList({
   const historyItems = history(posts);
 
   return (
-    <LinkList title="History">
+    <LinkList title="Arrivals">
       {historyItems.map((item) => (
         <SummaryItem
           key={`${item.year}-${item.month}`}
@@ -42,7 +42,7 @@ export async function HistoryList({
             selectedMonth === String(item.month)
           }
           link={`/history/${item.year}/${item.month}`}
-          title={`History / ${months[item.month]}, ${item.year}`}
+          title={`Arrivals / ${months[item.month]}, ${item.year}`}
         />
       ))}
     </LinkList>
