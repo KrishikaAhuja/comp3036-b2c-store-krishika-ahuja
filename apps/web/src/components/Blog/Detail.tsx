@@ -92,7 +92,7 @@ export async function BlogDetail({ post }: { post: Post }) {
           dangerouslySetInnerHTML={{ __html: content }} // injects HTML (from markdown)
         />
 
-        {/* views and saves section */}
+        {/* product view and stock-watch section */}
         <div className="flex gap-5 rounded-xl bg-gray-50 px-4 py-3 text-sm font-medium text-[var(--text-secondary)] dark:bg-gray-800">
           <p>{post.views} customer views</p>
           <p>{post.likes} watching stock</p>

@@ -7,16 +7,16 @@ test.describe("TAG SCREEN", () => {
       tag: "@a1",
     },
     async ({ page }) => {
-      await page.goto("/tags/dev-tools");
+      await page.goto("/tags/rgb");
 
-      // TAG SCREEN > Displays posts with the tag url (e.g. /tags/dev-tools)
+      // TAG SCREEN > Displays products with the collection url (e.g. /tags/rgb)
 
       const articles = await page.locator('[data-test-id^="blog-post-"]');
       await expect(articles).toHaveCount(1);
 
       await expect(page.getByTestId("blog-post-3")).toBeVisible();
       await expect(
-        page.getByText("No front end framework is the best"),
+        page.getByText("Vertex RGB Mechanical Keyboard"),
       ).toBeVisible();
     },
   );
@@ -27,19 +27,14 @@ test.describe("TAG SCREEN", () => {
       tag: "@a1",
     },
     async ({ page }) => {
-      await page.goto("/tags/front-end");
+      await page.goto("/tags/desk-setup");
 
       const articles = await page.locator('[data-test-id^="blog-post-"]');
-      await expect(articles).toHaveCount(2);
+      await expect(articles).toHaveCount(1);
 
-      await expect(page.getByTestId("blog-post-2")).toBeVisible();
+      await expect(page.getByTestId("blog-post-5")).toBeVisible();
       await expect(
-        page.getByText("Better front ends with Fatboy Slim"),
-      ).toBeVisible();
-
-      await expect(page.getByTestId("blog-post-3")).toBeVisible();
-      await expect(
-        page.getByText("No front end framework is the best"),
+        page.getByText("MagDock 3-in-1 Charging Station"),
       ).toBeVisible();
     },
   );
@@ -50,14 +45,14 @@ test.describe("TAG SCREEN", () => {
       tag: "@a1",
     },
     async ({ page }) => {
-      await page.goto("/category/abc");
+      await page.goto("/tags/abc");
 
-      // TAG SCREEN > Displays "0 Posts" when search does no posts have that tag
+      // TAG SCREEN > Displays "0 Products" when no products have that collection
 
       const articles = await page.locator('[data-test-id^="blog-post-"]');
       await expect(articles).toHaveCount(0);
 
-      await expect(page.getByText("0 Posts")).toBeVisible();
+      await expect(page.getByText("0 Products")).toBeVisible();
     },
   );
 });
