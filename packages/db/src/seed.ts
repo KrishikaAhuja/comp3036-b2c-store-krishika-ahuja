@@ -5,55 +5,48 @@ import { posts } from "./data.js"; // imports sample posts data
 export async function seed() {
   console.log("🌱 Seeding data"); // log message to show seeding started
 
-  // delete all existing likes first (to avoid foreign key issues)
-  await client.db.like.deleteMany();
+  await client.db.$transaction(async (tx) => {
+    // delete all existing likes first (to avoid foreign key issues)
+    await tx.like.deleteMany();
 
-  // delete all existing posts (clean database)
-  await client.db.post.deleteMany();
+    // delete all existing posts (clean database)
+    await tx.post.deleteMany();
 
-  // loop through each post from data.js
-  for (const post of posts) {
+    // loop through each post from data.js
+    for (const post of posts) {
+      // create a new post in the database
+      await tx.post.create({
+        data: {
+          id: post.id, // manually setting id (from seed data)
+          title: post.title, // post title
+          content: post.content, // full content
+          category: post.category, // category name
+          description: post.description, // short description
+          imageUrl: post.imageUrl, // image URL
+          priceAud: post.priceAud ?? 0, // product price in AUD
+          stockQuantity: post.stockQuantity ?? 0, // available stock
+          tags: post.tags
+            .split(",") // split tags by comma
+            .map((p) => p.trim()) // remove spaces
+            .join(","), // join back as clean string
+          urlId: post.urlId, // unique URL id
+          active: post.active, // whether post is visible
+          date: post.date, // post date
+          views: post.views, // initial views count
+        },
+      });
 
-    // create a new post in the database
-    await client.db.post.create({
-      data: {
-        id: post.id, // manually setting id (from seed data)
-        title: post.title, // post title
-        content: post.content // full content
-,
-        category: post.category, // category name
-        description: post.description, // short description
-        imageUrl: post.imageUrl, // image URL
-        priceAud: post.priceAud ?? 0, // product price in AUD
-        stockQuantity: post.stockQuantity ?? 0, // available stock
-        tags: post.tags
-          .split(",") // split tags by comma
-          .map((p) => p.trim()) // remove spaces
-          .join(","), // join back as clean string
-        urlId: post.urlId, // unique URL id
-        active: post.active, // whether post is visible
-        date: post.date, // post date
-        views: post.views, // initial views count
-      },
-    });
+      // create likes for this post
+      // runs loop based on number of likes in seed data
+      for (let i = 0; i < post.likes; i++) {
 
-    // create likes for this post
-    // runs loop based on number of likes in seed data
-    for (let i = 0; i < post.likes; i++) {
-
-      await client.db.like.upsert({
-        where: {
-          postId_userIP: {
+        await tx.like.create({
+          data: {
             postId: post.id,
             userIP: `192.168.100.${i}`,
           },
-        },
-        update: {},
-        create: {
-          postId: post.id, // connects like to the post
-          userIP: `192.168.100.${i}`, // fake unique user IP for each like
-        },
-      });
+        });
+      }
     }
-  }
+  });
 }

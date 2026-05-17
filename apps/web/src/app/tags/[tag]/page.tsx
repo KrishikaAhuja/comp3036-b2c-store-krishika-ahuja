@@ -1,6 +1,8 @@
 import { AppLayout } from "@/components/Layout/AppLayout";
 import { Main } from "@/components/Main";
-import { posts } from "@repo/db/data";
+import { getActiveProducts } from "@/functions/products";
+
+export const dynamic = "force-dynamic";
 
 export default async function Page({
   params,
@@ -8,6 +10,7 @@ export default async function Page({
   params: Promise<{ tag: string }>;
 }) {
   const { tag } = await params;
+  const posts = await getActiveProducts();
 
   const normalizedTag = tag.toLowerCase().replaceAll("-", "");
 
@@ -17,7 +20,7 @@ export default async function Page({
       .split(",")
       .map((t) => t.trim().replaceAll("-", "").replaceAll(" ", ""));
 
-    return post.active && normalizedPostTags.includes(normalizedTag);
+    return normalizedPostTags.includes(normalizedTag);
   });
 
   return (

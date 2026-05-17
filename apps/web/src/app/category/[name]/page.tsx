@@ -1,6 +1,8 @@
 import { AppLayout } from "@/components/Layout/AppLayout";
 import { Main } from "@/components/Main";
-import { posts } from "@repo/db/data";
+import { getActiveProducts } from "@/functions/products";
+
+export const dynamic = "force-dynamic";
 
 export default async function Page({
   params,
@@ -8,10 +10,11 @@ export default async function Page({
   params: Promise<{ name: string }>;
 }) {
   const { name } = await params;
+  const posts = await getActiveProducts();
 
   const filteredPosts = posts.filter(
-  (post) => post.category.toLowerCase() === name.toLowerCase() && post.active
-);
+    (post) => post.category.toLowerCase() === name.toLowerCase(),
+  );
 
   return (
     <AppLayout>

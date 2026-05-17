@@ -246,4 +246,36 @@ test.describe("ADMIN LIST SCREEN", () => {
     },
   );
 
+  test(
+    "Can hide / show products in store",
+    {
+      tag: "@a3",
+    },
+    async ({ userPage }) => {
+      await seed();
+      await userPage.goto("/");
+
+      let article = userPage.locator("article").first();
+      await expect(
+        article.getByRole("button", { name: "Hide from Store" }),
+      ).toBeVisible();
+      await expect(article.getByText("In stock")).toBeVisible();
+
+      await article.getByRole("button", { name: "Hide from Store" }).click();
+
+      article = userPage.locator("article").first();
+      await expect(
+        article.getByRole("button", { name: "Show in Store" }),
+      ).toBeVisible();
+      await expect(article.getByText("In stock")).toBeVisible();
+
+      await userPage.reload();
+
+      article = userPage.locator("article").first();
+      await expect(
+        article.getByRole("button", { name: "Show in Store" }),
+      ).toBeVisible();
+    },
+  );
+
 });

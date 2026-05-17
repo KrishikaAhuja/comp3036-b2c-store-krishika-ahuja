@@ -297,6 +297,7 @@
 }
 
 .editButton,
+.visibilityButton,
 .deleteButton {
   border: none;
   border-radius: 12px;
@@ -310,6 +311,11 @@
 .editButton {
   background: #dbeafe;
   color: #1d4ed8;
+}
+
+.visibilityButton {
+  background: #f1f5f9;
+  color: #334155;
 }
 
 .deleteButton {

@@ -360,6 +360,18 @@ export default function AdminList({ posts }: { posts: any[] }) {
                       type="button"
                       onClick={async () => {
                         await fetch(`/api/posts/${p.id}`, {
+                          method: "PATCH",
+                        });
+                        window.location.reload();
+                      }}
+                      className={styles.visibilityButton}
+                    >
+                      {p.active ? "Hide from Store" : "Show in Store"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        await fetch(`/api/posts/${p.id}`, {
                           method: "DELETE",
                         });
                         window.location.reload();
