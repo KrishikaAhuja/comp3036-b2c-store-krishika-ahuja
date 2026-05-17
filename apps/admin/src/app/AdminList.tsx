@@ -9,9 +9,11 @@ export default function AdminList({ posts }: { posts: any[] }) {
   // filter states (store user input values)
   const [content, setContent] = useState(""); // search text for content
   const [tag, setTag] = useState(""); // tag filter input
+  const [category, setCategory] = useState("");
   const [date, setDate] = useState(""); // date filter (YYYYMMDD)
   const [sort, setSort] = useState(""); // sorting option
   const [stockStatus, setStockStatus] = useState(""); // stock status filter
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   // converts DDMMYYYY → YYYY-MM-DD so it can be compared with DB date
   function formatDate(value: string) {
@@ -46,6 +48,16 @@ export default function AdminList({ posts }: { posts: any[] }) {
       maximumFractionDigits: 0,
     }).format(value ?? 0);
   }
+
+  const categories = useMemo(() => {
+    return Array.from(
+      new Set(
+        posts
+          .map((post) => String(post.category ?? "").trim())
+          .filter(Boolean),
+      ),
+    ).sort((a, b) => a.localeCompare(b));
+  }, [posts]);
 
   // filtering + sorting logic
   // useMemo avoids recalculating unless values change (performance)
@@ -104,6 +116,10 @@ export default function AdminList({ posts }: { posts: any[] }) {
       result = result.filter((p) => (p.stockQuantity ?? 0) <= 0);
     }
 
+    if (category) {
+      result = result.filter((p) => p.category === category);
+    }
+
     // sorting logic
     if (sort === "date-asc") {
       result = [...result].sort(
@@ -124,7 +140,7 @@ export default function AdminList({ posts }: { posts: any[] }) {
     }
 
     return result; // final filtered + sorted posts
-  }, [posts, content, tag, date, stockStatus, sort]);
+  }, [posts, content, tag, category, date, stockStatus, sort]);
 
   return (
     <main className={styles.main}>
@@ -154,10 +170,43 @@ export default function AdminList({ posts }: { posts: any[] }) {
           </div>
         </div>
 
-        <div className={styles.dashboardLayout}>
-        {/* filter section */}
-        <aside className={styles.filtersCard}>
-          <h2 className={styles.filtersTitle}>Filters</h2>
+        <div className={styles.toolbar}>
+          <button
+            type="button"
+            className={styles.filterButton}
+            onClick={() => setFiltersOpen(true)}
+          >
+            <span aria-hidden="true">Menu</span>
+            All Filters
+          </button>
+        </div>
+
+        {filtersOpen && (
+          <button
+            type="button"
+            className={styles.drawerBackdrop}
+            aria-label="Close filters"
+            onClick={() => setFiltersOpen(false)}
+          />
+        )}
+
+        {/* filter drawer */}
+        <aside
+          className={`${styles.filtersDrawer} ${
+            filtersOpen ? styles.filtersDrawerOpen : ""
+          }`}
+        >
+          <div className={styles.drawerHeader}>
+            <h2 className={styles.filtersTitle}>Filters</h2>
+            <button
+              type="button"
+              className={styles.closeButton}
+              aria-label="Close filters"
+              onClick={() => setFiltersOpen(false)}
+            >
+              X
+            </button>
+          </div>
           <div className={styles.filtersGrid}>
 
             {/* content search */}
@@ -216,6 +265,26 @@ export default function AdminList({ posts }: { posts: any[] }) {
                 <option value="">All</option>
                 <option value="in-stock">In stock</option>
                 <option value="out-of-stock">Out of stock</option>
+              </select>
+            </div>
+
+            {/* category filter */}
+            <div className={styles.fieldGroup}>
+              <label htmlFor="category" className={styles.label}>
+                Category
+              </label>
+              <select
+                id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className={styles.select}
+              >
+                <option value="">All categories</option>
+                {categories.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -310,7 +379,6 @@ export default function AdminList({ posts }: { posts: any[] }) {
           </div>
         )}
         </section>
-        </div>
       </div>
     </main>
   );
