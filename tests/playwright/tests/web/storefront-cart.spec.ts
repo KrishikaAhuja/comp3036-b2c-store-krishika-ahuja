@@ -1,7 +1,9 @@
 import { expect, test } from "./fixtures";
+import { seed } from "@repo/db/seed";
 
-test.describe("STOREFRONT", () => {
+test.describe("CLIENTSTORE", () => {
   test.beforeEach(async ({ page }) => {
+    await seed();
     await page.goto("/");
     await page.evaluate(() => {
       window.localStorage.clear();
