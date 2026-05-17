@@ -185,29 +185,25 @@ export default function AdminList({ posts }: { posts: any[] }) {
           <button
             type="button"
             className={styles.drawerBackdrop}
-            aria-label="Close filters"
+            aria-label="Close filter drawer backdrop"
             onClick={() => setFiltersOpen(false)}
           />
         )}
 
-        {/* filter drawer */}
-        <aside
-          className={`${styles.filtersDrawer} ${
-            filtersOpen ? styles.filtersDrawerOpen : ""
-          }`}
-        >
-          <div className={styles.drawerHeader}>
-            <h2 className={styles.filtersTitle}>Filters</h2>
-            <button
-              type="button"
-              className={styles.closeButton}
-              aria-label="Close filters"
-              onClick={() => setFiltersOpen(false)}
-            >
-              X
-            </button>
-          </div>
-          <div className={styles.filtersGrid}>
+        {filtersOpen && (
+          <aside className={`${styles.filtersDrawer} ${styles.filtersDrawerOpen}`}>
+            <div className={styles.drawerHeader}>
+              <h2 className={styles.filtersTitle}>Filters</h2>
+              <button
+                type="button"
+                className={styles.closeButton}
+                aria-label="Close filters"
+                onClick={() => setFiltersOpen(false)}
+              >
+                X
+              </button>
+            </div>
+            <div className={styles.filtersGrid}>
 
             {/* content search */}
             <div className={styles.fieldGroup}>
@@ -307,8 +303,9 @@ export default function AdminList({ posts }: { posts: any[] }) {
               </select>
             </div>
 
-          </div>
-        </aside>
+            </div>
+          </aside>
+        )}
 
         <section className={styles.productsPanel}>
         {/* number of results */}

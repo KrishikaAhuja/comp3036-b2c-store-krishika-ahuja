@@ -1,6 +1,10 @@
 import { seed } from "@repo/db/seed";
 import { expect, test } from "./fixtures";
 
+async function openFilters(page: any) {
+  await page.getByRole("button", { name: "All Filters" }).click();
+}
+
 test.beforeAll(async () => {
   await seed();
 });
@@ -31,18 +35,19 @@ test.describe("ADMIN LIST SCREEN", () => {
       await userPage.goto("/");
 
       // LIST SCREEN > On the top is a filter screen that allows to filter products by name or details
-      await userPage.getByLabel("Filter by Product:").fill("AeroBook");
+      await openFilters(userPage);
+      await userPage.getByLabel("Search product").fill("AeroBook");
       await expect(await userPage.locator("article").count()).toBe(1);
       await expect(
         userPage.getByText("AeroBook 14 Pro Laptop"),
       ).toBeVisible();
 
-      await userPage.getByLabel("Filter by Product:").fill("headphones");
+      await userPage.getByLabel("Search product").fill("headphones");
       await expect(
         userPage.getByText("PulseWave Noise-Cancelling Headphones"),
       ).toBeVisible();
 
-      await userPage.getByLabel("Filter by Product:").clear();
+      await userPage.getByLabel("Search product").clear();
       await expect(await userPage.locator("article").count()).toBe(5);
     },
   );
@@ -56,7 +61,8 @@ test.describe("ADMIN LIST SCREEN", () => {
       await userPage.goto("/");
 
       // LIST SCREEN > On the top is a filter screen that allows to filter products by collection
-      await userPage.getByLabel("Filter by Collection:").fill("Desk");
+      await openFilters(userPage);
+      await userPage.getByLabel("Collection").fill("Desk");
       await expect(await userPage.locator("article").count()).toBe(2);
       await expect(
         userPage.getByText("MagDock 3-in-1 Charging Station"),
@@ -64,7 +70,7 @@ test.describe("ADMIN LIST SCREEN", () => {
       await expect(
         userPage.getByText("ErgoLift Monitor Stand"),
       ).toBeVisible();
-      await userPage.getByLabel("Filter by Collection:").clear();
+      await userPage.getByLabel("Collection").clear();
     },
   );
 
@@ -77,8 +83,9 @@ test.describe("ADMIN LIST SCREEN", () => {
       await userPage.goto("/");
 
       // LIST SCREEN > On the top is a filter screen that allows to filter products by date
+      await openFilters(userPage);
       await userPage
-        .getByLabel("Filter by Date Added:")
+        .getByLabel("Date added")
         .pressSequentially("01012022");
       await expect(await userPage.locator("article").count()).toBe(3);
       await expect(
@@ -87,7 +94,7 @@ test.describe("ADMIN LIST SCREEN", () => {
       await expect(
         userPage.getByText("Vertex RGB Mechanical Keyboard"),
       ).toBeVisible();
-      await userPage.getByLabel("Filter by Date Added:").clear();
+      await userPage.getByLabel("Date added").clear();
     },
   );
 
@@ -100,9 +107,10 @@ test.describe("ADMIN LIST SCREEN", () => {
       await userPage.goto("/");
 
       // LIST SCREEN > On the top is a filter screen that allows to filter by visibility
-      await userPage.getByLabel("Filter by Collection:").fill("RGB");
+      await openFilters(userPage);
+      await userPage.getByLabel("Collection").fill("RGB");
       await userPage
-        .getByLabel("Filter by Date Added:")
+        .getByLabel("Date added")
         .pressSequentially("01012022");
       await expect(await userPage.locator("article").count()).toBe(1);
       await expect(
@@ -119,52 +127,34 @@ test.describe("ADMIN LIST SCREEN", () => {
     async ({ userPage }) => {
       await userPage.goto("/");
 
-      // LIST SCREEN > Users can sort posts by name or creation date, both ascending and descending
+      // LIST SCREEN > Users can sort products by creation date and price
+      await openFilters(userPage);
 
-      // title-asc
-      await userPage.getByLabel("Sort By:").selectOption("title-asc");
+      await userPage.getByLabel("Sort by").selectOption("date-desc");
       let articles = await userPage.locator("article").all();
 
       expect(await articles[0].innerText()).toContain(
-        "AeroBook 14 Pro Laptop",
+        "MagDock 3-in-1 Charging Station",
       );
       expect(await articles[1].innerText()).toContain(
-        "ErgoLift Monitor Stand",
+        "Vertex RGB Mechanical Keyboard",
       );
       expect(await articles[2].innerText()).toContain(
-        "MagDock 3-in-1 Charging Station",
+        "AeroBook 14 Pro Laptop",
       );
       expect(await articles[3].innerText()).toContain(
         "PulseWave Noise-Cancelling Headphones",
       );
       expect(await articles[4].innerText()).toContain(
-        "Vertex RGB Mechanical Keyboard",
+        "ErgoLift Monitor Stand",
       );
 
-      // title-desc
-      await userPage.getByLabel("Sort By:").selectOption("title-desc");
+      await userPage.getByLabel("Sort by").selectOption("date-asc");
       articles = await userPage.locator("article").all();
 
       expect(await articles[0].innerText()).toContain(
-        "Vertex RGB Mechanical Keyboard",
-      );
-      expect(await articles[1].innerText()).toContain(
-        "PulseWave Noise-Cancelling Headphones",
-      );
-      expect(await articles[2].innerText()).toContain(
-        "MagDock 3-in-1 Charging Station",
-      );
-      expect(await articles[3].innerText()).toContain(
         "ErgoLift Monitor Stand",
       );
-      expect(await articles[4].innerText()).toContain(
-        "AeroBook 14 Pro Laptop",
-      );
-
-      // title-asc
-      await userPage.getByLabel("Sort By:").selectOption("date-asc");
-      articles = await userPage.locator("article").all();
-
       expect(await articles[1].innerText()).toContain(
         "PulseWave Noise-Cancelling Headphones",
       );
@@ -173,29 +163,44 @@ test.describe("ADMIN LIST SCREEN", () => {
       );
       expect(await articles[3].innerText()).toContain(
         "Vertex RGB Mechanical Keyboard",
-      );
-      expect(await articles[0].innerText()).toContain(
-        "ErgoLift Monitor Stand",
       );
       expect(await articles[4].innerText()).toContain(
         "MagDock 3-in-1 Charging Station",
       );
 
-      // title-desc
-      await userPage.getByLabel("Sort By:").selectOption("date-desc");
+      await userPage.getByLabel("Sort by").selectOption("price-asc");
       articles = await userPage.locator("article").all();
 
-      expect(await articles[2].innerText()).toContain(
-        "AeroBook 14 Pro Laptop",
+      expect(await articles[0].innerText()).toContain(
+        "ErgoLift Monitor Stand",
       );
       expect(await articles[1].innerText()).toContain(
-        "Vertex RGB Mechanical Keyboard",
-      );
-      expect(await articles[0].innerText()).toContain(
         "MagDock 3-in-1 Charging Station",
+      );
+      expect(await articles[2].innerText()).toContain(
+        "Vertex RGB Mechanical Keyboard",
       );
       expect(await articles[3].innerText()).toContain(
         "PulseWave Noise-Cancelling Headphones",
+      );
+      expect(await articles[4].innerText()).toContain(
+        "AeroBook 14 Pro Laptop",
+      );
+
+      await userPage.getByLabel("Sort by").selectOption("price-desc");
+      articles = await userPage.locator("article").all();
+
+      expect(await articles[0].innerText()).toContain(
+        "AeroBook 14 Pro Laptop",
+      );
+      expect(await articles[1].innerText()).toContain(
+        "PulseWave Noise-Cancelling Headphones",
+      );
+      expect(await articles[2].innerText()).toContain(
+        "Vertex RGB Mechanical Keyboard",
+      );
+      expect(await articles[3].innerText()).toContain(
+        "MagDock 3-in-1 Charging Station",
       );
       expect(await articles[4].innerText()).toContain(
         "ErgoLift Monitor Stand",
@@ -224,11 +229,9 @@ test.describe("ADMIN LIST SCREEN", () => {
       await expect(article.getByText("Category: Accessories")).toBeVisible();
       await expect(article.getByText("$119")).toBeVisible();
       await expect(article.getByText("Stock: 35")).toBeVisible();
-      await expect(article.getByText("Active")).toBeVisible();
       await expect(article.getByText("In stock")).toBeVisible();
-
-      // LIST SCREEN > The active status is a button that, on click, just displays a message
-      await expect(article.locator('button:has-text("Active")')).toBeVisible();
+      await expect(article.getByRole("link", { name: "Edit" })).toBeVisible();
+      await expect(article.getByRole("button", { name: "Delete" })).toBeVisible();
     },
   );
 

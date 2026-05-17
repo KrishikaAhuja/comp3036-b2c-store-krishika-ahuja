@@ -29,7 +29,7 @@ test.describe("ADMIN UPDATE SCREEN", () => {
     async ({ userPage }) => {
       await userPage.goto("/post/no-front-end-framework-is-the-best");
 
-      const saveButton = await userPage.getByText("Save");
+      const saveButton = userPage.getByRole("button", { name: "Save" });
 
       // UPDATE SCREEN > There must be the following fields which must be validated for errors:
 
@@ -41,7 +41,7 @@ test.describe("ADMIN UPDATE SCREEN", () => {
       await expect(userPage.getByText("Product name is required")).toBeVisible();
       await userPage.getByLabel("Product Name").fill("New product");
       await saveButton.click();
-      await expect(userPage.getByText("Product name is required")).not.toBeVisible();
+      await expect(userPage.getByText("Product name is required")).toBeHidden();
 
       // UPDATE SCREEN > Description
 
@@ -53,7 +53,7 @@ test.describe("ADMIN UPDATE SCREEN", () => {
       await saveButton.click();
       await expect(
         userPage.getByText("Description is required"),
-      ).not.toBeVisible();
+      ).toBeHidden();
 
       // cannot be longer than 200
       await userPage.getByLabel("Description").fill("a".repeat(201));
@@ -70,7 +70,7 @@ test.describe("ADMIN UPDATE SCREEN", () => {
         userPage.getByText(
           "Description is too long. Maximum is 200 characters",
         ),
-      ).not.toBeVisible();
+      ).toBeHidden();
 
       // UPDATE SCREEN > Product Details
 
@@ -80,7 +80,7 @@ test.describe("ADMIN UPDATE SCREEN", () => {
       await expect(userPage.getByText("Product details are required")).toBeVisible();
       await userPage.getByLabel("Product Details").fill("New product details");
       await saveButton.click();
-      await expect(userPage.getByText("Product details are required")).not.toBeVisible();
+      await expect(userPage.getByText("Product details are required")).toBeHidden();
 
       // UPDATE SCREEN > Image
 
@@ -101,7 +101,7 @@ test.describe("ADMIN UPDATE SCREEN", () => {
       await saveButton.click();
       await expect(
         userPage.getByText("Image URL is required"),
-      ).not.toBeVisible();
+      ).toBeHidden();
 
       // UPDATE SCREEN > Collections
 
@@ -115,7 +115,7 @@ test.describe("ADMIN UPDATE SCREEN", () => {
       await saveButton.click();
       await expect(
         userPage.getByText("At least one collection is required"),
-      ).not.toBeVisible();
+      ).toBeHidden();
     },
   );
 
