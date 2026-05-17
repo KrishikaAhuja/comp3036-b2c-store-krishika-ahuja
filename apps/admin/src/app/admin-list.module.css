@@ -38,8 +38,7 @@
 }
 
 .logoutButton,
-.createButton,
-.statusButton {
+.createButton {
   border: none;
   border-radius: 12px;
   padding: 12px 16px;
@@ -197,11 +196,6 @@
   gap: 12px;
 }
 
-.statusButton {
-  background: #e5e7eb;
-  color: #111827;
-}
-
 .statusRow,
 .actionRow {
   display: flex;
@@ -236,16 +230,6 @@
 }
 
 .deleteButton {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.statusActive {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.statusInactive {
   background: #fee2e2;
   color: #991b1b;
 }

@@ -11,7 +11,7 @@ export default function AdminList({ posts }: { posts: any[] }) {
   const [tag, setTag] = useState(""); // tag filter input
   const [date, setDate] = useState(""); // date filter (YYYYMMDD)
   const [sort, setSort] = useState(""); // sorting option
-  const [visibility, setVisibility] = useState(""); // active/inactive filter
+  const [stockStatus, setStockStatus] = useState(""); // stock status filter
 
   // converts DDMMYYYY → YYYY-MM-DD so it can be compared with DB date
   function formatDate(value: string) {
@@ -97,11 +97,11 @@ export default function AdminList({ posts }: { posts: any[] }) {
       result = result.filter((p) => new Date(p.date) >= targetDate);
     }
 
-    // filter based on active/inactive status
-    if (visibility === "active") {
-      result = result.filter((p) => p.active);
-    } else if (visibility === "inactive") {
-      result = result.filter((p) => !p.active);
+    // filter based on stock status
+    if (stockStatus === "in-stock") {
+      result = result.filter((p) => (p.stockQuantity ?? 0) > 0);
+    } else if (stockStatus === "out-of-stock") {
+      result = result.filter((p) => (p.stockQuantity ?? 0) <= 0);
     }
 
     // sorting logic
@@ -120,7 +120,7 @@ export default function AdminList({ posts }: { posts: any[] }) {
     }
 
     return result; // final filtered + sorted posts
-  }, [posts, content, tag, date, visibility, sort]);
+  }, [posts, content, tag, date, stockStatus, sort]);
 
   return (
     <main className={styles.main}>
@@ -196,20 +196,20 @@ export default function AdminList({ posts }: { posts: any[] }) {
               />
             </div>
 
-            {/* visibility filter */}
+            {/* stock status filter */}
             <div className={styles.fieldGroup}>
-              <label htmlFor="visibility" className={styles.label}>
-                Product Status:
+              <label htmlFor="stockStatus" className={styles.label}>
+                Stock Status:
               </label>
               <select
-                id="visibility"
-                value={visibility}
-                onChange={(e) => setVisibility(e.target.value)}
+                id="stockStatus"
+                value={stockStatus}
+                onChange={(e) => setStockStatus(e.target.value)}
                 className={styles.select}
               >
                 <option value="">All</option>
-                <option value="active">Active / in store</option>
-                <option value="inactive">Inactive</option>
+                <option value="in-stock">In stock</option>
+                <option value="out-of-stock">Out of stock</option>
               </select>
             </div>
 
@@ -274,20 +274,6 @@ export default function AdminList({ posts }: { posts: any[] }) {
 
                 <div className={styles.cardFooter}>
                   <div className={styles.statusRow}>
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        await fetch(`/api/posts/${p.id}`, {
-                          method: "PATCH", // toggles active status
-                        });
-                        window.location.reload(); // reload to update UI
-                      }}
-                      className={`${styles.statusButton} ${
-                        p.active ? styles.statusActive : styles.statusInactive
-                      }`}
-                    >
-                      {p.active ? "Active" : "Inactive"}
-                    </button>
                     <span className={styles.stockBadge}>
                       {(p.stockQuantity ?? 0) > 0 ? "In stock" : "Out of stock"}
                     </span>
