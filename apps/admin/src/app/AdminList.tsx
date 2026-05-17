@@ -105,17 +105,21 @@ export default function AdminList({ posts }: { posts: any[] }) {
     }
 
     // sorting logic
-    if (sort === "title-asc") {
-      result = [...result].sort((a, b) => a.title.localeCompare(b.title));
-    } else if (sort === "title-desc") {
-      result = [...result].sort((a, b) => b.title.localeCompare(a.title));
-    } else if (sort === "date-asc") {
+    if (sort === "date-asc") {
       result = [...result].sort(
         (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
       );
     } else if (sort === "date-desc") {
       result = [...result].sort(
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+      );
+    } else if (sort === "price-asc") {
+      result = [...result].sort(
+        (a, b) => (a.priceAud ?? 0) - (b.priceAud ?? 0),
+      );
+    } else if (sort === "price-desc") {
+      result = [...result].sort(
+        (a, b) => (b.priceAud ?? 0) - (a.priceAud ?? 0),
       );
     }
 
@@ -150,14 +154,16 @@ export default function AdminList({ posts }: { posts: any[] }) {
           </div>
         </div>
 
+        <div className={styles.dashboardLayout}>
         {/* filter section */}
-        <section className={styles.filtersCard}>
+        <aside className={styles.filtersCard}>
+          <h2 className={styles.filtersTitle}>Filters</h2>
           <div className={styles.filtersGrid}>
 
             {/* content search */}
             <div className={styles.fieldGroup}>
               <label htmlFor="content" className={styles.label}>
-                Filter by Product:
+                Search product
               </label>
               <input
                 id="content"
@@ -171,7 +177,7 @@ export default function AdminList({ posts }: { posts: any[] }) {
             {/* tag filter */}
             <div className={styles.fieldGroup}>
               <label htmlFor="tag" className={styles.label}>
-                Filter by Collection:
+                Collection
               </label>
               <input
                 id="tag"
@@ -185,7 +191,7 @@ export default function AdminList({ posts }: { posts: any[] }) {
             {/* date filter */}
             <div className={styles.fieldGroup}>
               <label htmlFor="date" className={styles.label}>
-                Filter by Date Added:
+                Date added
               </label>
               <input
                 id="date"
@@ -199,7 +205,7 @@ export default function AdminList({ posts }: { posts: any[] }) {
             {/* stock status filter */}
             <div className={styles.fieldGroup}>
               <label htmlFor="stockStatus" className={styles.label}>
-                Stock Status:
+                Stock status
               </label>
               <select
                 id="stockStatus"
@@ -216,7 +222,7 @@ export default function AdminList({ posts }: { posts: any[] }) {
             {/* sorting options */}
             <div className={styles.fieldGroup}>
               <label htmlFor="sort" className={styles.label}>
-                Sort By:
+                Sort by
               </label>
               <select
                 id="sort"
@@ -225,16 +231,17 @@ export default function AdminList({ posts }: { posts: any[] }) {
                 className={styles.select}
               >
                 <option value="">None</option>
-                <option value="title-asc">Name A-Z</option>
-                <option value="title-desc">Name Z-A</option>
-                <option value="date-asc">Oldest First</option>
                 <option value="date-desc">Newest First</option>
+                <option value="date-asc">Oldest First</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
               </select>
             </div>
 
           </div>
-        </section>
+        </aside>
 
+        <section className={styles.productsPanel}>
         {/* number of results */}
         <p className={styles.resultsText}>
           Showing {filtered.length} product{filtered.length === 1 ? "" : "s"}
@@ -302,6 +309,8 @@ export default function AdminList({ posts }: { posts: any[] }) {
             ))}
           </div>
         )}
+        </section>
+        </div>
       </div>
     </main>
   );
