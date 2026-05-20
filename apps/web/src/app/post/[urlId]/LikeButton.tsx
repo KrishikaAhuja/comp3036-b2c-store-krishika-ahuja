@@ -15,6 +15,7 @@ export default function LikeButton({
   const [liked, setLiked] = useState(initialLiked);
 
   async function handleLike() {
+    // Prevent double-clicks from sending duplicate watch/unwatch requests.
     if (loading) return;
 
     setLoading(true);
@@ -27,6 +28,7 @@ export default function LikeButton({
       body: JSON.stringify({ postId }),
     });
 
+    // Refresh the server-rendered detail page so watcher counts update from the database.
     setLiked(!liked);
     router.refresh();
     setLoading(false);

@@ -11,6 +11,7 @@ export function SummaryItem({
   isSelected: boolean;
   title?: string;
 }) {
+  // Used by category, collection, and arrival menus so each link shows its product count.
   return (
     <li>
       <a

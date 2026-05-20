@@ -22,6 +22,7 @@ export function CartPageContent() {
   const [items, setItems] = useState<CartItem[]>([]);
 
   function refreshCart() {
+    // localStorage is the source of truth for the current customer's cart.
     setItems(getCartItems());
   }
 
@@ -36,12 +37,14 @@ export function CartPageContent() {
     };
   }, []);
 
+  // Memoize the total so it is recalculated only when cart items change.
   const total = useMemo(
     () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
     [items],
   );
 
   function changeQuantity(productId: number, quantity: number) {
+    // Quantity 0 is allowed here because the cart helper removes non-positive rows.
     updateCartItemQuantity(productId, quantity);
     refreshCart();
   }
@@ -52,6 +55,7 @@ export function CartPageContent() {
   }
 
   if (items.length === 0) {
+    // Empty state keeps the cart route useful even before the customer adds products.
     return (
       <div className="rounded-lg border border-gray-200 bg-[var(--background)] p-6 text-[var(--text)] shadow-sm dark:border-gray-700">
         <h1 className="text-2xl font-semibold">Shopping Cart</h1>
@@ -96,7 +100,7 @@ export function CartPageContent() {
             >
               <div className="flex items-center gap-4">
                 {item.imageUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
+                  
                   <img
                     src={item.imageUrl}
                     alt={item.title}

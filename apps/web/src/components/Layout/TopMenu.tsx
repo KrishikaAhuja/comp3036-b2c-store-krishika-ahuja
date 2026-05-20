@@ -15,15 +15,13 @@ function debounce<T extends (...args: Any[]) => Any>(fn: T, delay = 300) {
 export function TopMenu({ query }: { query?: string }) {
   const router = useRouter();
 
+  // Debouncing avoids pushing a new search route for every single keystroke immediately.
   const handleSearch = debounce(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const search = event.target.value;
       router.push(`/search?q=${search}`);
     },
   );
-
-  // TODO: create and hook the search input to the handleSearch function
-  //       make sure you are able to explain what the handleSearch is doing and what debounce does
 
   return (
   <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-gray-200 bg-[var(--background)] p-4 shadow-sm md:flex-row md:items-center md:justify-between dark:border-gray-700">

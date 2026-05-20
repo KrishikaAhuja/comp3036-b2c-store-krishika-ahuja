@@ -152,16 +152,11 @@ export default function AdminList({ posts }: { posts: any[] }) {
 
           <div className={styles.headerActions}>
             {/* logout button → deletes auth cookie and redirects */}
-            <button
-              type="button"
-              className={styles.logoutButton}
-              onClick={async () => {
-                await fetch("/api/auth", { method: "DELETE" });
-                window.location.href = "/";
-              }}
-            >
-              Logout
-            </button>
+            <form action="/api/logout" method="post" className={styles.logoutForm}>
+    <button type="submit" className={styles.logoutButton}>
+      Logout
+    </button>
+  </form>
 
             {/* navigate to create post page */}
             <a href="/posts/create" className={styles.createButton}>

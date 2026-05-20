@@ -8,6 +8,7 @@ export function Main({
   posts: Post[];
   className?: string;
 }) {
+  // Keeps route pages small: they fetch/filter products, then hand display to the catalogue grid.
   return (
     <main className={className}>
       <BlogList posts={posts} />

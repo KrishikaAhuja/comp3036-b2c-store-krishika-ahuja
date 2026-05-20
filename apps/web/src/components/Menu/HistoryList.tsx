@@ -28,6 +28,7 @@ export async function HistoryList({
   selectedMonth?: string;
   posts: Post[];
 }) {
+  // Build arrival archive links from product dates, newest month first.
   const historyItems = history(posts);
 
   return (

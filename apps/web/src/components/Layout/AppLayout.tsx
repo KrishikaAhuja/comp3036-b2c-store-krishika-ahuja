@@ -8,6 +8,7 @@ export async function AppLayout({
   children,
   query,
 }: PropsWithChildren<{ query?: string }>) {
+  // The sidebar needs the current active catalogue for category, arrival, and collection counts.
   const posts = await getActiveProducts();
 
   return (

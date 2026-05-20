@@ -10,6 +10,7 @@ export async function TagList({
   selectedTag?: string;
   posts: Post[];
 }) {
+  // Product tags are presented to customers as collections in the sidebar.
   const postTags = (await tags(posts)) as {
     name: string;
     count: number;

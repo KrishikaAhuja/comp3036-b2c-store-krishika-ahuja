@@ -18,14 +18,14 @@ export default async function Page({
   // Gets the urlId from the page route params.
   const { urlId } = await params;
 
-  // Finds the post in the database using urlId.
+  // Finds the product in the database using the legacy urlId field.
   // Likes are included so we can count likes and check if the user liked the post.
   const post = await client.db.post.findUnique({
     where: { urlId },
     include: { Likes: true },
   });
 
-  // If the post does not exist or is inactive, show article not found.
+  // If the product does not exist or is inactive, customers should not be able to view it.
   if (!post || !post.active) {
     return (
       <AppLayout>
@@ -61,8 +61,8 @@ export default async function Page({
     likes: updatedPost.Likes.length,
   };
 
-  // Checks if the current test user has already liked this post.
-  // "test-ip" is being used as the user identifier here.
+  // Checks if the current test user has already added this product to their stock-watch list.
+  // "test-ip" is being used as the user identifier in this assignment version.
   const isLiked = updatedPost.Likes.some(
     (like) => like.userIP === "test-ip"
   );

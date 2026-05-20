@@ -9,10 +9,12 @@ export function CartNavLink() {
 
   useEffect(() => {
     function updateCount() {
+      // Recalculate from storage so the badge stays correct after add/remove/quantity changes.
       setCount(getCartItemCount());
     }
 
     updateCount();
+    // Custom event covers same-tab changes; storage covers changes from another browser tab.
     window.addEventListener(CART_UPDATED_EVENT, updateCount);
     window.addEventListener("storage", updateCount);
 

@@ -14,6 +14,7 @@ export const CART_STORAGE_KEY = "storefront-cart";
 export const CART_UPDATED_EVENT = "storefront-cart-updated";
 
 function canUseStorage() {
+  // The cart runs only in the browser, so guard localStorage for server rendering.
   return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
 }
 
@@ -33,6 +34,7 @@ function readStoredCart(): CartItem[] {
       return [];
     }
 
+    // Validate stored data before using it so a broken localStorage value cannot crash the cart page.
     return parsed
       .filter((item): item is CartItem => {
         return (
@@ -59,6 +61,7 @@ function writeStoredCart(items: CartItem[]) {
   }
 
   window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+  // Notify cart badges and the cart page that browser storage has changed in this tab.
   window.dispatchEvent(new Event(CART_UPDATED_EVENT));
 }
 
@@ -74,6 +77,7 @@ export function addCartItem(product: CartProduct) {
   const items = readStoredCart();
   const existingItem = items.find((item) => item.id === product.id);
 
+  // Adding the same product again increases quantity instead of duplicating rows.
   if (existingItem) {
     existingItem.quantity += 1;
   } else {

@@ -6,6 +6,7 @@ import { LinkList } from "./LinkList";
 export function CategoryList({ posts }: { posts: Post[] }) {
   const baseCategories = categories(posts);
 
+  // Keep the main store departments visible even when a category currently has no products.
   const ALL_CATEGORIES = [
     "Electronics",
     "Accessories",
@@ -14,6 +15,7 @@ export function CategoryList({ posts }: { posts: Post[] }) {
     "Gaming",
   ];
 
+  // Merge live counts into the fixed department list shown in the sidebar.
   const items = ALL_CATEGORIES.map((name) => {
     const existing = baseCategories.find((c) => c.name === name);
     return existing || { name, count: 0 };

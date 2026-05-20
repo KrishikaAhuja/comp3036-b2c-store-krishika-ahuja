@@ -12,6 +12,7 @@ export default async function Page({
   const { year, month } = await params;
   const posts = await getActiveProducts();
 
+  // Arrival archive pages filter products by the month/year stored on the product record.
   const filteredPosts = posts.filter((post) => {
     const date = new Date(post.date);
     return (

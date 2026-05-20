@@ -33,6 +33,7 @@ export async function LeftMenu({ posts }: { posts: Post[] }) {
         </div>
 
         <nav>
+          {/* These lists give customers multiple ways to browse the same active product catalogue. */}
           <ul role="list" className="flex flex-col gap-8">
             <li>
               <CategoryList posts={posts} />

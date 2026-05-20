@@ -5,6 +5,7 @@ import styles from "./page.module.css";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
+  // Load fresh active products so admin visibility changes are reflected immediately.
   const posts = await getActiveProducts();
 
   return (

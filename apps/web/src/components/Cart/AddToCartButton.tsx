@@ -7,8 +7,10 @@ export function AddToCartButton({ product }: { product: CartProduct }) {
   const [added, setAdded] = useState(false);
 
   function handleAddToCart() {
+    // Store only the product fields needed to rebuild the cart in the browser.
     addCartItem(product);
     setAdded(true);
+    // Short feedback confirms the click without navigating away from the catalogue.
     window.setTimeout(() => setAdded(false), 1200);
   }
 

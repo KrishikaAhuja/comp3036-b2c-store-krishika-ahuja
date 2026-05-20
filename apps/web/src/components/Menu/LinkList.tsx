@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from "react";
 
 export function LinkList(props: PropsWithChildren<{ title: string }>) {
+  // Shared wrapper keeps sidebar sections visually consistent.
   return (
     <div>
       <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-[var(--text-secondary)]">

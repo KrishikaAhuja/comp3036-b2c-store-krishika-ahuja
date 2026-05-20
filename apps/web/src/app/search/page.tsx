@@ -11,8 +11,10 @@ export default async function Page({
 }) {
   const { q = "" } = await searchParams;
   const query = q.toLowerCase();
+  // Search runs on the active catalogue only, keeping hidden admin products out of results.
   const posts = await getActiveProducts();
 
+  // Match simple customer search terms against the product name and short description.
   const filteredPosts = posts.filter(
     (post) =>
       post.title.toLowerCase().includes(query) ||

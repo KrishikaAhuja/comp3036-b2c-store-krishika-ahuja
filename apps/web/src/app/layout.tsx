@@ -24,6 +24,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Read the theme cookie on the server so the initial HTML matches the customer's preference.
   const serverCookies = await cookies();
   const theme = serverCookies.get("theme")?.value || "light";
 
@@ -34,6 +35,7 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
+                // Apply the saved theme before React hydrates to avoid a light/dark flash.
                 const savedTheme = localStorage.getItem("theme") || "light";
                 document.documentElement.setAttribute("data-theme", savedTheme);
               })();

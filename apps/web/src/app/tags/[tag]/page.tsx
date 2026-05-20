@@ -12,6 +12,7 @@ export default async function Page({
   const { tag } = await params;
   const posts = await getActiveProducts();
 
+  // Normalize route text and stored tags so "Desk Setup" matches /tags/desk-setup.
   const normalizedTag = tag.toLowerCase().replaceAll("-", "");
 
   const filteredPosts = posts.filter((post) => {

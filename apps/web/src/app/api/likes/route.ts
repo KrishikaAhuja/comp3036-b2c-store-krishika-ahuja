@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   // In a real app, this would come from request headers.
   const userIP = "test-ip";
 
-  // Check if this user already liked this post
+  // Check if this user already watches this product so the endpoint can toggle the state.
   const existing = await client.db.like.findUnique({
     where: {
       postId_userIP: {
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
   });
 
   if (existing) {
-    // If like already exists, remove it = unlike
+    // If a watch already exists, remove it.
     await client.db.like.delete({
       where: {
         postId_userIP: {
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } else {
-    // If like does not exist, create it = like
+    // If no watch exists, create one.
     await client.db.like.create({
       data: {
         postId,
