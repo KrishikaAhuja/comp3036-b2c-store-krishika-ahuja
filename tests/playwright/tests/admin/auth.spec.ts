@@ -1,9 +1,7 @@
-import { seed } from "@repo/db/seed";
 import { expect, test } from "./fixtures";
 
 test.describe("ADMIN AUTH", () => {
   test.beforeEach(async ({ context }) => {
-    await seed();
     await context.clearCookies();
   });
 

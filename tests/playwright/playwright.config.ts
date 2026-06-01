@@ -8,17 +8,14 @@ import "dotenv/config";
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-import fs from "fs";
 import path from "path";
 
-// Define the directory path
-const authDir = path.resolve(".auth");
+const repoRoot = path.resolve(__dirname, "../..");
 
-// Create .auth directory if it doesn't exist
-if (!fs.existsSync(authDir)) {
-  fs.mkdirSync(authDir);
-  console.log(".auth directory created");
-}
+process.chdir(repoRoot);
+process.env.DATABASE_URL = `file:${path
+  .resolve(repoRoot, "packages/db/prisma/dev.db")
+  .replaceAll("\\", "/")}`;
 
 /**
  * See https://playwright.dev/docs/test-configuration.
