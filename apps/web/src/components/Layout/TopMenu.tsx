@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CartNavLink } from "../Cart/CartNavLink";
 import ThemeSwitch from "../Themes/ThemeSwitcher";
@@ -37,6 +38,12 @@ export function TopMenu({ query }: { query?: string }) {
     </form>
 
     <div className="flex items-center justify-end gap-3">
+      <Link
+        href="/auth"
+        className="rounded-md border border-gray-200 px-3 py-2 text-sm font-medium text-[var(--text)] hover:border-[var(--wsu)] dark:border-gray-700"
+      >
+        Sign in
+      </Link>
       <CartNavLink />
       <ThemeSwitch />
     </div>
