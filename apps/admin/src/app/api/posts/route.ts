@@ -1,4 +1,5 @@
 import { client } from "@repo/db/client"; // Prisma client wrapper used to access the database
+import { requireAdmin } from "../../../utils/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 // Creates a URL-safe id from the title
@@ -10,8 +11,23 @@ function makeUrlId(title: string) {
     .replace(/^-|-$/g, "");
 }
 
+async function getUnauthorizedResponse() {
+  try {
+    await requireAdmin();
+    return null;
+  } catch {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+}
+
 // Gets posts from database with optional server-side filters
 export async function GET(req: NextRequest) {
+  const unauthorized = await getUnauthorizedResponse();
+
+  if (unauthorized) {
+    return unauthorized;
+  }
+
   const { searchParams } = new URL(req.url);
 
   // Read filter values from the URL query string
@@ -57,6 +73,12 @@ export async function GET(req: NextRequest) {
 
 // Updates an existing post
 export async function PUT(req: NextRequest) {
+  const unauthorized = await getUnauthorizedResponse();
+
+  if (unauthorized) {
+    return unauthorized;
+  }
+
   const body = await req.json();
 
   const updated = await client.db.post.update({
@@ -81,6 +103,12 @@ export async function PUT(req: NextRequest) {
 
 // Creates a new post
 export async function POST(req: NextRequest) {
+  const unauthorized = await getUnauthorizedResponse();
+
+  if (unauthorized) {
+    return unauthorized;
+  }
+
   const body = await req.json();
 
   const created = await client.db.post.create({
@@ -106,6 +134,12 @@ export async function PATCH(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
+  const unauthorized = await getUnauthorizedResponse();
+
+  if (unauthorized) {
+    return unauthorized;
+  }
+
   const { id } = await context.params;
   const postId = Number(id);
 
