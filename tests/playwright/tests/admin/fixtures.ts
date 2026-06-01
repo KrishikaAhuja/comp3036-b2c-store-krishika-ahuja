@@ -46,6 +46,7 @@ export const test = base.extend<MyFixtures>({
     const context = await browser.newContext();
     const userPage = await context.newPage(); //  new UserPage(await context.newPage());
     await userPage.goto("/");
+    await userPage.getByLabel("Email", { exact: true }).fill("admin@example.com");
     await userPage.getByLabel("Password", { exact: true }).fill("123");
     await userPage.getByText("Sign In", { exact: true }).click();
     await userPage.getByText("Product Management", { exact: true }).waitFor();

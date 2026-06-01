@@ -18,6 +18,17 @@ export default async function Page({ // This page receives a dynamic route param
         <h1 className={pageStyles.title}>Sign in to your account</h1>
 
         <form action="/api/auth" method="post" className={pageStyles.form}>
+          <label htmlFor="email" className={pageStyles.label}>
+            Email
+          </label>
+
+          <input
+            id="email"
+            name="email"
+            type="email"
+            className={pageStyles.input}
+          />
+
           <label htmlFor="password" className={pageStyles.label}>
             Password
           </label>

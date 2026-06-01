@@ -15,6 +15,17 @@ export default async function Page() {
           method="post"
           className={pageStyles.form}
         >
+          <label htmlFor="email" className={pageStyles.label}>
+            Email
+          </label>
+
+          <input
+            id="email"
+            name="email"
+            type="email"
+            className={pageStyles.input}
+          />
+
           <label htmlFor="password" className={pageStyles.label}>
             Password
           </label>

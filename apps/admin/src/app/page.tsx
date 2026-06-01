@@ -40,14 +40,16 @@ export default async function Home({ searchParams }: HomeProps) {
           {/* Show this message only when the login failed. */}
           {showError && (
             <p className={styles.errorMessage}>
-              Incorrect password. Please try again.
+              Incorrect email or password. Please try again.
             </p>
           )}
 
-          {/* This label is connected to the password input using htmlFor and id. */}
+          <label htmlFor="email">Email</label>
+
+          <input id="email" name="email" type="email" />
+
           <label htmlFor="password">Password</label>
 
-          {/* The name must be "password" because the backend reads this field from the form data. */}
           <input id="password" name="password" type="password" />
 
           {/* This button submits the login form. */}

@@ -9,7 +9,7 @@ setup(
     const apiContext = await playwright.request.newContext();
 
     await apiContext.post("http://localhost:3002/api/auth", {
-      data: { password: "123" },
+      data: { email: "admin@example.com", password: "123" },
     });
 
     await apiContext.storageState({ path: authFile });
