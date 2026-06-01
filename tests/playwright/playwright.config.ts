@@ -56,7 +56,6 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    { name: "setup", testMatch: /.*\.setup\.ts/ },
     {
       name: "chromium",
       testDir: "./tests/admin",
@@ -64,7 +63,6 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
         baseURL: "http://localhost:3002",
       },
-      dependencies: process.env.CI ? ["setup"] : [],
     },
     {
       name: "chromium",
@@ -73,7 +71,6 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
         baseURL: "http://localhost:3001",
       },
-      dependencies: process.env.CI ? ["setup"] : [],
     },
 
     // {

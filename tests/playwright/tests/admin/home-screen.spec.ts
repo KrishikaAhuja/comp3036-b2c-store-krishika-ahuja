@@ -30,7 +30,8 @@ test.describe("ADMIN HOME SCREEN", () => {
     async ({ page }) => {
       await page.goto("/");
 
-      // HOME SCREEN > Authenticate the current client using a hard-coded password
+      // HOME SCREEN > Authenticate the current admin using database credentials.
+      await page.getByLabel("Email", { exact: true }).fill("admin@example.com");
       await page.getByLabel("Password", { exact: true }).fill("123");
       await page.getByText("Sign In", { exact: true }).click();
 
