@@ -1,11 +1,37 @@
+import bcrypt from "bcryptjs";
 import { client } from "./client.js"; // imports Prisma client to interact with DB
 import { posts } from "./data.js"; // imports sample posts data
 
+const adminUser = {
+  name: process.env.ADMIN_NAME || "Admin User",
+  email: process.env.ADMIN_EMAIL || "admin@example.com",
+  password: process.env.ADMIN_PASSWORD || process.env.PASSWORD || "admin123",
+};
+
 // function to seed (insert) data into the database
 export async function seed() {
-  console.log("🌱 Seeding data"); // log message to show seeding started
+  console.log("Seeding data"); // log message to show seeding started
+
+  const adminPasswordHash = await bcrypt.hash(adminUser.password, 10);
 
   await client.db.$transaction(async (tx) => {
+    await tx.user.upsert({
+      where: {
+        email: adminUser.email,
+      },
+      update: {
+        name: adminUser.name,
+        passwordHash: adminPasswordHash,
+        role: "ADMIN",
+      },
+      create: {
+        name: adminUser.name,
+        email: adminUser.email,
+        passwordHash: adminPasswordHash,
+        role: "ADMIN",
+      },
+    });
+
     // delete all existing likes first (to avoid foreign key issues)
     await tx.like.deleteMany();
 
@@ -39,7 +65,6 @@ export async function seed() {
       // create likes for this post
       // runs loop based on number of likes in seed data
       for (let i = 0; i < post.likes; i++) {
-
         await tx.like.create({
           data: {
             postId: post.id,
