@@ -14,9 +14,10 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@repo/db": "workspace:*",
+    "@repo/env": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/utils": "workspace:*",
-    "@repo/env": "workspace:*",
+    "bcryptjs": "^3.0.3",
     "jsonwebtoken": "^9.0.2",
     "marked": "^15.0.6",
     "next": "^15.1.6",
