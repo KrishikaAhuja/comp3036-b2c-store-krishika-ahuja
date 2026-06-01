@@ -107,36 +107,52 @@ export function AuthForm() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-5xl items-center px-4 py-10">
-      <div className="grid w-full overflow-hidden rounded-lg border border-gray-200 bg-[var(--background)] shadow-sm dark:border-gray-700 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="hidden bg-[var(--wsu)] p-8 text-white lg:flex lg:flex-col lg:justify-between">
+    <div className="mx-auto flex min-h-screen w-full max-w-6xl items-center px-4 py-10">
+      <div className="grid w-full overflow-hidden rounded-[2rem] border border-white/75 bg-white/74 shadow-2xl shadow-rose-200/35 backdrop-blur-2xl dark:border-white/10 dark:bg-gray-950/70 dark:shadow-black/40 lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="relative hidden overflow-hidden bg-[linear-gradient(145deg,#b8d8d8_0%,#f4c7c3_52%,#d7c7f4_100%)] p-8 text-gray-950 lg:flex lg:flex-col lg:justify-between">
+          <div className="absolute -right-14 top-8 h-44 w-44 rounded-full border border-white/45 bg-white/20" />
+          <div className="absolute bottom-16 right-10 h-28 w-28 rounded-full bg-white/35 blur-md" />
+          <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-white/25 blur-sm" />
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.12em]">
-              Full-Stack Store
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gray-700">
+              Full-Stack Store Club
             </p>
-            <h1 className="mt-4 text-3xl font-semibold leading-tight">
-              Access your customer account
+            <h1 className="relative z-10 mt-5 max-w-sm text-5xl font-black leading-[0.95]">
+              Your cart deserves main character access.
             </h1>
           </div>
-          <p className="text-sm leading-6 text-white/85">
-            Sign in to continue shopping, or create a customer account for
-            checkout and order access.
-          </p>
+          <div className="relative rounded-2xl border border-white/55 bg-white/35 p-5 backdrop-blur">
+            <div className="mb-3 flex gap-2">
+              <span className="rounded-full bg-white/80 px-3 py-1 text-xs font-bold text-gray-900">
+                saved carts
+              </span>
+              <span className="rounded-full bg-violet-100 px-3 py-1 text-xs font-bold text-gray-900">
+                faster checkout
+              </span>
+            </div>
+            <p className="text-sm leading-6 text-gray-800">
+              Keep your picks, checkout quicker, and come back to the pieces
+              you were eyeing without starting over.
+            </p>
+          </div>
         </div>
 
-        <div className="p-6 sm:p-8">
+        <div className="p-6 sm:p-10">
           <div className="mb-6">
-            <h2 className="text-2xl font-semibold text-[var(--text)]">
-              {mode === "register" ? "Create account" : "Welcome back"}
+            <p className="mb-3 inline-flex rounded-full bg-rose-100 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-rose-700 dark:bg-rose-950 dark:text-rose-100">
+              {mode === "register" ? "join the list" : "back again"}
+            </p>
+            <h2 className="text-3xl font-black text-[var(--text)]">
+              {mode === "register" ? "Make it yours" : "Run it back"}
             </h2>
             <p className="mt-2 text-sm text-[var(--text-secondary)]">
               {mode === "register"
-                ? "Use your email and a secure password to register."
-                : "Use your customer email and password to sign in."}
+                ? "Create your customer profile and keep your checkout flow smooth."
+                : "Sign in with your customer details and pick up where you left off."}
             </p>
           </div>
 
-          <div className="mb-6 grid grid-cols-2 rounded-md border border-gray-200 bg-gray-50 p-1 dark:border-gray-700 dark:bg-gray-800">
+          <div className="mb-6 grid grid-cols-2 rounded-full border border-gray-200 bg-white/70 p-1 shadow-inner dark:border-gray-700 dark:bg-gray-900/80">
           <button
             type="button"
             onClick={() => {
@@ -144,9 +160,9 @@ export function AuthForm() {
               setError("");
               setConfirmPassword("");
             }}
-            className={`rounded px-3 py-2 text-sm font-medium ${
+            className={`rounded-full px-3 py-2 text-sm font-bold transition ${
               mode === "login"
-                ? "bg-[var(--text)] text-[var(--background)]"
+                ? "bg-gray-950 text-white shadow-lg shadow-gray-950/20 dark:bg-white dark:text-gray-950"
                 : "text-[var(--text-secondary)] hover:text-[var(--text)]"
             }`}
           >
@@ -158,9 +174,9 @@ export function AuthForm() {
               setMode("register");
               setError("");
             }}
-            className={`rounded px-3 py-2 text-sm font-medium ${
+            className={`rounded-full px-3 py-2 text-sm font-bold transition ${
               mode === "register"
-                ? "bg-[var(--text)] text-[var(--background)]"
+                ? "bg-gray-950 text-white shadow-lg shadow-gray-950/20 dark:bg-white dark:text-gray-950"
                 : "text-[var(--text-secondary)] hover:text-[var(--text)]"
             }`}
           >
@@ -180,7 +196,7 @@ export function AuthForm() {
                 type="text"
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                className="w-full rounded-md border border-gray-300 bg-[var(--background)] px-3 py-2 text-sm outline-none focus:border-[var(--wsu)] dark:border-gray-700"
+                className="w-full rounded-2xl border border-rose-100 bg-white/82 px-4 py-3 text-sm outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-200/60 dark:border-gray-700 dark:bg-gray-900/80"
                 autoComplete="name"
                 required
               />
@@ -197,7 +213,7 @@ export function AuthForm() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="w-full rounded-md border border-gray-300 bg-[var(--background)] px-3 py-2 text-sm outline-none focus:border-[var(--wsu)] dark:border-gray-700"
+              className="w-full rounded-2xl border border-rose-100 bg-white/82 px-4 py-3 text-sm outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-200/60 dark:border-gray-700 dark:bg-gray-900/80"
               autoComplete="email"
               required
             />
@@ -213,7 +229,7 @@ export function AuthForm() {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="w-full rounded-md border border-gray-300 bg-[var(--background)] px-3 py-2 text-sm outline-none focus:border-[var(--wsu)] dark:border-gray-700"
+              className="w-full rounded-2xl border border-rose-100 bg-white/82 px-4 py-3 text-sm outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-200/60 dark:border-gray-700 dark:bg-gray-900/80"
               minLength={mode === "register" ? MIN_PASSWORD_LENGTH : undefined}
               autoComplete={
                 mode === "register" ? "new-password" : "current-password"
@@ -238,7 +254,7 @@ export function AuthForm() {
                 type="password"
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
-                className="w-full rounded-md border border-gray-300 bg-[var(--background)] px-3 py-2 text-sm outline-none focus:border-[var(--wsu)] dark:border-gray-700"
+                className="w-full rounded-2xl border border-rose-100 bg-white/82 px-4 py-3 text-sm outline-none transition focus:border-rose-300 focus:ring-4 focus:ring-rose-200/60 dark:border-gray-700 dark:bg-gray-900/80"
                 autoComplete="new-password"
                 minLength={MIN_PASSWORD_LENGTH}
                 required
@@ -247,7 +263,7 @@ export function AuthForm() {
           )}
 
           {error && (
-            <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
               {error}
             </p>
           )}
@@ -255,7 +271,7 @@ export function AuthForm() {
           <button
             type="submit"
             disabled={pending}
-            className="w-full rounded-md bg-[var(--wsu)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--wsu-light)] disabled:cursor-not-allowed disabled:opacity-70"
+            className="w-full rounded-2xl bg-[linear-gradient(135deg,#9fb8d9,#d8a7b1_48%,#b8d8c0)] px-4 py-3 text-sm font-black text-gray-950 shadow-xl shadow-rose-200/40 transition hover:-translate-y-0.5 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
           >
             {pending
               ? "Please wait"

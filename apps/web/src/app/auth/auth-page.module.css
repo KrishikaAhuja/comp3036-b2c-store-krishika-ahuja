@@ -1,0 +1,113 @@
+.shell {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 12% 18%, rgba(244, 199, 195, 0.58), transparent 30%),
+    radial-gradient(circle at 88% 14%, rgba(184, 216, 216, 0.58), transparent 32%),
+    radial-gradient(circle at 50% 90%, rgba(215, 199, 244, 0.46), transparent 36%),
+    linear-gradient(135deg, #fff7f3 0%, #fdfbff 44%, #eef8f6 100%);
+}
+
+.shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.1) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent 78%);
+  pointer-events: none;
+}
+
+.shell::after {
+  animation: backgroundShift 10s ease-in-out infinite alternate;
+  background:
+    linear-gradient(100deg, transparent 18%, rgba(255, 255, 255, 0.48) 34%, transparent 50%),
+    linear-gradient(118deg, transparent 48%, rgba(216, 167, 177, 0.2) 58%, transparent 70%),
+    radial-gradient(circle at 70% 30%, rgba(159, 184, 217, 0.26), transparent 24%);
+  content: "";
+  inset: -18%;
+  pointer-events: none;
+  position: absolute;
+  transform: translate3d(-4%, -2%, 0);
+}
+
+.band {
+  animation: bandIntro 900ms ease-out both, bandDrift 8s ease-in-out 900ms infinite alternate;
+  background: linear-gradient(90deg, rgba(216, 167, 177, 0.24), rgba(184, 216, 216, 0.24));
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  height: 180px;
+  left: -8%;
+  pointer-events: none;
+  position: absolute;
+  top: 11%;
+  transform: rotate(-8deg);
+  width: 116%;
+}
+
+.bandSecondary {
+  animation-delay: 140ms, 1040ms;
+  background: linear-gradient(90deg, rgba(159, 184, 217, 0.22), rgba(215, 199, 244, 0.24));
+  top: auto;
+  bottom: 7%;
+  transform: rotate(7deg);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+}
+
+:global(html[data-theme="dark"]) .shell {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(244, 199, 195, 0.22), transparent 28%),
+    radial-gradient(circle at 88% 14%, rgba(184, 216, 216, 0.2), transparent 30%),
+    radial-gradient(circle at 50% 90%, rgba(215, 199, 244, 0.18), transparent 34%),
+    linear-gradient(135deg, #111827 0%, #171717 48%, #0f172a 100%);
+}
+
+:global(html[data-theme="dark"]) .shell::before {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+
+@keyframes backgroundShift {
+  from {
+    transform: translate3d(-4%, -2%, 0);
+  }
+  to {
+    transform: translate3d(5%, 3%, 0);
+  }
+}
+
+@keyframes bandIntro {
+  from {
+    opacity: 0;
+    translate: -4rem 0;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes bandDrift {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 1.5rem -0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell::after,
+  .band,
+  .bandSecondary {
+    animation: none;
+  }
+}
