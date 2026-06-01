@@ -33,7 +33,7 @@ function verifyToken(token: string): UserTokenPayload | null {
 
 export async function getCurrentUser(): Promise<CurrentUser | null> {
   const userCookies = await cookies();
-  const token = userCookies.get("auth_token")?.value;
+  const token = userCookies.get("customer_auth_token")?.value;
 
   if (!token) {
     return null;

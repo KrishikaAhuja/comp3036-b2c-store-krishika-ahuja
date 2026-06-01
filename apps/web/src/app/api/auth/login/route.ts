@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  response.cookies.set("auth_token", token, {
+  response.cookies.set("customer_auth_token", token, {
     httpOnly: true,
     path: "/",
     sameSite: "lax",

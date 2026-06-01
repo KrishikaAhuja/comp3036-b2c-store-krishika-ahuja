@@ -7,6 +7,9 @@ type AuthMode = "login" | "register";
 
 type AuthResponse = {
   error?: string;
+  user?: {
+    role: "CUSTOMER" | "ADMIN";
+  };
 };
 
 const MIN_PASSWORD_LENGTH = 8;
@@ -27,6 +30,18 @@ async function submitAuthForm(url: string, data: Record<string, string>) {
   }
 
   return body;
+}
+
+function getAdminUrl() {
+  if (process.env.NEXT_PUBLIC_ADMIN_URL) {
+    return process.env.NEXT_PUBLIC_ADMIN_URL;
+  }
+
+  if (window.location.hostname === "localhost") {
+    return "http://localhost:3002";
+  }
+
+  return "";
 }
 
 export function AuthForm() {
@@ -92,10 +107,23 @@ export function AuthForm() {
         });
       }
 
-      await submitAuthForm("/api/auth/login", {
+      const loginResult = await submitAuthForm("/api/auth/login", {
         email,
         password,
       });
+
+      if (loginResult.user?.role === "ADMIN") {
+        const adminUrl = getAdminUrl();
+
+        if (adminUrl) {
+          window.location.assign(adminUrl);
+          return;
+        }
+
+        await fetch("/api/auth/logout", { method: "POST" });
+        setError("Admin accounts need to sign in through the admin app.");
+        return;
+      }
 
       router.push("/");
       router.refresh();

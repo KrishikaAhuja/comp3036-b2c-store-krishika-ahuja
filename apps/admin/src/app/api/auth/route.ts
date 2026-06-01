@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
   const response = NextResponse.redirect(new URL("/", req.url), 303);
 
   // Store JWT token in a secure httpOnly cookie
-  response.cookies.set("auth_token", token, {
+  response.cookies.set("admin_auth_token", token, {
     httpOnly: true,
     path: "/",
     sameSite: "lax",
@@ -71,7 +71,7 @@ export async function DELETE(req: NextRequest) {
   const response = NextResponse.json({ success: true });
 
   // Expire the auth cookie so the user is logged out
-  response.cookies.set("auth_token", "", {
+  response.cookies.set("admin_auth_token", "", {
     httpOnly: true,
     path: "/",
     expires: new Date(0),

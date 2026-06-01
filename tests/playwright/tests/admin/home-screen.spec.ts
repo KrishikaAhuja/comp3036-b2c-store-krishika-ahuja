@@ -39,7 +39,7 @@ test.describe("ADMIN HOME SCREEN", () => {
       // HOME SCREEN > Use a cookie to remember the signed-in state.
       const cookies = await page.context().cookies();
       const passwordCookie = cookies.find(
-        (cookie) => cookie.name === "auth_token",
+        (cookie) => cookie.name === "admin_auth_token",
       );
       expect(passwordCookie).toBeDefined();
 

@@ -33,7 +33,7 @@ function verifyAdminToken(token: string): AdminTokenPayload | null {
 
 export async function getCurrentUser(): Promise<CurrentAdminUser | null> {
   const userCookies = await cookies();
-  const token = userCookies.get("auth_token")?.value;
+  const token = userCookies.get("admin_auth_token")?.value;
 
   if (!token) {
     return null;
