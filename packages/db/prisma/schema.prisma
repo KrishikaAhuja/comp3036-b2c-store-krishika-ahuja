@@ -10,6 +10,23 @@ datasource db {
   url      = env("DATABASE_URL") // gets the database URL from the .env file
 }
 
+// User roles control whether someone can access the customer site or admin app.
+enum UserRole {
+  CUSTOMER
+  ADMIN
+}
+
+// User table stores customer and admin accounts.
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(CUSTOMER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 // Post table stores each blog post.
 model Post {
   id            Int      @id @default(autoincrement()) // unique post id, automatically increases
