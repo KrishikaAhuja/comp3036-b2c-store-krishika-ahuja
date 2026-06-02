@@ -66,6 +66,9 @@ test.describe("CUSTOMER AUTH API", () => {
       expect(logoutResponse.headers()["set-cookie"]).toContain(
         "customer_auth_token=;",
       );
+
+      const loggedOutMeResponse = await request.get("/api/auth/me");
+      expect(loggedOutMeResponse.status()).toBe(401);
     },
   );
 
@@ -94,6 +97,35 @@ test.describe("CUSTOMER AUTH API", () => {
       expect(duplicateResponse.status()).toBe(409);
       const body = await duplicateResponse.json();
       expect(body.error).toBe("An account with this email already exists.");
+    },
+  );
+
+  test(
+    "rejects incorrect customer login",
+    { tag: "@a3" },
+    async ({ request }) => {
+      const response = await request.post("/api/auth/login", {
+        data: {
+          email: uniqueCustomerEmail(),
+          password: "password123",
+        },
+      });
+
+      expect(response.status()).toBe(401);
+      const body = await response.json();
+      expect(body.error).toBe("Incorrect email or password.");
+    },
+  );
+
+  test(
+    "returns 401 for current user without a customer session",
+    { tag: "@a3" },
+    async ({ request }) => {
+      const response = await request.get("/api/auth/me");
+
+      expect(response.status()).toBe(401);
+      const body = await response.json();
+      expect(body.user).toBeNull();
     },
   );
 });

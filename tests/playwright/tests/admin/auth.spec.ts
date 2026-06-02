@@ -45,6 +45,37 @@ test.describe("ADMIN AUTH", () => {
   );
 
   test(
+    "requires admin login for create product page",
+    { tag: "@a2" },
+    async ({ page }) => {
+      await page.goto("/posts/create");
+
+      await expect(page.getByText("Sign in to your account")).toBeVisible();
+      await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
+      await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
+    },
+  );
+
+  test(
+    "ignores customer auth cookies in admin app",
+    { tag: "@a2" },
+    async ({ page, context }) => {
+      await context.addCookies([
+        {
+          name: "customer_auth_token",
+          value: "not-an-admin-token",
+          url: "http://localhost:3002",
+        },
+      ]);
+
+      await page.goto("/");
+
+      await expect(page.getByText("Sign in to your account")).toBeVisible();
+      await expect(page.getByText("Product Management")).not.toBeVisible();
+    },
+  );
+
+  test(
     "blocks unauthenticated admin API access",
     { tag: "@a3" },
     async ({ request }) => {
@@ -66,6 +97,31 @@ test.describe("ADMIN AUTH", () => {
       });
 
       expect(createResponse.status()).toBe(401);
+    },
+  );
+
+  test(
+    "blocks admin API access after logout",
+    { tag: "@a3" },
+    async ({ request }) => {
+      const loginResponse = await request.post("/api/auth", {
+        data: {
+          email: "admin@example.com",
+          password: "123",
+        },
+        maxRedirects: 0,
+      });
+
+      expect(loginResponse.status()).toBe(303);
+
+      const loggedInResponse = await request.get("/api/posts");
+      expect(loggedInResponse.status()).toBe(200);
+
+      const logoutResponse = await request.delete("/api/auth");
+      expect(logoutResponse.status()).toBe(200);
+
+      const loggedOutResponse = await request.get("/api/posts");
+      expect(loggedOutResponse.status()).toBe(401);
     },
   );
 

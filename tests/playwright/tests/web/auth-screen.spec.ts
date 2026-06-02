@@ -45,6 +45,40 @@ test.describe("CUSTOMER AUTH SCREEN", () => {
   );
 
   test(
+    "validates required customer fields",
+    { tag: "@a1" },
+    async ({ page }) => {
+      await page.goto("/auth");
+
+      await page.getByRole("button", { name: "Sign in" }).click();
+      await expect(page.getByText("Enter your email address.")).toBeVisible();
+
+      await page.getByRole("button", { name: "Register" }).click();
+      await page.getByRole("button", { name: "Create account" }).click();
+      await expect(page.getByText("Enter your name.")).toBeVisible();
+    },
+  );
+
+  test(
+    "validates short registration password",
+    { tag: "@a1" },
+    async ({ page }) => {
+      await page.goto("/auth");
+      await page.getByRole("button", { name: "Register" }).click();
+
+      await page.getByLabel("Name").fill("Test Customer");
+      await page.getByLabel("Email").fill(uniqueCustomerEmail());
+      await page.getByLabel("Password", { exact: true }).fill("short");
+      await page.getByLabel("Repeat password").fill("short");
+      await page.getByRole("button", { name: "Create account" }).click();
+
+      await expect(
+        page.getByText("Password must be at least 8 characters."),
+      ).toBeVisible();
+    },
+  );
+
+  test(
     "registers a customer and signs them in",
     { tag: "@a1" },
     async ({ page }) => {
@@ -79,6 +113,35 @@ test.describe("CUSTOMER AUTH SCREEN", () => {
       await page.getByRole("button", { name: "Sign in" }).click();
 
       await expect(page.getByText("Incorrect email or password.")).toBeVisible();
+    },
+  );
+
+  test(
+    "shows duplicate email errors during registration",
+    { tag: "@a1" },
+    async ({ page }) => {
+      const email = uniqueCustomerEmail();
+
+      const response = await page.request.post("/api/auth/register", {
+        data: {
+          name: "Existing Customer",
+          email,
+          password: "password123",
+        },
+      });
+      expect(response.status()).toBe(201);
+
+      await page.goto("/auth");
+      await page.getByRole("button", { name: "Register" }).click();
+      await page.getByLabel("Name").fill("Duplicate Customer");
+      await page.getByLabel("Email").fill(email);
+      await page.getByLabel("Password", { exact: true }).fill("password123");
+      await page.getByLabel("Repeat password").fill("password123");
+      await page.getByRole("button", { name: "Create account" }).click();
+
+      await expect(
+        page.getByText("An account with this email already exists."),
+      ).toBeVisible();
     },
   );
 });
