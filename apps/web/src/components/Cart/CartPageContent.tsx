@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
   CART_UPDATED_EVENT,
-  clearCart,
   getCartItems,
   removeCartItem,
   updateCartItemQuantity,
@@ -21,9 +20,6 @@ function formatPrice(value: number) {
 
 export function CartPageContent() {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [checkoutError, setCheckoutError] = useState("");
-  const [checkoutSuccess, setCheckoutSuccess] = useState("");
-  const [checkingOut, setCheckingOut] = useState(false);
 
   function refreshCart() {
     // localStorage is the source of truth for the current customer's cart.
@@ -58,56 +54,14 @@ export function CartPageContent() {
     refreshCart();
   }
 
-  async function handleCheckout() {
-    setCheckoutError("");
-    setCheckoutSuccess("");
-    setCheckingOut(true);
-
-    try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          items: items.map((item) => ({
-            id: item.id,
-            quantity: item.quantity,
-          })),
-        }),
-      });
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || "Checkout could not be completed.");
-      }
-
-      clearCart();
-      refreshCart();
-      setCheckoutSuccess(`Payment approved. Order #${result.orderId} is confirmed.`);
-    } catch (error) {
-      setCheckoutError(
-        error instanceof Error ? error.message : "Checkout could not be completed.",
-      );
-    } finally {
-      setCheckingOut(false);
-    }
-  }
-
   if (items.length === 0) {
     // Empty state keeps the cart route useful even before the customer adds products.
     return (
       <div className="rounded-lg border border-[var(--surface-muted)] bg-[var(--surface)] p-6 text-[var(--text)] shadow-sm dark:border-gray-700">
         <h1 className="text-2xl font-semibold">Book Bag</h1>
-        {checkoutSuccess ? (
-          <p className="mt-3 rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm font-semibold text-green-800">
-            {checkoutSuccess}
-          </p>
-        ) : (
-          <p className="mt-3 text-sm text-[var(--text-secondary)]">
-            Your book bag is empty.
-          </p>
-        )}
+        <p className="mt-3 text-sm text-[var(--text-secondary)]">
+          Your book bag is empty.
+        </p>
         <Link
           href="/"
           className="mt-5 inline-flex h-10 items-center justify-center rounded-md bg-[var(--accent)] px-4 text-sm font-semibold text-[var(--surface)] transition hover:bg-[var(--accent-hover)]"
@@ -212,21 +166,14 @@ export function CartPageContent() {
             <span>{formatPrice(total)}</span>
           </div>
           <p className="mt-3 text-sm text-[var(--text-secondary)]">
-            Mock payment approves immediately for this demo store.
+            Continue to the demo checkout to enter delivery and mock payment details.
           </p>
-          {checkoutError && (
-            <p className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
-              {checkoutError}
-            </p>
-          )}
-          <button
-            type="button"
-            onClick={handleCheckout}
-            disabled={checkingOut}
+          <Link
+            href="/checkout"
             className="mt-4 inline-flex h-10 w-full items-center justify-center rounded-md bg-[var(--accent)] px-4 text-sm font-semibold text-[var(--surface)] transition hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {checkingOut ? "Processing" : "Pay with Mock Checkout"}
-          </button>
+            Proceed to Checkout
+          </Link>
         </div>
       </div>
     </div>

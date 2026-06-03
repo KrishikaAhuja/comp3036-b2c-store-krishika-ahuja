@@ -53,8 +53,27 @@ test.describe("customer book bag", () => {
     await page.getByRole("button", { name: "Increase Atomic Habits quantity" }).click();
     await expect(page.getByText("$56", { exact: true }).last()).toBeVisible();
 
-    await page.getByRole("button", { name: "Pay with Mock Checkout" }).click();
-    await expect(page.getByText(/Payment approved\. Order #/)).toBeVisible();
+    await page.getByRole("link", { name: "Proceed to Checkout" }).click();
+    await expect(page).toHaveURL("/checkout");
+    await expect(page.getByRole("heading", { name: "Checkout" })).toBeVisible();
+    await expect(page.getByText("Atomic Habits")).toBeVisible();
+
+    const checkoutForm = page.getByTestId("checkout-form");
+    await checkoutForm.getByLabel("Phone Number").fill("0412 345 678");
+    await checkoutForm.getByLabel("Delivery Address").fill("12 Book Lane, Sydney NSW");
+    await checkoutForm.getByLabel("Cardholder Name").fill("Cart Customer");
+    await checkoutForm.getByLabel("Card Number").fill("1234 5678 9012 3456");
+    await checkoutForm.getByLabel("Expiry Date (MM/YY)").fill("12/28");
+    await checkoutForm.getByLabel("CVV").fill("123");
+    await checkoutForm.getByRole("button", { name: "Place Order" }).click();
+
+    await expect(page).toHaveURL(/\/order-confirmation\?orderId=\d+/);
+    await expect(
+      page.getByText("Payment Successful! Thank you for your purchase."),
+    ).toBeVisible();
+    await expect(page.getByText(/MOCK-\d{8}-\d{4}/)).toBeVisible();
+    await expect(page.locator("dl").getByText("Cart Customer", { exact: true })).toBeVisible();
+    await expect(page.getByText("$56", { exact: true })).toBeVisible();
     await expect(page.getByRole("link", { name: "Book Bag (0)" })).toBeVisible();
 
     const orders = await client.db.$queryRawUnsafe<
@@ -81,5 +100,80 @@ test.describe("customer book bag", () => {
       },
     });
     expect(book?.stockQuantity).toBe(33);
+  });
+
+  test("checkout validation does not create an order or clear the cart", { tag: "@a1" }, async ({ page }) => {
+    const email = uniqueCustomerEmail();
+    const registerResponse = await page.request.post("/api/auth/register", {
+      data: {
+        name: "Invalid Checkout Customer",
+        email,
+        password: "password123",
+      },
+    });
+    expect(registerResponse.status()).toBe(201);
+    const loginResponse = await page.request.post("/api/auth/login", {
+      data: {
+        email,
+        password: "password123",
+      },
+    });
+    expect(loginResponse.status()).toBe(200);
+
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    await page.evaluate(() => {
+      window.localStorage.setItem(
+        "storefront-cart",
+        JSON.stringify([
+          {
+            id: 5,
+            urlId: "atomic-habits",
+            title: "Atomic Habits",
+            price: 28,
+            imageUrl:
+              "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1655988385i/40121378.jpg",
+            stockQuantity: 35,
+            quantity: 1,
+          },
+        ]),
+      );
+    });
+
+    await page.goto("/checkout", { waitUntil: "domcontentloaded" });
+    await expect(page).toHaveURL("/checkout");
+    await expect(page.getByRole("link", { name: "Book Bag (1)" })).toBeVisible();
+
+    const invalidCardResponse = await page.request.post("/api/checkout", {
+      data: {
+        items: [
+          {
+            id: 5,
+            quantity: 1,
+          },
+        ],
+        customer: {
+          fullName: "Invalid Checkout Customer",
+          email,
+          phone: "0412 345 678",
+          deliveryAddress: "12 Book Lane, Sydney NSW",
+        },
+        payment: {
+          method: "mock_credit_card",
+          cardholderName: "Invalid Checkout Customer",
+          cardNumber: "1234-5678-9012-3456",
+          expiryDate: "12/28",
+          cvv: "123",
+        },
+      },
+    });
+    expect(invalidCardResponse.status()).toBe(400);
+    expect(await invalidCardResponse.json()).toEqual({
+      error: "Card number can only contain numbers and spaces.",
+    });
+
+    const orders = await client.db.$queryRawUnsafe<{ count: number }[]>(
+      `SELECT COUNT(*) AS count FROM "Order"`,
+    );
+    expect(orders[0]?.count).toBe(0);
   });
 });
