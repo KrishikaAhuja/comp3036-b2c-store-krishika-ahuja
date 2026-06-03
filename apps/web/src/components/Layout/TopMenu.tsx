@@ -43,7 +43,7 @@ export function TopMenu({
           type="search"
           defaultValue={query}
           onChange={handleSearch}
-          placeholder="Search products..."
+          placeholder="Search books..."
           className="w-full rounded-xl border border-gray-200 bg-[var(--background)] px-4 py-3 text-sm text-[var(--text)] outline-none placeholder:text-[var(--text-secondary)] focus:border-blue-500 dark:border-gray-700"
         />
       </form>

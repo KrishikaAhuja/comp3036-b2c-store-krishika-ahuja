@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
 
   if (!user || user.role !== "CUSTOMER") {
     return NextResponse.json(
-      { error: "Sign in to watch product stock." },
+      { error: "Sign in to save this read." },
       { status: 401 },
     );
   }

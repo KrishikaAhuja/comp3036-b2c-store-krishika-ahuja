@@ -143,23 +143,23 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
           <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-white/25 blur-sm" />
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-gray-700">
-              Full-Stack Store Club
+              Book Nook Club
             </p>
             <h1 className="relative z-10 mt-5 max-w-sm text-5xl font-black leading-[0.95]">
-              Your cart deserves main character access.
+              Your next read deserves main character access.
             </h1>
           </div>
           <div className="relative rounded-2xl border border-white/55 bg-white/35 p-5 backdrop-blur">
             <div className="mb-3 flex gap-2">
               <span className="rounded-full bg-white/80 px-3 py-1 text-xs font-bold text-gray-900">
-                saved carts
+                saved reads
               </span>
               <span className="rounded-full bg-violet-100 px-3 py-1 text-xs font-bold text-gray-900">
-                faster checkout
+                book bag
               </span>
             </div>
             <p className="text-sm leading-6 text-gray-800">
-              Keep your picks, checkout quicker, and come back to the pieces
+              Keep your picks, checkout quicker, and come back to the reads
               you were eyeing without starting over.
             </p>
           </div>

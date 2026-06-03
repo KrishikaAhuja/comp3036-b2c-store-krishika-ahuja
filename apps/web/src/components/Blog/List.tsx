@@ -5,7 +5,7 @@ export function BlogList({ posts }: { posts: Post[] }) {
   const activePosts = posts.filter((post) => post.active);
 
   if (activePosts.length === 0) {
-    return <div className="py-6">0 Products</div>;
+    return <div className="py-6">0 Books</div>;
   }
 
   return (

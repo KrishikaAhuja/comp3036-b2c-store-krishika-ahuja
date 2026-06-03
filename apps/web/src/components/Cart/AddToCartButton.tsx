@@ -34,7 +34,7 @@ export function AddToCartButton({ product }: { product: CartProduct }) {
       onClick={handleAddToCart}
       className="inline-flex h-10 items-center justify-center rounded-md border border-gray-300 px-4 text-sm font-semibold text-[var(--foreground)] transition hover:border-blue-500 hover:text-blue-600 dark:border-gray-700"
     >
-      {added ? "Added to Cart" : "Add to Cart"}
+      {added ? "Added to Bag" : "Add to Bag"}
     </button>
   );
 }

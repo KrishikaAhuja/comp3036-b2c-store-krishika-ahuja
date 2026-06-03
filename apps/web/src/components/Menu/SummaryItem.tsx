@@ -11,7 +11,7 @@ export function SummaryItem({
   isSelected: boolean;
   title?: string;
 }) {
-  // Used by category, collection, and arrival menus so each link shows its product count.
+  // Used by genre, age-range, and arrival menus so each link shows its book count.
   return (
     <li>
       <a

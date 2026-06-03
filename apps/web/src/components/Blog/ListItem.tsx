@@ -78,8 +78,8 @@ export function BlogListItem({ post }: { post: Post }) {
         </div>
 
         <div className="mt-auto flex items-center justify-between gap-4 border-t border-gray-200 pt-4 text-sm text-[var(--text-secondary)] dark:border-gray-700">
-          <p>{getStockQuantity(post)} in stock</p>
-          <p>{post.likes} watching stock</p>
+          <p>{getStockQuantity(post)} copies left</p>
+          <p>{post.likes} saving this read</p>
         </div>
 
         <div className="mt-1 grid gap-2 sm:grid-cols-2">
@@ -96,7 +96,7 @@ export function BlogListItem({ post }: { post: Post }) {
             href={`/post/${post.urlId}`}
             className="inline-flex h-10 items-center justify-center rounded-md bg-[var(--foreground)] px-4 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
           >
-            View Product
+            View Book
           </Link>
         </div>
       </div>

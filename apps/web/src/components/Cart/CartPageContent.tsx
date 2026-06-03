@@ -58,15 +58,15 @@ export function CartPageContent() {
     // Empty state keeps the cart route useful even before the customer adds products.
     return (
       <div className="rounded-lg border border-gray-200 bg-[var(--background)] p-6 text-[var(--text)] shadow-sm dark:border-gray-700">
-        <h1 className="text-2xl font-semibold">Shopping Cart</h1>
+        <h1 className="text-2xl font-semibold">Book Bag</h1>
         <p className="mt-3 text-sm text-[var(--text-secondary)]">
-          Your cart is empty.
+          Your book bag is empty.
         </p>
         <Link
           href="/"
           className="mt-5 inline-flex h-10 items-center justify-center rounded-md bg-[var(--foreground)] px-4 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
         >
-          Continue Shopping
+          Browse Books
         </Link>
       </div>
     );
@@ -76,16 +76,16 @@ export function CartPageContent() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold text-[var(--text)]">
-          Shopping Cart
+          Book Bag
         </h1>
         <p className="mt-1 text-sm text-[var(--text-secondary)]">
-          Review quantities before checkout is added later.
+          Review your reads before checkout is added later.
         </p>
       </div>
 
       <div className="overflow-hidden rounded-lg border border-gray-200 bg-[var(--background)] shadow-sm dark:border-gray-700">
         <div className="hidden grid-cols-[1fr_7rem_10rem_7rem_7rem] gap-4 border-b border-gray-200 px-5 py-3 text-sm font-semibold text-[var(--text-secondary)] md:grid dark:border-gray-700">
-          <span>Product</span>
+          <span>Book</span>
           <span>Price</span>
           <span>Quantity</span>
           <span>Subtotal</span>

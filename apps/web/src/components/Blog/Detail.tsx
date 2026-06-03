@@ -69,7 +69,7 @@ export async function BlogDetail({ post }: { post: Post }) {
             {formatPrice(post)}
           </p>
           <p className="rounded-full bg-green-50 px-3 py-1 text-sm font-semibold text-green-700 dark:bg-green-950 dark:text-green-300">
-            {getStockQuantity(post)} in stock
+            {getStockQuantity(post)} copies left
           </p>
         </div>
 
@@ -95,7 +95,7 @@ export async function BlogDetail({ post }: { post: Post }) {
         {/* product view and stock-watch section */}
         <div className="flex gap-5 rounded-xl bg-gray-50 px-4 py-3 text-sm font-medium text-[var(--text-secondary)] dark:bg-gray-800">
           <p>{post.views} customer views</p>
-          <p>{post.likes} watching stock</p>
+          <p>{post.likes} saving this read</p>
         </div>
 
         {/* hidden element used only for testing (not visible to users) */}

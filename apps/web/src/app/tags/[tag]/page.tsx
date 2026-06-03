@@ -12,7 +12,7 @@ export default async function Page({
   const { tag } = await params;
   const posts = await getActiveProducts();
 
-  // Normalize route text and stored tags so "Desk Setup" matches /tags/desk-setup.
+  // Normalize route text and stored age ranges so "Ages 12+" matches /tags/ages-12.
   const normalizedTag = tag.toLowerCase().replaceAll("-", "");
 
   const filteredPosts = posts.filter((post) => {
@@ -27,7 +27,7 @@ export default async function Page({
   return (
     <AppLayout>
       {filteredPosts.length === 0 ? (
-        <div>0 Products</div>
+        <div>0 Books</div>
       ) : (
         <Main posts={filteredPosts} />
       )}

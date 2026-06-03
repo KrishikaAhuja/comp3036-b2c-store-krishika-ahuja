@@ -9,7 +9,7 @@ export async function AppLayout({
   children,
   query,
 }: PropsWithChildren<{ query?: string }>) {
-  // The sidebar needs the current active catalogue for category, arrival, and collection counts.
+  // The sidebar needs the current active catalogue for genre, arrival, and age-range counts.
   const posts = await getActiveProducts();
   const user = await getCurrentUser();
 

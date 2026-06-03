@@ -8,11 +8,11 @@ export function CategoryList({ posts }: { posts: Post[] }) {
 
   // Keep the main store departments visible even when a category currently has no products.
   const ALL_CATEGORIES = [
-    "Electronics",
-    "Accessories",
-    "Audio",
-    "Office",
-    "Gaming",
+    "Mystery",
+    "Romance",
+    "Fantasy",
+    "Children",
+    "Nonfiction",
   ];
 
   // Merge live counts into the fixed department list shown in the sidebar.

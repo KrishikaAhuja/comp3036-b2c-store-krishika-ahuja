@@ -31,7 +31,7 @@ export default async function Page({
   if (!post || !post.active) {
     return (
       <AppLayout>
-        <div>Product not found</div>
+        <div>Book not found</div>
       </AppLayout>
     );
   }
@@ -82,13 +82,13 @@ export default async function Page({
 
             {/* Shows total stock watches for this post */}
             <div className="rounded-xl bg-gray-100 px-4 py-2 font-semibold text-green-700 shadow-sm dark:bg-green-900 dark:text-green-300">
-              Stock watchers: {displayPost.likes}
+              Saved by readers: {displayPost.likes}
             </div>
           </div>
 
           {/* Shows total views for this post */}
           <div className="rounded-xl bg-gray-100 px-5 py-2.5 font-semibold text-gray-700 shadow-sm dark:bg-gray-800 dark:text-gray-300">
-            Product views: {updatedPost.views}
+            Book views: {updatedPost.views}
           </div>
         </div>
 

@@ -13,22 +13,22 @@ export async function LeftMenu({ posts }: { posts: Post[] }) {
             href="/"
             className="mb-4 inline-flex text-sm font-semibold text-[var(--text-secondary)] transition hover:text-blue-600"
           >
-            &larr; All Products
+            &larr; All Books
           </Link>
           <Link
             href="/"
             className="block text-xs font-semibold uppercase tracking-[0.2em] text-blue-600 transition hover:text-blue-700"
           >
-            Store
+            Bookstore
           </Link>
           <Link
             href="/"
             className="mt-2 block text-2xl font-bold text-[var(--text)] transition hover:text-blue-600"
           >
-            Product Catalog
+            Books
           </Link>
           <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-            Browse products by category, release date, and collection.
+            Browse books by genre, arrival date, and age range.
           </p>
         </div>
 
