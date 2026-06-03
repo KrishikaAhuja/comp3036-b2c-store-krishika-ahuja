@@ -25,6 +25,7 @@ model User {
   role         UserRole @default(CUSTOMER)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  orders       Order[]
 }
 
 // Post table stores each blog post.
@@ -43,6 +44,7 @@ model Post {
   views         Int      @default(0) // number of views, starts at 0
   active        Boolean  @default(true) // controls if the post is visible or hidden
   Likes         Like[] // one post can have many likes
+  orderItems    OrderItem[]
 }
 
 // Like table stores likes for posts.
@@ -57,4 +59,38 @@ model Like {
   // makes postId + userIP the combined primary key.
   // This prevents the same user from liking the same post more than once.
   @@id([postId, userIP])
+}
+
+// Order table stores completed customer purchases.
+model Order {
+  id               Int         @id @default(autoincrement())
+  userId           Int
+  status           String      @default("PAID")
+  paymentProvider  String      @default("mock")
+  paymentReference String?
+  totalAud         Int
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items            OrderItem[]
+
+  @@index([userId])
+}
+
+// OrderItem stores each purchased book snapshot for an order.
+model OrderItem {
+  id             Int    @id @default(autoincrement())
+  orderId        Int
+  postId         Int?
+  title          String
+  urlId          String
+  imageUrl       String
+  unitPriceAud   Int
+  quantity       Int
+  lineTotalAud   Int
+  order          Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  post           Post?  @relation(fields: [postId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([postId])
 }
