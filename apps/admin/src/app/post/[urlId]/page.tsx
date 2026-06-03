@@ -15,7 +15,7 @@ export default async function Page({ // This page receives a dynamic route param
   if (!loggedIn) {
     return (
       <main className={pageStyles.main}>
-        <h1 className={pageStyles.title}>Sign in to your account</h1>
+        <h1 className={pageStyles.title}>Sign in to Bookstore Admin</h1>
 
         <form action="/api/auth" method="post" className={pageStyles.form}>
           <label htmlFor="email" className={pageStyles.label}>
@@ -55,7 +55,7 @@ export default async function Page({ // This page receives a dynamic route param
 
   // If no matching post exists, show fallback
   if (!post) {
-    return <main>Product not found</main>;
+    return <main>Book not found</main>;
   }
 
   // Send the database post into the update form

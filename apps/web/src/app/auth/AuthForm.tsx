@@ -136,8 +136,8 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-6xl items-center px-4 py-10">
-      <div className="grid w-full overflow-hidden rounded-[2rem] border border-[var(--surface-muted)] bg-[var(--surface)]/95 shadow-2xl shadow-[#2f5d50]/12 backdrop-blur-2xl dark:border-white/10 dark:bg-gray-950/70 dark:shadow-black/40 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="relative hidden overflow-hidden bg-[linear-gradient(145deg,#1f2722_0%,#2f5d50_58%,#7a3f32_100%)] p-8 text-[#fffdf8] lg:flex lg:flex-col lg:justify-between">
+      <div className="grid w-full overflow-hidden rounded-[2rem] border border-[var(--surface-muted)] bg-[var(--surface)]/95 shadow-2xl shadow-[#70412f]/12 backdrop-blur-2xl dark:border-white/10 dark:bg-gray-950/70 dark:shadow-black/40 lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="relative hidden overflow-hidden bg-[linear-gradient(145deg,#2b1d17_0%,#70412f_58%,#2f5d50_100%)] p-8 text-[#fffdf8] lg:flex lg:flex-col lg:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#ded6c8]">
               Bookstore Account
@@ -196,7 +196,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
             }}
             className={`rounded-full px-3 py-2 text-sm font-bold transition ${
               mode === "login"
-                ? "bg-[var(--accent)] text-[var(--surface)] shadow-lg shadow-[#2f5d50]/20 dark:bg-white dark:text-gray-950"
+                ? "bg-[var(--accent)] text-[var(--surface)] shadow-lg shadow-[#70412f]/20 dark:bg-white dark:text-gray-950"
                 : "text-[var(--text-secondary)] hover:text-[var(--text)]"
             }`}
           >
@@ -210,7 +210,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
             }}
             className={`rounded-full px-3 py-2 text-sm font-bold transition ${
               mode === "register"
-                ? "bg-[var(--accent)] text-[var(--surface)] shadow-lg shadow-[#2f5d50]/20 dark:bg-white dark:text-gray-950"
+                ? "bg-[var(--accent)] text-[var(--surface)] shadow-lg shadow-[#70412f]/20 dark:bg-white dark:text-gray-950"
                 : "text-[var(--text-secondary)] hover:text-[var(--text)]"
             }`}
           >
@@ -230,7 +230,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
                 type="text"
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[#2f5d50]/20 dark:border-gray-700 dark:bg-gray-900/80"
+                className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[#70412f]/20 dark:border-gray-700 dark:bg-gray-900/80"
                 autoComplete="name"
                 required
               />
@@ -247,7 +247,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[#2f5d50]/20 dark:border-gray-700 dark:bg-gray-900/80"
+              className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[#70412f]/20 dark:border-gray-700 dark:bg-gray-900/80"
               autoComplete="email"
               required
             />
@@ -263,7 +263,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[#2f5d50]/20 dark:border-gray-700 dark:bg-gray-900/80"
+              className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[#70412f]/20 dark:border-gray-700 dark:bg-gray-900/80"
               minLength={mode === "register" ? MIN_PASSWORD_LENGTH : undefined}
               autoComplete={
                 mode === "register" ? "new-password" : "current-password"
@@ -288,7 +288,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
                 type="password"
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
-                className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[#2f5d50]/20 dark:border-gray-700 dark:bg-gray-900/80"
+                className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[#70412f]/20 dark:border-gray-700 dark:bg-gray-900/80"
                 autoComplete="new-password"
                 minLength={MIN_PASSWORD_LENGTH}
                 required
@@ -305,7 +305,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
           <button
             type="submit"
             disabled={pending}
-            className="w-full rounded-2xl bg-[var(--accent)] px-4 py-3 text-sm font-black text-[var(--surface)] shadow-xl shadow-[#2f5d50]/25 transition hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
+            className="w-full rounded-2xl bg-[var(--accent)] px-4 py-3 text-sm font-black text-[var(--surface)] shadow-xl shadow-[#70412f]/25 transition hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
           >
             {pending
               ? "Please wait"

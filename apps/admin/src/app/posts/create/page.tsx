@@ -8,7 +8,7 @@ export default async function Page() {
   if (!loggedIn) {
     return (
       <main className={pageStyles.main}>
-        <h1 className={pageStyles.title}>Sign in to your account</h1>
+        <h1 className={pageStyles.title}>Sign in to Bookstore Admin</h1>
 
         <form
           action="/api/login"

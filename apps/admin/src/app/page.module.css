@@ -1,6 +1,9 @@
 .main {
   min-height: 100vh;
-  background: linear-gradient(135deg, #eef2ff, #f3f4f6);
+  background:
+    linear-gradient(90deg, rgba(112, 65, 47, 0.07) 1px, transparent 1px),
+    linear-gradient(#f6f3ed, #eeebe4);
+  background-size: 36px 100%, auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11,12 +14,12 @@
 .main form {
   width: 100%;
   max-width: 420px;
-  background: white;
+  background: var(--surface);
   padding: 32px;
   border-radius: 20px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--surface-muted);
 
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.1);
+  box-shadow: 0 20px 50px rgba(112, 65, 47, 0.12);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -28,19 +31,19 @@
   margin: 0 0 12px;
   font-size: 1.8rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text);
   text-align: center;
 }
 
 .main label {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--text-secondary);
 }
 
 .main input {
   width: 100%;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--surface-muted);
   border-radius: 12px;
   padding: 12px 14px;
   font-size: 1rem;
@@ -48,8 +51,8 @@
 }
 
 .main input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(112, 65, 47, 0.16);
 }
 
 .main button {
@@ -59,15 +62,15 @@
   padding: 12px;
   font-size: 1rem;
   font-weight: 600;
-  background: #2563eb;
-  color: white;
+  background: var(--accent);
+  color: var(--surface);
   cursor: pointer;
 
-  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 6px 14px rgba(112, 65, 47, 0.25);
 }
 
 .main button:hover {
-  background: #1d4ed8;
+  background: var(--accent-hover);
 }
 
 @media (max-width: 640px) {

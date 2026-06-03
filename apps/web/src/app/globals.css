@@ -13,11 +13,11 @@
   --textHover: #274f43;
   --text-secondary: #5f675f;
   --text-secondaryHover: #48534c;
-  --accent: #2f5d50;
-  --accent-hover: #24483e;
-  --accent-secondary: #7a3f32;
-  --wsu: #2f5d50;
-  --wsu-light: #6b8f7c;
+  --accent: #70412f;
+  --accent-hover: #563023;
+  --accent-secondary: #2f5d50;
+  --wsu: #70412f;
+  --wsu-light: #9a6a4f;
 }
 
 html[data-theme="dark"] {
@@ -29,9 +29,9 @@ html[data-theme="dark"] {
   --textHover: theme("colors.gray.300");
   --text-secondary: theme("colors.gray.400");
   --text-secondaryHover: theme("colors.gray.500");
-  --accent: #8fc7ad;
-  --accent-hover: #b7dec9;
-  --accent-secondary: #d7a08e;
+  --accent: #d2a47b;
+  --accent-hover: #efc39c;
+  --accent-secondary: #8fc7ad;
 }
 
 html {

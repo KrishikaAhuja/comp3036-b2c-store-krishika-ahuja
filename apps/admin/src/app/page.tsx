@@ -35,7 +35,7 @@ export default async function Home({ searchParams }: HomeProps) {
       <main className={styles.main}>
         {/* This form sends the password to the /api/auth route using POST. */}
         <form action="/api/auth" method="post">
-          <h1>Sign in to your account</h1>
+          <h1>Sign in to Bookstore Admin</h1>
 
           {/* Show this message only when the login failed. */}
           {showError && (

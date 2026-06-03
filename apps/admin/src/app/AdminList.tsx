@@ -148,7 +148,7 @@ export default function AdminList({ posts }: { posts: any[] }) {
 
         {/* page header */}
         <div className={styles.header}>
-          <h1 className={styles.title}>Product Management</h1>
+          <h1 className={styles.title}>Book Management</h1>
 
           <div className={styles.headerActions}>
             {/* logout button → deletes auth cookie and redirects */}
@@ -160,7 +160,7 @@ export default function AdminList({ posts }: { posts: any[] }) {
 
             {/* navigate to create post page */}
             <a href="/posts/create" className={styles.createButton}>
-              Create Product
+              Create Book
             </a>
           </div>
         </div>
@@ -203,28 +203,28 @@ export default function AdminList({ posts }: { posts: any[] }) {
             {/* content search */}
             <div className={styles.fieldGroup}>
               <label htmlFor="content" className={styles.label}>
-                Search product
+                Search book
               </label>
               <input
                 id="content"
                 value={content}
                 onChange={(e) => setContent(e.target.value)} // updates state
                 className={styles.input}
-                placeholder="Search name, description, details..."
+                placeholder="Search title, description, details..."
               />
             </div>
 
             {/* tag filter */}
             <div className={styles.fieldGroup}>
               <label htmlFor="tag" className={styles.label}>
-                Collection
+                Age range
               </label>
               <input
                 id="tag"
                 value={tag}
                 onChange={(e) => setTag(e.target.value)}
                 className={styles.input}
-                placeholder="Enter a collection"
+                placeholder="Enter an age range"
               />
             </div>
 
@@ -305,13 +305,13 @@ export default function AdminList({ posts }: { posts: any[] }) {
         <section className={styles.productsPanel}>
         {/* number of results */}
         <p className={styles.resultsText}>
-          Showing {filtered.length} product{filtered.length === 1 ? "" : "s"}
+          Showing {filtered.length} book{filtered.length === 1 ? "" : "s"}
         </p>
 
         {/* if no posts match */}
         {filtered.length === 0 ? (
           <div className={styles.emptyState}>
-            No products matched your filters.
+            No books matched your filters.
           </div>
         ) : (
           <div className={styles.postsGrid}>
@@ -351,18 +351,6 @@ export default function AdminList({ posts }: { posts: any[] }) {
                     <a href={`/post/${p.urlId}`} className={styles.editButton}>
                       Edit
                     </a>
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        await fetch(`/api/posts/${p.id}`, {
-                          method: "PATCH",
-                        });
-                        window.location.reload();
-                      }}
-                      className={styles.visibilityButton}
-                    >
-                      {p.active ? "Hide from Store" : "Show in Store"}
-                    </button>
                     <button
                       type="button"
                       onClick={async () => {

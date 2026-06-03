@@ -5,23 +5,33 @@
 @config "../../tailwind.config.ts";
 
 :root {
-  --background: white;
-  --foreground: #0a0a0a;
-  --text: theme("colors.gray.900");
-  --textHover: theme("colors.gray.700");
-  --text-secondary: theme("colors.gray.600");
-  --text-secondaryHover: theme("colors.gray.400");
-  --wsu: #a31631;
-  --wsu-light: #853846;
+  --background: #f6f3ed;
+  --surface: #fffdf8;
+  --surface-muted: #ded6c8;
+  --foreground: #1f2722;
+  --text: #1f2722;
+  --textHover: #70412f;
+  --text-secondary: #5f675f;
+  --text-secondaryHover: #48534c;
+  --accent: #70412f;
+  --accent-hover: #563023;
+  --accent-secondary: #2f5d50;
+  --wsu: #70412f;
+  --wsu-light: #9a6a4f;
 }
 
 html[data-theme="dark"] {
   --background: theme("colors.gray.900");
+  --surface: theme("colors.gray.800");
+  --surface-muted: theme("colors.gray.700");
   --foreground: #ededed;
   --text: theme("colors.gray.50");
   --textHover: theme("colors.gray.300");
   --text-secondary: theme("colors.gray.400");
   --text-secondaryHover: theme("colors.gray.500");
+  --accent: #d2a47b;
+  --accent-hover: #efc39c;
+  --accent-secondary: #8fc7ad;
 }
 
 html {

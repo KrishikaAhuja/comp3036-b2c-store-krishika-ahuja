@@ -30,7 +30,7 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
   function validate() { // Checks form before saving
     const newErrors: Record<string, string> = {}; // Stores errors
 
-    if (!title.trim()) newErrors.title = "Product name is required";
+    if (!title.trim()) newErrors.title = "Book title is required";
     if (!category.trim()) newErrors.category = "Category is required"; // Category required
 
     if (!description.trim()) { // Description required
@@ -40,8 +40,8 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
         "Description is too long. Maximum is 200 characters";
     }
 
-    if (!content.trim()) newErrors.content = "Product details are required";
-    if (!tags.trim()) newErrors.tags = "At least one collection is required";
+    if (!content.trim()) newErrors.content = "Book details are required";
+    if (!tags.trim()) newErrors.tags = "At least one age range is required";
 
     const parsedPrice = Number(priceAud);
     if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
@@ -97,7 +97,7 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
       return;
     }
 
-    setSuccess("Product saved successfully"); // Show success message
+    setSuccess("Book saved successfully"); // Show success message
     setSaveError(""); // Clear error message
   }
 
@@ -127,14 +127,14 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
         <div className={styles.card}>
           <div className={styles.headerRow}>
             <h1 className={styles.title}>
-              {isNewPost ? "Create Product" : "Update Product"}
+              {isNewPost ? "Create Book" : "Update Book"}
             </h1>
           </div>
 
           <div className={styles.form}>
             <div className={styles.fieldGroup}>
               <label htmlFor="title" className={styles.label}>
-                Product Name
+                Book Title
               </label>
               <input
                 id="title"
@@ -179,7 +179,7 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
 
             <div className={styles.fieldGroup}>
               <label htmlFor="content" className={styles.label}>
-                Product Details
+                Book Details
               </label>
 
               {!showPreview ? (
@@ -213,7 +213,7 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
 
             <div className={styles.fieldGroup}>
               <label htmlFor="tags" className={styles.label}>
-                Collections
+                Age Range
               </label>
               <input
                 id="tags"
