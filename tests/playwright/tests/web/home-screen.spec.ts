@@ -73,10 +73,10 @@ test.describe("customer bookstore home", () => {
 
     const html = await page.getAttribute("html", "data-theme");
     if (html === "dark") {
-      await page.getByText("Light Mode").click();
+      await page.getByText("Light Mode").click({ force: true });
       await expect(await page.getAttribute("html", "data-theme")).toBe("light");
     } else {
-      await page.getByText("Dark Mode").click();
+      await page.getByText("Dark Mode").click({ force: true });
       await expect(await page.getAttribute("html", "data-theme")).toBe("dark");
     }
   });

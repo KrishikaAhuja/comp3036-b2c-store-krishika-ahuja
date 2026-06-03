@@ -35,6 +35,9 @@ export async function seed() {
     // delete all existing likes first (to avoid foreign key issues)
     await tx.like.deleteMany();
 
+    await tx.$executeRawUnsafe('DELETE FROM "OrderItem"');
+    await tx.$executeRawUnsafe('DELETE FROM "Order"');
+
     // delete all existing posts (clean database)
     await tx.post.deleteMany();
 
