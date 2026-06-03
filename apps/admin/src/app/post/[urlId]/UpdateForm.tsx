@@ -9,7 +9,6 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
   const [title, setTitle] = useState(post.title); // Current title value
   const [description, setDescription] = useState(post.description); // Current description value
   const [content, setContent] = useState(post.content); // Current markdown content
-  const [tags, setTags] = useState(post.tags); // Current tags
   const [imageUrl, setImageUrl] = useState(post.imageUrl); // Current image URL
   const [category, setCategory] = useState(post.category); // Current category
   const [priceAud, setPriceAud] = useState(String(post.priceAud ?? 0));
@@ -41,8 +40,6 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
     }
 
     if (!content.trim()) newErrors.content = "Book details are required";
-    if (!tags.trim()) newErrors.tags = "At least one age range is required";
-
     const parsedPrice = Number(priceAud);
     if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
       newErrors.priceAud = "Price must be 0 or more";
@@ -83,7 +80,7 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
         title,
         description,
         content,
-        tags,
+        tags: "",
         imageUrl,
         category,
         priceAud: Number(priceAud),
@@ -209,19 +206,6 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
               >
                 {showPreview ? "Close Preview" : "Preview"}
               </button>
-            </div>
-
-            <div className={styles.fieldGroup}>
-              <label htmlFor="tags" className={styles.label}>
-                Age Range
-              </label>
-              <input
-                id="tags"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                className={styles.input}
-              />
-              {errors.tags && <p className={styles.error}>{errors.tags}</p>}
             </div>
 
             <div className={styles.fieldGroup}>

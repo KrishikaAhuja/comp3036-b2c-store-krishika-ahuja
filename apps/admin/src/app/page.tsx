@@ -71,6 +71,19 @@ export default async function Home({ searchParams }: HomeProps) {
     },
   });
 
+  const customerCount = await client.db.user.count({
+    where: {
+      role: "CUSTOMER",
+    },
+  });
+
   // Pass the database posts into AdminList so it can display, filter, and manage them.
-  return <AdminList posts={dbPosts} />;
+  return (
+    <AdminList
+      posts={dbPosts}
+      stats={{
+        customerCount,
+      }}
+    />
+  );
 }

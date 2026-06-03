@@ -32,26 +32,14 @@ export async function GET(req: NextRequest) {
 
   // Read filter values from the URL query string
   const content = searchParams.get("content") || "";
-  const tag = searchParams.get("tag") || "";
   const visibility = searchParams.get("visibility") || "";
 
   // Fetch only matching posts from the database
   const posts = await client.db.post.findMany({
     where: {
       AND: [
-        // Filter by title, description, or content
-        content
-          ? {
-              OR: [
-                { title: { contains: content } },
-                { description: { contains: content } },
-                { content: { contains: content } },
-              ],
-            }
-          : {},
-
-        // Filter by tag
-        tag ? { tags: { contains: tag } } : {},
+        // Filter by title
+        content ? { title: { contains: content } } : {},
 
         // Filter by active/inactive status
         visibility === "active"
@@ -88,7 +76,7 @@ export async function PUT(req: NextRequest) {
       urlId: makeUrlId(body.title),
       description: body.description,
       content: body.content,
-      tags: body.tags,
+      tags: "",
       imageUrl: body.imageUrl,
       category: body.category,
       priceAud: Math.max(0, Math.floor(Number(body.priceAud) || 0)),
@@ -117,7 +105,7 @@ export async function POST(req: NextRequest) {
       urlId: makeUrlId(body.title),
       description: body.description,
       content: body.content,
-      tags: body.tags,
+      tags: "",
       imageUrl: body.imageUrl,
       category: body.category,
       priceAud: Math.max(0, Math.floor(Number(body.priceAud) || 0)),
