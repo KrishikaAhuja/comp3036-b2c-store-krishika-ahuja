@@ -1,7 +1,6 @@
 import { AppLayout } from "@/components/Layout/AppLayout"; // imports the main page layout
 import { BlogDetail } from "@/components/Blog/Detail"; // imports the component that shows full product details
 import { client } from "@repo/db/client"; // imports the database client
-import LikeButton from "./LikeButton"; // imports the like button component
 import { cookies } from "next/headers"; // used to read cookies from the request
 
 // Makes this page always load fresh data instead of using cached data.
@@ -29,7 +28,7 @@ export default async function Page({
   if (!post || !post.active) {
     return (
       <AppLayout>
-        <div>Product not found</div>
+        <div>Book not found</div>
       </AppLayout>
     );
   }
@@ -61,40 +60,10 @@ export default async function Page({
     likes: updatedPost.Likes.length,
   };
 
-  // Checks if the current test user has already added this product to their stock-watch list.
-  // "test-ip" is being used as the user identifier in this assignment version.
-  const isLiked = updatedPost.Likes.some(
-    (like) => like.userIP === "test-ip"
-  );
-
-  // Shows the product detail page with stock-watch count, views count, and product content.
+  // Shows the book detail page with cover, metadata, and markdown content.
   return (
     <AppLayout>
-      <div className="space-y-6">
-        {/* Top row showing stock watch button, watch count, and views count */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Like button receives the post id and whether it is already being watched */}
-            <LikeButton
-              postId={updatedPost.id}
-              initialLiked={isLiked}
-            />
-
-            {/* Shows total stock watches for this post */}
-            <div className="rounded-xl bg-gray-100 px-4 py-2 font-semibold text-green-700 shadow-sm dark:bg-green-900 dark:text-green-300">
-              Stock watchers: {displayPost.likes}
-            </div>
-          </div>
-
-          {/* Shows total views for this post */}
-          <div className="rounded-xl bg-gray-100 px-5 py-2.5 font-semibold text-gray-700 shadow-sm dark:bg-gray-800 dark:text-gray-300">
-            Product views: {updatedPost.views}
-          </div>
-        </div>
-
-        {/* Shows the product title, image, description, and content */}
-        <BlogDetail post={displayPost} />
-      </div>
+      <BlogDetail post={displayPost} />
     </AppLayout>
   );
 }

@@ -8,13 +8,24 @@ export default async function Page() {
   if (!loggedIn) {
     return (
       <main className={pageStyles.main}>
-        <h1 className={pageStyles.title}>Sign in to your account</h1>
+        <h1 className={pageStyles.title}>Bookstore Admin Sign In</h1>
 
         <form
           action="/api/login"
           method="post"
           className={pageStyles.form}
         >
+          <label htmlFor="email" className={pageStyles.label}>
+            Email
+          </label>
+
+          <input
+            id="email"
+            name="email"
+            type="email"
+            className={pageStyles.input}
+          />
+
           <label htmlFor="password" className={pageStyles.label}>
             Password
           </label>

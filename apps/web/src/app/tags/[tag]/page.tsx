@@ -12,14 +12,14 @@ export default async function Page({
   const { tag } = await params;
   const posts = await getActiveProducts();
 
-  // Normalize route text and stored tags so "Desk Setup" matches /tags/desk-setup.
-  const normalizedTag = tag.toLowerCase().replaceAll("-", "");
+  // Normalize route text and stored age ranges so "Ages 12+" matches /tags/ages-12.
+  const normalizedTag = tag.toLowerCase().replace(/[^a-z0-9]/g, "");
 
   const filteredPosts = posts.filter((post) => {
     const normalizedPostTags = post.tags
       .toLowerCase()
       .split(",")
-      .map((t) => t.trim().replaceAll("-", "").replaceAll(" ", ""));
+      .map((t) => t.trim().replace(/[^a-z0-9]/g, ""));
 
     return normalizedPostTags.includes(normalizedTag);
   });
@@ -27,7 +27,7 @@ export default async function Page({
   return (
     <AppLayout>
       {filteredPosts.length === 0 ? (
-        <div>0 Products</div>
+        <div>0 Books</div>
       ) : (
         <Main posts={filteredPosts} />
       )}

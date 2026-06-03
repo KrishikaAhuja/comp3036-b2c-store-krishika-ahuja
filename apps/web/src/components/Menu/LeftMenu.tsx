@@ -7,28 +7,28 @@ import Link from "next/link";
 export async function LeftMenu({ posts }: { posts: Post[] }) {
   return (
     <aside className="w-full lg:w-72 lg:flex-shrink-0">
-      <div className="rounded-2xl border border-gray-200 bg-[var(--background)] p-6 shadow-sm dark:border-gray-700">
+      <div className="rounded-2xl border border-[var(--surface-muted)] bg-[var(--surface)] p-6 shadow-sm dark:border-gray-700">
         <div className="mb-8">
           <Link
             href="/"
-            className="mb-4 inline-flex text-sm font-semibold text-[var(--text-secondary)] transition hover:text-blue-600"
+            className="mb-4 inline-flex text-sm font-semibold text-[var(--text-secondary)] transition hover:text-[var(--accent)]"
           >
-            &larr; All Products
+            &larr; All Books
           </Link>
           <Link
             href="/"
-            className="block text-xs font-semibold uppercase tracking-[0.2em] text-blue-600 transition hover:text-blue-700"
+            className="block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent)] transition hover:text-[var(--accent-hover)]"
           >
-            Store
+            Bookstore
           </Link>
           <Link
             href="/"
-            className="mt-2 block text-2xl font-bold text-[var(--text)] transition hover:text-blue-600"
+            className="mt-2 block text-2xl font-bold text-[var(--text)] transition hover:text-[var(--accent)]"
           >
-            Product Catalog
+            Books
           </Link>
           <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-            Browse products by category, release date, and collection.
+            Browse books by genre, arrival date, and age range.
           </p>
         </div>
 
@@ -47,7 +47,7 @@ export async function LeftMenu({ posts }: { posts: Post[] }) {
             <li>
               <Link
                 href="http://localhost:3002"
-                className="block rounded-xl bg-gray-50 px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700"
+                className="block rounded-xl bg-[var(--background)] px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition hover:bg-[var(--surface-muted)] dark:bg-gray-800 dark:hover:bg-gray-700"
               >
                 Admin
               </Link>

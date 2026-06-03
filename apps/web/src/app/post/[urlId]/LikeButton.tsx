@@ -2,13 +2,16 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { getCustomerLoginUrl } from "../../../utils/customerAuthRedirect";
 
 export default function LikeButton({
   postId,
   initialLiked,
+  isAuthenticated,
 }: {
   postId: number;
   initialLiked: boolean;
+  isAuthenticated: boolean;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -17,6 +20,11 @@ export default function LikeButton({
   async function handleLike() {
     // Prevent double-clicks from sending duplicate watch/unwatch requests.
     if (loading) return;
+
+    if (!isAuthenticated) {
+      window.location.assign(getCustomerLoginUrl(window.location.pathname));
+      return;
+    }
 
     setLoading(true);
 
@@ -43,7 +51,7 @@ export default function LikeButton({
         liked ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"
       } ${loading ? "cursor-not-allowed opacity-60" : ""}`}
     >
-      {loading ? "Updating..." : liked ? "Watching stock" : "Watch stock"}
+      {loading ? "Updating..." : liked ? "Saved read" : "Save this read"}
     </button>
   );
 }

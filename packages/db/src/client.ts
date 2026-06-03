@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client"; // imports Prisma client to interact with database
-import { env } from "@repo/env/web"; // imports environment variables (like DATABASE_URL)
 
 // extend global object so we can store prisma instance (prevents multiple connections)
 declare global {
@@ -15,12 +14,15 @@ export const createClient = () => {
     return globalThis.prisma;
   }
 
-  // get database URL from env file
-  const URL = env.DATABASE_URL;
+  const databaseUrl = process.env.DATABASE_URL;
+
+  if (!databaseUrl) {
+    throw new Error("DATABASE_URL is required");
+  }
 
   // create new Prisma client
   const prisma = new PrismaClient({
-    datasourceUrl: URL, // connect to database using URL
+    datasourceUrl: databaseUrl, // connect to database using URL
   });
 
   // store it globally so next time we reuse it

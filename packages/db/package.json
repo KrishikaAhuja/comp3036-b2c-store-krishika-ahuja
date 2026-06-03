@@ -31,7 +31,8 @@
     }
   },
   "dependencies": {
-    "@repo/env": "workspace:*"
+    "@repo/env": "workspace:*",
+    "bcryptjs": "^3.0.3"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

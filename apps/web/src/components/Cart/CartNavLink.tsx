@@ -27,9 +27,9 @@ export function CartNavLink() {
   return (
     <Link
       href="/cart"
-      className="inline-flex h-11 items-center justify-center rounded-xl border border-gray-200 px-4 text-sm font-semibold text-[var(--text)] transition hover:border-blue-500 hover:text-blue-600 dark:border-gray-700"
+      className="inline-flex h-11 items-center justify-center rounded-xl border border-[var(--surface-muted)] px-4 text-sm font-semibold text-[var(--text)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] dark:border-gray-700"
     >
-      Cart ({count})
+      Book Bag ({count})
     </Link>
   );
 }

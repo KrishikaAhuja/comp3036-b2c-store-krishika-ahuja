@@ -35,19 +35,21 @@ export default async function Home({ searchParams }: HomeProps) {
       <main className={styles.main}>
         {/* This form sends the password to the /api/auth route using POST. */}
         <form action="/api/auth" method="post">
-          <h1>Sign in to your account</h1>
+          <h1>Bookstore Admin Sign In</h1>
 
           {/* Show this message only when the login failed. */}
           {showError && (
             <p className={styles.errorMessage}>
-              Incorrect password. Please try again.
+              Incorrect email or password. Please try again.
             </p>
           )}
 
-          {/* This label is connected to the password input using htmlFor and id. */}
+          <label htmlFor="email">Email</label>
+
+          <input id="email" name="email" type="email" />
+
           <label htmlFor="password">Password</label>
 
-          {/* The name must be "password" because the backend reads this field from the form data. */}
           <input id="password" name="password" type="password" />
 
           {/* This button submits the login form. */}
@@ -69,6 +71,19 @@ export default async function Home({ searchParams }: HomeProps) {
     },
   });
 
+  const customerCount = await client.db.user.count({
+    where: {
+      role: "CUSTOMER",
+    },
+  });
+
   // Pass the database posts into AdminList so it can display, filter, and manage them.
-  return <AdminList posts={dbPosts} />;
+  return (
+    <AdminList
+      posts={dbPosts}
+      stats={{
+        customerCount,
+      }}
+    />
+  );
 }

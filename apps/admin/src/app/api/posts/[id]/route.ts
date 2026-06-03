@@ -1,11 +1,27 @@
 import { client } from "@repo/db/client"; // Prisma client wrapper used to access the database
+import { requireAdmin } from "../../../../utils/auth";
 import { NextRequest, NextResponse } from "next/server";
+
+async function getUnauthorizedResponse() {
+  try {
+    await requireAdmin();
+    return null;
+  } catch {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+}
 
 // Handles activate/deactivate for one post
 export async function PATCH(
   req: NextRequest,
   context: { params: Promise<{ id: string }> },
 ) {
+  const unauthorized = await getUnauthorizedResponse();
+
+  if (unauthorized) {
+    return unauthorized;
+  }
+
   // Get post id from the route, for example /api/posts/1
   const { id } = await context.params;
   const postId = Number(id);
@@ -36,6 +52,12 @@ export async function DELETE(
   req: NextRequest,
   context: { params: Promise<{ id: string }> },
 ) {
+  const unauthorized = await getUnauthorizedResponse();
+
+  if (unauthorized) {
+    return unauthorized;
+  }
+
   const { id } = await context.params;
   const postId = Number(id);
 

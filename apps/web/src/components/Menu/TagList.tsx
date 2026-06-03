@@ -10,22 +10,22 @@ export async function TagList({
   selectedTag?: string;
   posts: Post[];
 }) {
-  // Product tags are presented to customers as collections in the sidebar.
+  // Tags are used as customer-facing age ranges in the sidebar.
   const postTags = (await tags(posts)) as {
     name: string;
     count: number;
   }[];
 
   return (
-    <LinkList title="Collections">
+    <LinkList title="Age Range">
       {postTags.map((item) => (
         <SummaryItem
           key={item.name}
           name={item.name}
           count={item.count}
           isSelected={selectedTag === item.name}
-          link={`/tags/${item.name.toLowerCase().replaceAll(" ", "-")}`}
-          title={`Collection / ${item.name}`}
+          link={`/tags/${item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`}
+          title={`Age Range / ${item.name}`}
         />
       ))}
     </LinkList>

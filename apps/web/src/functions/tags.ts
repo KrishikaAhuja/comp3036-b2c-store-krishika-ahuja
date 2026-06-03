@@ -1,7 +1,7 @@
 export async function tags(posts: { tags: string; active: boolean }[]) {
   const tagCount: Record<string, number> = {};
 
-  // Tags are displayed as customer-facing collections, excluding hidden products.
+  // Tags are displayed as customer-facing age ranges, excluding hidden books.
   posts
     .filter((post) => post.active)
     .forEach((post) => {

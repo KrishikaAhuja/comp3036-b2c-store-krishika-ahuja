@@ -1,4 +1,5 @@
 import { client } from "@repo/db/client"; // Prisma client wrapper used to access the database
+import { requireAdmin } from "../../../utils/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 // Creates a URL-safe id from the title
@@ -10,32 +11,35 @@ function makeUrlId(title: string) {
     .replace(/^-|-$/g, "");
 }
 
+async function getUnauthorizedResponse() {
+  try {
+    await requireAdmin();
+    return null;
+  } catch {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+}
+
 // Gets posts from database with optional server-side filters
 export async function GET(req: NextRequest) {
+  const unauthorized = await getUnauthorizedResponse();
+
+  if (unauthorized) {
+    return unauthorized;
+  }
+
   const { searchParams } = new URL(req.url);
 
   // Read filter values from the URL query string
   const content = searchParams.get("content") || "";
-  const tag = searchParams.get("tag") || "";
   const visibility = searchParams.get("visibility") || "";
 
   // Fetch only matching posts from the database
   const posts = await client.db.post.findMany({
     where: {
       AND: [
-        // Filter by title, description, or content
-        content
-          ? {
-              OR: [
-                { title: { contains: content } },
-                { description: { contains: content } },
-                { content: { contains: content } },
-              ],
-            }
-          : {},
-
-        // Filter by tag
-        tag ? { tags: { contains: tag } } : {},
+        // Filter by title
+        content ? { title: { contains: content } } : {},
 
         // Filter by active/inactive status
         visibility === "active"
@@ -57,6 +61,12 @@ export async function GET(req: NextRequest) {
 
 // Updates an existing post
 export async function PUT(req: NextRequest) {
+  const unauthorized = await getUnauthorizedResponse();
+
+  if (unauthorized) {
+    return unauthorized;
+  }
+
   const body = await req.json();
 
   const updated = await client.db.post.update({
@@ -66,13 +76,12 @@ export async function PUT(req: NextRequest) {
       urlId: makeUrlId(body.title),
       description: body.description,
       content: body.content,
-      tags: body.tags,
+      tags: "",
       imageUrl: body.imageUrl,
       category: body.category,
       priceAud: Math.max(0, Math.floor(Number(body.priceAud) || 0)),
       stockQuantity: Math.max(0, Math.floor(Number(body.stockQuantity) || 0)),
       active: Boolean(body.active),
-      date: new Date(),
     },
   });
 
@@ -81,6 +90,12 @@ export async function PUT(req: NextRequest) {
 
 // Creates a new post
 export async function POST(req: NextRequest) {
+  const unauthorized = await getUnauthorizedResponse();
+
+  if (unauthorized) {
+    return unauthorized;
+  }
+
   const body = await req.json();
 
   const created = await client.db.post.create({
@@ -89,7 +104,7 @@ export async function POST(req: NextRequest) {
       urlId: makeUrlId(body.title),
       description: body.description,
       content: body.content,
-      tags: body.tags,
+      tags: "",
       imageUrl: body.imageUrl,
       category: body.category,
       priceAud: Math.max(0, Math.floor(Number(body.priceAud) || 0)),
@@ -106,6 +121,12 @@ export async function PATCH(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
+  const unauthorized = await getUnauthorizedResponse();
+
+  if (unauthorized) {
+    return unauthorized;
+  }
+
   const { id } = await context.params;
   const postId = Number(id);
 
