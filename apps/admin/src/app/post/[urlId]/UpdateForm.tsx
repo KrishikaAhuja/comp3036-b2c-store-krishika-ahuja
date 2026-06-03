@@ -1,11 +1,13 @@
 "use client"; // Client component, so hooks and button clicks work
 
 import Link from "next/link"; // Link back to admin home
+import { useRouter } from "next/navigation";
 import { marked } from "marked"; // Converts markdown to HTML for preview
 import { useRef, useState } from "react"; // React hooks
 import styles from "./update-form.module.css"; // CSS module styles
 
 export default function UpdateForm({ post }: { post: any }) { // Receives one post object
+  const router = useRouter();
   const [title, setTitle] = useState(post.title); // Current title value
   const [description, setDescription] = useState(post.description); // Current description value
   const [content, setContent] = useState(post.content); // Current markdown content
@@ -15,7 +17,7 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
   const [stockQuantity, setStockQuantity] = useState(
     String(post.stockQuantity ?? 0),
   );
-  const [active, setActive] = useState(Boolean(post.active));
+  const [active] = useState(Boolean(post.active));
   const [success, setSuccess] = useState(""); // Success message after saving
 
   const [errors, setErrors] = useState<Record<string, string>>({}); // Field validation errors
@@ -96,6 +98,7 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
 
     setSuccess("Book saved successfully"); // Show success message
     setSaveError(""); // Clear error message
+    router.back();
   }
 
   function handleTogglePreview() { // Switches between edit and preview
@@ -121,44 +124,69 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
   return (
     <main className={styles.main}>
       <div className={styles.container}>
-        <div className={styles.card}>
-          <div className={styles.headerRow}>
+        <div className={styles.pageHeader}>
+          <div>
+            <p className={styles.eyebrow}>Inventory editor</p>
             <h1 className={styles.title}>
               {isNewPost ? "Create Book" : "Update Book"}
             </h1>
+            <p className={styles.subtitle}>
+              {isNewPost
+                ? "Add a new title to the bookstore catalog."
+                : "Update catalog details, cover art, pricing, and stock."}
+            </p>
           </div>
+          <Link href="/" className={styles.exitButton}>
+            Back to Dashboard
+          </Link>
+        </div>
 
-          <div className={styles.form}>
-            <div className={styles.fieldGroup}>
-              <label htmlFor="title" className={styles.label}>
-                Book Title
-              </label>
-              <input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className={styles.input}
-              />
-              {errors.title && <p className={styles.error}>{errors.title}</p>}
+        <div className={styles.editorGrid}>
+          <section className={styles.card}>
+            <div className={styles.sectionHeader}>
+              <div>
+                <p className={styles.eyebrow}>Book record</p>
+                <h2>Catalog Details</h2>
+              </div>
+              <span className={active ? styles.activeBadge : styles.inactiveBadge}>
+                {active ? "Active in store" : "Draft"}
+              </span>
             </div>
 
-            <div className={styles.fieldGroup}>
-              <label htmlFor="category" className={styles.label}>
-                Category
-              </label>
-              <input
-                id="category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className={styles.input}
-              />
-              {errors.category && <p className={styles.error}>{errors.category}</p>}
+            <div className={styles.formGrid}>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="title" className={styles.label}>
+                  Book Title
+                </label>
+                <input
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className={styles.input}
+                  placeholder="e.g. The Midnight Library"
+                />
+                {errors.title && <p className={styles.error}>{errors.title}</p>}
+              </div>
+
+              <div className={styles.fieldGroup}>
+                <label htmlFor="category" className={styles.label}>
+                  Genre
+                </label>
+                <input
+                  id="category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className={styles.input}
+                  placeholder="Mystery, Romance, Fantasy..."
+                />
+                {errors.category && <p className={styles.error}>{errors.category}</p>}
+              </div>
             </div>
 
             <div className={styles.fieldGroup}>
               <div className={styles.labelRow}>
                 <label htmlFor="description" className={styles.label}>
-                  Description
+                  Short Description
                 </label>
                 <span className={styles.charCount}>{description.length}/200</span>
               </div>
@@ -168,6 +196,7 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className={styles.textarea}
+                placeholder="A short customer-facing summary."
               />
               {errors.description && (
                 <p className={styles.error}>{errors.description}</p>
@@ -186,6 +215,7 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   className={styles.textareaLarge}
+                  placeholder="Add author, edition notes, and book details."
                 />
               ) : (
                 <div
@@ -207,10 +237,57 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
                 {showPreview ? "Close Preview" : "Preview"}
               </button>
             </div>
+          </section>
 
+          <aside className={styles.sidePanel}>
+            <section className={styles.card}>
+              <div className={styles.sectionHeader}>
+                <div>
+                  <p className={styles.eyebrow}>Cover</p>
+                  <h2>Book Cover</h2>
+                </div>
+              </div>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="imageUrl" className={styles.label}>
+                  Image URL
+                </label>
+                <input
+                  id="imageUrl"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  className={styles.input}
+                  placeholder="https://..."
+                />
+                {errors.imageUrl && (
+                  <p className={styles.error}>{errors.imageUrl}</p>
+                )}
+
+                {imageUrl.trim() ? (
+                  <div className={styles.coverFrame}>
+                    <img
+                      data-test-id="image-preview"
+                      src={imageUrl}
+                      alt="preview"
+                      className={styles.imagePreview}
+                    />
+                  </div>
+                ) : (
+                  <div className={styles.imagePlaceholder}>No cover preview</div>
+                )}
+              </div>
+            </section>
+
+            <section className={styles.card}>
+              <div className={styles.sectionHeader}>
+                <div>
+                  <p className={styles.eyebrow}>Selling</p>
+                  <h2>Pricing & Stock</h2>
+                </div>
+              </div>
+              <div className={styles.formGridCompact}>
             <div className={styles.fieldGroup}>
               <label htmlFor="priceAud" className={styles.label}>
-                Price
+                Price AUD
               </label>
               <input
                 id="priceAud"
@@ -243,43 +320,9 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
                 <p className={styles.error}>{errors.stockQuantity}</p>
               )}
             </div>
+              </div>
 
-            <label className={styles.checkboxRow}>
-              <input
-                type="checkbox"
-                checked={active}
-                onChange={(e) => setActive(e.target.checked)}
-              />
-              Active in store
-            </label>
-
-            <div className={styles.fieldGroup}>
-              <label htmlFor="imageUrl" className={styles.label}>
-                Image URL
-              </label>
-              <input
-                id="imageUrl"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                className={styles.input}
-              />
-              {errors.imageUrl && (
-                <p className={styles.error}>{errors.imageUrl}</p>
-              )}
-
-              {imageUrl.trim() ? (
-                <img
-                  data-test-id="image-preview"
-                  src={imageUrl}
-                  alt="preview"
-                  className={styles.imagePreview}
-                />
-              ) : (
-                <div className={styles.imagePlaceholder}>No image preview</div>
-              )}
-            </div>
-
-            {success && <p>{success}</p>}
+            {success && <p className={styles.success}>{success}</p>}
             {saveError && <p className={styles.error}>{saveError}</p>}
 
             <div className={styles.buttonRow}>
@@ -288,14 +331,15 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
                 onClick={handleSave}
                 className={styles.primaryButton}
               >
-                Save
+                {isNewPost ? "Create Book" : "Save Changes"}
               </button>
 
-              <Link href="/" className={styles.exitButton}>
-                Exit
+              <Link href="/inventory" className={styles.exitButton}>
+                Cancel
               </Link>
             </div>
-          </div>
+            </section>
+          </aside>
         </div>
       </div>
     </main>
