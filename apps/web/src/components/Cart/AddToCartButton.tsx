@@ -2,16 +2,30 @@
 
 import { useState } from "react";
 import { addCartItem, type CartProduct } from "../../functions/cart";
+import { getCustomerLoginUrl } from "../../utils/customerAuthRedirect";
 
 export function AddToCartButton({ product }: { product: CartProduct }) {
   const [added, setAdded] = useState(false);
 
   function handleAddToCart() {
-    // Store only the product fields needed to rebuild the cart in the browser.
-    addCartItem(product);
-    setAdded(true);
-    // Short feedback confirms the click without navigating away from the catalogue.
-    window.setTimeout(() => setAdded(false), 1200);
+    const nextPath = `${window.location.pathname}${window.location.search}`;
+
+    fetch("/api/auth/me")
+      .then((response) => {
+        if (!response.ok) {
+          window.location.assign(getCustomerLoginUrl(nextPath));
+          return;
+        }
+
+        // Store only the product fields needed to rebuild the cart in the browser.
+        addCartItem(product);
+        setAdded(true);
+        // Short feedback confirms the click without navigating away from the catalogue.
+        window.setTimeout(() => setAdded(false), 1200);
+      })
+      .catch(() => {
+        window.location.assign(getCustomerLoginUrl(nextPath));
+      });
   }
 
   return (

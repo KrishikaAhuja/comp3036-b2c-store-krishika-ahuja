@@ -2,6 +2,7 @@ import { getCurrentUser } from "../../utils/auth";
 import { redirect } from "next/navigation";
 import { AuthForm } from "./AuthForm";
 import styles from "./auth-page.module.css";
+import { getSafeNextPath } from "../../utils/customerAuthRedirect";
 
 function getAdminRedirectUrl() {
   if (process.env.NEXT_PUBLIC_ADMIN_URL) {
@@ -15,15 +16,21 @@ function getAdminRedirectUrl() {
   return "/";
 }
 
-export default async function AuthPage() {
+export default async function AuthPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ next?: string }>;
+}) {
   const user = await getCurrentUser();
+  const params = await searchParams;
+  const nextPath = getSafeNextPath(params?.next);
 
   if (user?.role === "ADMIN") {
     redirect(getAdminRedirectUrl());
   }
 
   if (user?.role === "CUSTOMER") {
-    redirect("/");
+    redirect(nextPath);
   }
 
   return (
@@ -31,7 +38,7 @@ export default async function AuthPage() {
       <div className={styles.band} />
       <div className={`${styles.band} ${styles.bandSecondary}`} />
       <div className={styles.content}>
-        <AuthForm />
+        <AuthForm nextPath={nextPath} />
       </div>
     </main>
   );

@@ -1,16 +1,24 @@
 import { client } from "@repo/db/client"; // Prisma client wrapper used to access the database
 import { NextRequest, NextResponse } from "next/server";
+import { getCurrentUser } from "../../../utils/auth";
 
 // Handles like/unlike
 export async function POST(req: NextRequest) {
+  const user = await getCurrentUser();
+
+  if (!user || user.role !== "CUSTOMER") {
+    return NextResponse.json(
+      { error: "Sign in to watch product stock." },
+      { status: 401 },
+    );
+  }
+
   const body = await req.json();
 
   // Get post id from request body
   const postId = Number(body.postId);
 
-  // Uses a fixed IP for tests.
-  // In a real app, this would come from request headers.
-  const userIP = "test-ip";
+  const userIP = `customer-${user.id}`;
 
   // Check if this user already watches this product so the endpoint can toggle the state.
   const existing = await client.db.like.findUnique({

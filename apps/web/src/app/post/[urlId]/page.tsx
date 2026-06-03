@@ -3,6 +3,7 @@ import { BlogDetail } from "@/components/Blog/Detail"; // imports the component 
 import { client } from "@repo/db/client"; // imports the database client
 import LikeButton from "./LikeButton"; // imports the like button component
 import { cookies } from "next/headers"; // used to read cookies from the request
+import { getCurrentUser } from "@/utils/auth";
 
 // Makes this page always load fresh data instead of using cached data.
 // This is important because views and likes can change.
@@ -17,6 +18,7 @@ export default async function Page({
 }) {
   // Gets the urlId from the page route params.
   const { urlId } = await params;
+  const user = await getCurrentUser();
 
   // Finds the product in the database using the legacy urlId field.
   // Likes are included so we can count likes and check if the user liked the post.
@@ -61,11 +63,8 @@ export default async function Page({
     likes: updatedPost.Likes.length,
   };
 
-  // Checks if the current test user has already added this product to their stock-watch list.
-  // "test-ip" is being used as the user identifier in this assignment version.
-  const isLiked = updatedPost.Likes.some(
-    (like) => like.userIP === "test-ip"
-  );
+  const userKey = user ? `customer-${user.id}` : "";
+  const isLiked = updatedPost.Likes.some((like) => like.userIP === userKey);
 
   // Shows the product detail page with stock-watch count, views count, and product content.
   return (
@@ -78,6 +77,7 @@ export default async function Page({
             <LikeButton
               postId={updatedPost.id}
               initialLiked={isLiked}
+              isAuthenticated={Boolean(user)}
             />
 
             {/* Shows total stock watches for this post */}
