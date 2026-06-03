@@ -4,9 +4,13 @@ import { post1 } from "./List.test";
 import { BlogListItem } from "./ListItem";
 
 test("renders book card data", async () => {
-  const { getByText } = render(<BlogListItem post={post1} />);
+  const { getByLabelText, getByText } = render(<BlogListItem post={post1} />);
 
-  await expect.element(getByText("The Test Mystery")).toBeVisible();
+  await expect
+    .element(getByLabelText("Flip The Test Mystery to details"))
+    .toBeVisible();
+  await getByLabelText("Flip The Test Mystery to details").click();
+
   await expect
     .element(getByText("The Test Mystery"))
     .toHaveAttribute("href", "/post/the-test-mystery");

@@ -1,8 +1,8 @@
-import type { Post } from "@repo/db/data"; // temporary product data shape
-import { marked } from "marked"; // library to convert markdown → HTML
-import Link from "next/link"; // used for navigation between pages
+import type { Post } from "@repo/db/data";
+import { marked } from "marked";
+import Link from "next/link";
+import { AddToCartButton } from "../Cart/AddToCartButton";
 
-// formats the date into a readable format (e.g. 05 Jan 2026)
 function formatDate(date: Date) {
   return new Intl.DateTimeFormat("en-GB", {
     day: "2-digit",
@@ -23,85 +23,81 @@ function getStockQuantity(post: Post) {
   return post.stockQuantity ?? post.likes;
 }
 
-// main component to display full product details
-export async function BlogDetail({ post }: { post: Post }) {
+function getProductPrice(post: Post) {
+  return post.priceAud ?? Math.max(post.views, 1);
+}
 
-  // converts markdown content into HTML so it can be displayed properly
+export async function BlogDetail({ post }: { post: Post }) {
   const content = await marked.parse(post.content);
 
   return (
     <article
-      data-test-id={`blog-post-${post.id}`} // used for testing
-      className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-900"
+      data-test-id={`blog-post-${post.id}`}
+      className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-900"
     >
-      {/* product image */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={post.imageUrl}
-        alt={post.title}
-        className="h-48 w-full object-cover"
-      />
+      <div className="grid lg:grid-cols-[minmax(18rem,24rem)_1fr]">
+        <div className="flex items-center justify-center bg-gray-100 p-6 dark:bg-gray-800">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={post.imageUrl}
+            alt={post.title}
+            className="max-h-[32rem] w-full object-contain drop-shadow-xl"
+          />
+        </div>
 
-      <div className="space-y-3 p-6">
+        <div className="space-y-5 p-6 lg:p-8">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
+              {post.category}
+            </p>
+            <h1 className="mt-2 text-3xl font-bold leading-tight text-[var(--text)]">
+              <Link
+                href={`/post/${post.urlId}`}
+                className="transition hover:text-blue-600"
+              >
+                {post.title}
+              </Link>
+            </h1>
+            <p className="mt-2 text-sm font-medium text-[var(--text-secondary)]">
+              Listed {formatDate(post.date)}
+            </p>
+          </div>
 
-        {/* formatted date */}
-        <p className="text-sm font-medium text-[var(--text-secondary)]">
-          Listed {formatDate(post.date)}
-        </p>
-
-        {/* product title with link to itself */}
-        <h1>
-          <Link
-            href={`/post/${post.urlId}`}
-            className="text-3xl font-bold leading-tight text-blue-600 transition hover:text-blue-700"
-          >
-            {post.title}
-          </Link>
-        </h1>
-
-        {/* category of the post */}
-        <p className="text-sm font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
-          {post.category}
-        </p>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <p className="text-2xl font-semibold text-[var(--text)]">
+          <p className="text-3xl font-semibold text-[var(--text)]">
             {formatPrice(post)}
           </p>
-          <p className="rounded-full bg-green-50 px-3 py-1 text-sm font-semibold text-green-700 dark:bg-green-950 dark:text-green-300">
-            {getStockQuantity(post)} copies left
+
+          <p className="w-fit rounded-full bg-green-50 px-3 py-1 text-sm font-semibold text-green-700 dark:bg-green-950 dark:text-green-300">
+            {getStockQuantity(post)} copies available
           </p>
+
+          <div className="flex flex-wrap gap-2">
+            {post.tags.split(",").map((tag) => (
+              <span
+                key={tag.trim()}
+                className="rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+              >
+                #{tag.trim()}
+              </span>
+            ))}
+          </div>
+
+          <AddToCartButton
+            product={{
+              id: post.id,
+              urlId: post.urlId,
+              title: post.title,
+              price: getProductPrice(post),
+              imageUrl: post.imageUrl,
+            }}
+          />
+
+          <div
+            data-test-id="content-markdown"
+            className="prose prose-sm max-w-none leading-7 text-[var(--text)] dark:prose-invert"
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
         </div>
-
-        {/* tags section */}
-        <div className="flex flex-wrap gap-2">
-          {post.tags.split(",").map((tag) => (
-            <span
-              key={tag.trim()}
-              className="rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-950 dark:text-blue-300"
-            >
-              #{tag.trim()} {/* shows each tag with # */}
-            </span>
-          ))}
-        </div>
-
-        {/* markdown content displayed as HTML */}
-        <div
-          data-test-id="content-markdown" // used for testing
-          className="prose prose-sm max-w-none leading-7 text-[var(--text)] dark:prose-invert"
-          dangerouslySetInnerHTML={{ __html: content }} // injects HTML (from markdown)
-        />
-
-        {/* product view and stock-watch section */}
-        <div className="flex gap-5 rounded-xl bg-gray-50 px-4 py-3 text-sm font-medium text-[var(--text-secondary)] dark:bg-gray-800">
-          <p>{post.views} customer views</p>
-          <p>{post.likes} saving this read</p>
-        </div>
-
-        {/* hidden element used only for testing (not visible to users) */}
-        <span className="hidden" data-testid="like-button">
-          Stock watch action
-        </span>
       </div>
     </article>
   );
