@@ -57,14 +57,14 @@ export function CartPageContent() {
   if (items.length === 0) {
     // Empty state keeps the cart route useful even before the customer adds products.
     return (
-      <div className="rounded-lg border border-gray-200 bg-[var(--background)] p-6 text-[var(--text)] shadow-sm dark:border-gray-700">
+      <div className="rounded-lg border border-[var(--surface-muted)] bg-[var(--surface)] p-6 text-[var(--text)] shadow-sm dark:border-gray-700">
         <h1 className="text-2xl font-semibold">Book Bag</h1>
         <p className="mt-3 text-sm text-[var(--text-secondary)]">
           Your book bag is empty.
         </p>
         <Link
           href="/"
-          className="mt-5 inline-flex h-10 items-center justify-center rounded-md bg-[var(--foreground)] px-4 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
+          className="mt-5 inline-flex h-10 items-center justify-center rounded-md bg-[var(--accent)] px-4 text-sm font-semibold text-[var(--surface)] transition hover:bg-[var(--accent-hover)]"
         >
           Browse Books
         </Link>
@@ -83,7 +83,7 @@ export function CartPageContent() {
         </p>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-[var(--background)] shadow-sm dark:border-gray-700">
+      <div className="overflow-hidden rounded-lg border border-[var(--surface-muted)] bg-[var(--surface)] shadow-sm dark:border-gray-700">
         <div className="hidden grid-cols-[1fr_7rem_10rem_7rem_7rem] gap-4 border-b border-gray-200 px-5 py-3 text-sm font-semibold text-[var(--text-secondary)] md:grid dark:border-gray-700">
           <span>Book</span>
           <span>Price</span>
@@ -109,7 +109,7 @@ export function CartPageContent() {
                 ) : null}
                 <Link
                   href={`/post/${item.urlId}`}
-                  className="font-semibold text-[var(--text)] transition hover:text-blue-600"
+                  className="font-semibold text-[var(--text)] transition hover:text-[var(--accent)]"
                 >
                   {item.title}
                 </Link>
@@ -124,7 +124,7 @@ export function CartPageContent() {
                 <button
                   type="button"
                   onClick={() => changeQuantity(item.id, item.quantity - 1)}
-                  className="h-10 w-10 text-lg font-semibold transition hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="h-10 w-10 text-lg font-semibold transition hover:bg-[var(--surface-muted)] dark:hover:bg-gray-800"
                   aria-label={`Decrease ${item.title} quantity`}
                 >
                   -
@@ -135,7 +135,7 @@ export function CartPageContent() {
                 <button
                   type="button"
                   onClick={() => changeQuantity(item.id, item.quantity + 1)}
-                  className="h-10 w-10 text-lg font-semibold transition hover:bg-gray-100 dark:hover:bg-gray-800"
+                  className="h-10 w-10 text-lg font-semibold transition hover:bg-[var(--surface-muted)] dark:hover:bg-gray-800"
                   aria-label={`Increase ${item.title} quantity`}
                 >
                   +
@@ -160,7 +160,7 @@ export function CartPageContent() {
       </div>
 
       <div className="flex justify-end">
-        <div className="w-full rounded-lg border border-gray-200 bg-[var(--background)] p-5 shadow-sm md:w-80 dark:border-gray-700">
+        <div className="w-full rounded-lg border border-[var(--surface-muted)] bg-[var(--surface)] p-5 shadow-sm md:w-80 dark:border-gray-700">
           <div className="flex items-center justify-between text-lg font-semibold">
             <span>Total</span>
             <span>{formatPrice(total)}</span>

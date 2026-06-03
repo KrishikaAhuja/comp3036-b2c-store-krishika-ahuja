@@ -37,27 +37,27 @@ export function TopMenu({
   }
 
   return (
-    <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-gray-200 bg-[var(--background)] p-4 shadow-sm md:flex-row md:items-center md:justify-between dark:border-gray-700">
+    <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-[var(--surface-muted)] bg-[var(--surface)] p-4 shadow-sm md:flex-row md:items-center md:justify-between dark:border-gray-700">
       <form action="#" method="GET" className="flex-1">
         <input
           type="search"
           defaultValue={query}
           onChange={handleSearch}
           placeholder="Search books..."
-          className="w-full rounded-xl border border-gray-200 bg-[var(--background)] px-4 py-3 text-sm text-[var(--text)] outline-none placeholder:text-[var(--text-secondary)] focus:border-blue-500 dark:border-gray-700"
+          className="w-full rounded-xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm text-[var(--text)] outline-none placeholder:text-[var(--text-secondary)] focus:border-[var(--accent)] dark:border-gray-700"
         />
       </form>
 
       <div className="flex flex-wrap items-center justify-end gap-3">
         {userName ? (
           <>
-            <span className="rounded-md border border-gray-200 px-3 py-2 text-sm font-medium text-[var(--text)] dark:border-gray-700">
+            <span className="rounded-md border border-[var(--surface-muted)] px-3 py-2 text-sm font-medium text-[var(--text)] dark:border-gray-700">
               Account: {userName}
             </span>
             <button
               type="button"
               onClick={handleLogout}
-              className="rounded-md border border-gray-200 px-3 py-2 text-sm font-medium text-[var(--text)] hover:border-[var(--wsu)] dark:border-gray-700"
+              className="rounded-md border border-[var(--surface-muted)] px-3 py-2 text-sm font-medium text-[var(--text)] hover:border-[var(--accent)] dark:border-gray-700"
             >
               Logout
             </button>
@@ -65,7 +65,7 @@ export function TopMenu({
         ) : (
           <Link
             href="/auth"
-            className="rounded-md border border-gray-200 px-3 py-2 text-sm font-medium text-[var(--text)] hover:border-[var(--wsu)] dark:border-gray-700"
+            className="rounded-md border border-[var(--surface-muted)] px-3 py-2 text-sm font-medium text-[var(--text)] hover:border-[var(--accent)] dark:border-gray-700"
           >
             Sign in
           </Link>

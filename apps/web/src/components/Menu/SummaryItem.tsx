@@ -19,8 +19,8 @@ export function SummaryItem({
         title={title}
         className={`flex items-center justify-between rounded-xl px-3 py-2 text-base font-medium ${
           isSelected
-            ? "selected bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-            : "text-[var(--text-secondary)] hover:bg-gray-50 hover:text-[var(--text)] dark:hover:bg-gray-800"
+            ? "selected bg-[var(--surface-muted)] text-[var(--accent)] dark:bg-blue-900/30 dark:text-blue-300"
+            : "text-[var(--text-secondary)] hover:bg-[var(--background)] hover:text-[var(--text)] dark:hover:bg-gray-800"
         }`}
       >
         <span className="font-medium">{name}</span>

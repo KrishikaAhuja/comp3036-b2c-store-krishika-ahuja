@@ -37,8 +37,8 @@ export function BlogListItem({ post }: { post: Post }) {
       className="h-full [perspective:1200px]"
       data-test-id={`blog-post-${post.id}`}
     >
-      <div className="relative min-h-[34rem] rounded-lg [transform-style:preserve-3d]">
-        <div className="absolute inset-0 flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-[var(--background)] p-5 shadow-sm dark:border-gray-700">
+      <div className="relative min-h-[29rem] rounded-lg [transform-style:preserve-3d]">
+        <div className="absolute inset-0 flex flex-col overflow-hidden rounded-lg border border-[var(--surface-muted)] bg-[var(--surface)] p-5 shadow-sm dark:border-gray-700">
           <div className="flex items-center justify-between gap-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
               {post.category}
@@ -46,7 +46,7 @@ export function BlogListItem({ post }: { post: Post }) {
             <button
               type="button"
               onClick={() => setOpened(false)}
-              className="rounded-md border border-gray-200 px-2.5 py-1.5 text-xs font-semibold text-[var(--text-secondary)] transition hover:border-blue-500 hover:text-blue-600 dark:border-gray-700"
+              className="rounded-md border border-[var(--surface-muted)] px-2.5 py-1.5 text-xs font-semibold text-[var(--text-secondary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] dark:border-gray-700"
             >
               Back to cover
             </button>
@@ -54,7 +54,7 @@ export function BlogListItem({ post }: { post: Post }) {
 
           <Link
             href={`/post/${post.urlId}`}
-            className="mt-4 text-lg font-semibold leading-snug text-[var(--foreground)] transition hover:text-blue-600"
+            className="mt-4 text-lg font-semibold leading-snug text-[var(--foreground)] transition hover:text-[var(--accent)]"
           >
             {post.title}
           </Link>
@@ -75,7 +75,7 @@ export function BlogListItem({ post }: { post: Post }) {
             {post.tags.split(",").map((tag) => (
               <span
                 key={tag.trim()}
-                className="rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                className="rounded-md bg-[#ead8bd] px-2.5 py-1 text-xs font-medium text-[var(--accent)] dark:bg-gray-800 dark:text-gray-300"
               >
                 #{tag.trim()}
               </span>
@@ -99,7 +99,7 @@ export function BlogListItem({ post }: { post: Post }) {
             />
             <Link
               href={`/post/${post.urlId}`}
-              className="inline-flex h-10 items-center justify-center rounded-md bg-[var(--foreground)] px-4 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
+              className="inline-flex h-10 items-center justify-center rounded-md bg-[var(--accent)] px-4 text-sm font-semibold text-[var(--surface)] transition hover:bg-[var(--accent-hover)]"
             >
               View Book
             </Link>
@@ -107,14 +107,14 @@ export function BlogListItem({ post }: { post: Post }) {
         </div>
 
         <div
-          className={`absolute inset-0 z-10 flex origin-left flex-col overflow-hidden rounded-lg border border-gray-200 bg-[var(--background)] shadow-sm transition-transform duration-700 [backface-visibility:hidden] [transform-style:preserve-3d] dark:border-gray-700 ${
+          className={`absolute inset-0 z-10 flex origin-left flex-col overflow-hidden rounded-lg border border-[var(--surface-muted)] bg-[var(--surface)] shadow-sm transition-transform duration-700 [backface-visibility:hidden] [transform-style:preserve-3d] dark:border-gray-700 ${
             opened ? "[transform:rotateY(-118deg)]" : ""
           }`}
           aria-hidden={opened}
         >
           <Link
             href={`/post/${post.urlId}`}
-            className="flex flex-1 items-center justify-center bg-gray-100 p-5 dark:bg-gray-800"
+            className="flex min-h-[29rem] items-center justify-center bg-[var(--surface-muted)] p-4 dark:bg-gray-800"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -129,7 +129,7 @@ export function BlogListItem({ post }: { post: Post }) {
             onClick={() => setOpened(true)}
             aria-label={`Flip ${post.title} to details`}
             title="Flip me"
-            className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1 rounded-l-md border border-gray-300 bg-[var(--background)] px-2 py-1.5 text-xs font-semibold text-[var(--foreground)] shadow-md transition hover:border-blue-500 hover:text-blue-600 dark:border-gray-700"
+            className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1 rounded-l-md border border-[var(--accent)] bg-[var(--surface)] px-2 py-1.5 text-xs font-semibold text-[var(--accent)] shadow-md transition hover:bg-[var(--accent)] hover:text-[var(--surface)] dark:border-gray-700"
           >
             <span>Flip me</span>
             <span className="h-0 w-0 border-y-[6px] border-l-[9px] border-y-transparent border-l-current" />

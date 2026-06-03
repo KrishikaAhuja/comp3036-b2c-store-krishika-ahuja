@@ -32,9 +32,9 @@ export function AddToCartButton({ product }: { product: CartProduct }) {
     <button
       type="button"
       onClick={handleAddToCart}
-      className="inline-flex h-10 items-center justify-center rounded-md border border-gray-300 px-4 text-sm font-semibold text-[var(--foreground)] transition hover:border-blue-500 hover:text-blue-600 dark:border-gray-700"
+      className="inline-flex h-10 items-center justify-center rounded-md border border-[var(--accent)] px-4 text-sm font-semibold text-[var(--accent)] transition hover:bg-[var(--accent)] hover:text-[var(--surface)] dark:border-[var(--accent)]"
     >
-      {added ? "Added to Bag" : "Add to Bag"}
+      {added ? "Added to Book Bag" : "Add to Book Bag"}
     </button>
   );
 }

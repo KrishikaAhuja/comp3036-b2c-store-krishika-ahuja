@@ -33,10 +33,10 @@ export async function BlogDetail({ post }: { post: Post }) {
   return (
     <article
       data-test-id={`blog-post-${post.id}`}
-      className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-900"
+      className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-[var(--surface-muted)] bg-[var(--surface)] shadow-md dark:border-gray-700"
     >
       <div className="grid lg:grid-cols-[minmax(18rem,24rem)_1fr]">
-        <div className="flex items-center justify-center bg-gray-100 p-6 dark:bg-gray-800">
+        <div className="flex items-center justify-center bg-[var(--surface-muted)] p-6 dark:bg-gray-800">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={post.imageUrl}
@@ -53,7 +53,7 @@ export async function BlogDetail({ post }: { post: Post }) {
             <h1 className="mt-2 text-3xl font-bold leading-tight text-[var(--text)]">
               <Link
                 href={`/post/${post.urlId}`}
-                className="transition hover:text-blue-600"
+                className="transition hover:text-[var(--accent)]"
               >
                 {post.title}
               </Link>
@@ -67,7 +67,7 @@ export async function BlogDetail({ post }: { post: Post }) {
             {formatPrice(post)}
           </p>
 
-          <p className="w-fit rounded-full bg-green-50 px-3 py-1 text-sm font-semibold text-green-700 dark:bg-green-950 dark:text-green-300">
+          <p className="w-fit rounded-full bg-[#efe1c9] px-3 py-1 text-sm font-semibold text-[var(--accent)] dark:bg-green-950 dark:text-green-300">
             {getStockQuantity(post)} copies available
           </p>
 
@@ -75,12 +75,18 @@ export async function BlogDetail({ post }: { post: Post }) {
             {post.tags.split(",").map((tag) => (
               <span
                 key={tag.trim()}
-                className="rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+                className="rounded-full bg-[#ead8bd] px-3 py-1 text-sm font-medium text-[var(--accent)] dark:bg-blue-950 dark:text-blue-300"
               >
                 #{tag.trim()}
               </span>
             ))}
           </div>
+
+          <div
+            data-test-id="content-markdown"
+            className="prose prose-sm max-w-none leading-7 text-[var(--text)] dark:prose-invert"
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
 
           <AddToCartButton
             product={{
@@ -90,12 +96,6 @@ export async function BlogDetail({ post }: { post: Post }) {
               price: getProductPrice(post),
               imageUrl: post.imageUrl,
             }}
-          />
-
-          <div
-            data-test-id="content-markdown"
-            className="prose prose-sm max-w-none leading-7 text-[var(--text)] dark:prose-invert"
-            dangerouslySetInnerHTML={{ __html: content }}
           />
         </div>
       </div>

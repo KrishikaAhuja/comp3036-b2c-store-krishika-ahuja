@@ -9,7 +9,7 @@ const ThemeSwitch = () => {
   if (!mounted) {
     // Render stable placeholder text until the browser theme value is available.
     return (
-      <Button className="rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-[var(--text)] shadow-sm dark:border-gray-700">
+      <Button className="rounded-xl border border-[var(--surface-muted)] px-4 py-2 text-sm font-medium text-[var(--text)] shadow-sm dark:border-gray-700">
         Theme
       </Button>
     );
@@ -18,7 +18,7 @@ const ThemeSwitch = () => {
   return (
     <Button
       onClick={toggleTheme}
-      className="rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-[var(--text)] shadow-sm hover:text-[var(--textHover)] dark:border-gray-700"
+      className="rounded-xl border border-[var(--surface-muted)] px-4 py-2 text-sm font-medium text-[var(--text)] shadow-sm hover:text-[var(--accent)] dark:border-gray-700"
     >
       {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
     </Button>
