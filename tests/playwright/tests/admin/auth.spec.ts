@@ -31,7 +31,7 @@ test.describe("ADMIN AUTH", () => {
       await page.getByLabel("Password", { exact: true }).fill("123");
       await page.getByRole("button", { name: "Sign In" }).click();
 
-      await expect(page.getByText("Product Management")).toBeVisible();
+      await expect(page.getByText("Admin Dashboard")).toBeVisible();
 
       const cookies = await page.context().cookies();
       expect(cookies.some((cookie) => cookie.name === "admin_auth_token")).toBe(
@@ -40,17 +40,17 @@ test.describe("ADMIN AUTH", () => {
 
       await page.getByRole("button", { name: "Logout" }).click();
 
-      await expect(page.getByText("Sign in to your account")).toBeVisible();
+      await expect(page.getByText("Bookstore Admin Sign In")).toBeVisible();
     },
   );
 
   test(
-    "requires admin login for create product page",
+    "requires admin login for create book page",
     { tag: "@a2" },
     async ({ page }) => {
       await page.goto("/posts/create");
 
-      await expect(page.getByText("Sign in to your account")).toBeVisible();
+      await expect(page.getByText("Bookstore Admin Sign In")).toBeVisible();
       await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
       await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
     },
@@ -70,8 +70,8 @@ test.describe("ADMIN AUTH", () => {
 
       await page.goto("/");
 
-      await expect(page.getByText("Sign in to your account")).toBeVisible();
-      await expect(page.getByText("Product Management")).not.toBeVisible();
+      await expect(page.getByText("Bookstore Admin Sign In")).toBeVisible();
+      await expect(page.getByText("Admin Dashboard")).not.toBeVisible();
     },
   );
 
@@ -84,7 +84,7 @@ test.describe("ADMIN AUTH", () => {
 
       const createResponse = await request.post("/api/posts", {
         data: {
-          title: "Unauthorized Product",
+          title: "Unauthorized Book",
           description: "Should not be created",
           content: "Blocked",
           tags: "blocked",

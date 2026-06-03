@@ -1,13 +1,11 @@
 "use client"; // Client component, so hooks and button clicks work
 
 import Link from "next/link"; // Link back to admin home
-import { useRouter } from "next/navigation";
 import { marked } from "marked"; // Converts markdown to HTML for preview
 import { useRef, useState } from "react"; // React hooks
 import styles from "./update-form.module.css"; // CSS module styles
 
 export default function UpdateForm({ post }: { post: any }) { // Receives one post object
-  const router = useRouter();
   const [title, setTitle] = useState(post.title); // Current title value
   const [description, setDescription] = useState(post.description); // Current description value
   const [content, setContent] = useState(post.content); // Current markdown content
@@ -98,7 +96,14 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
 
     setSuccess("Book saved successfully"); // Show success message
     setSaveError(""); // Clear error message
-    router.back();
+
+    const previousUrl = document.referrer ? new URL(document.referrer) : null;
+    const previousPath =
+      previousUrl && previousUrl.origin === window.location.origin
+        ? `${previousUrl.pathname}${previousUrl.search}`
+        : "/inventory";
+
+    window.location.assign(previousPath);
   }
 
   function handleTogglePreview() { // Switches between edit and preview

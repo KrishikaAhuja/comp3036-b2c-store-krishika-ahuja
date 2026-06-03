@@ -138,6 +138,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-4 py-10">
       <form
         onSubmit={handleSubmit}
+        noValidate
         className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--surface)] p-8 shadow-2xl shadow-[#4b1f2f]/12"
       >
         <div className="mb-6 text-center">

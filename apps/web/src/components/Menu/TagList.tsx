@@ -24,7 +24,7 @@ export async function TagList({
           name={item.name}
           count={item.count}
           isSelected={selectedTag === item.name}
-          link={`/tags/${item.name.toLowerCase().replaceAll(" ", "-")}`}
+          link={`/tags/${item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`}
           title={`Age Range / ${item.name}`}
         />
       ))}

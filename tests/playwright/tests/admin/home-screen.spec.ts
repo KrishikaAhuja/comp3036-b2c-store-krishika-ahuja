@@ -17,7 +17,7 @@ test.describe("ADMIN HOME SCREEN", () => {
 
       // HOME SCREEN > Shows Login screen if not logged
       await expect(
-        page.getByText("Sign in to your account", { exact: true }),
+        page.getByText("Bookstore Admin Sign In", { exact: true }),
       ).toBeVisible();
     },
   );
@@ -35,7 +35,7 @@ test.describe("ADMIN HOME SCREEN", () => {
       await page.getByLabel("Password", { exact: true }).fill("123");
       await page.getByText("Sign In", { exact: true }).click();
 
-      await expect(page.getByText("Product Management")).toBeVisible();
+      await expect(page.getByText("Admin Dashboard")).toBeVisible();
 
       // HOME SCREEN > Use a cookie to remember the signed-in state.
       const cookies = await page.context().cookies();
@@ -50,8 +50,7 @@ test.describe("ADMIN HOME SCREEN", () => {
       //  HOME SCREEN > Clicking the logout button logs user out
       await page.getByText("Logout").click();
 
-      await expect(await page.locator("article")).toHaveCount(0);
-      await expect(page.getByText("Sign in to your account")).toBeVisible();
+      await expect(page.getByText("Bookstore Admin Sign In")).toBeVisible();
     },
   );
 
@@ -65,11 +64,11 @@ test.describe("ADMIN HOME SCREEN", () => {
 
       // shows title
       await expect(
-        userPage.getByText("Product Management", { exact: true }),
+        userPage.getByText("Admin Dashboard", { exact: true }),
       ).toBeVisible();
 
-      // LIST SCREEN > Article list is only accessible to logged-in users.
-      await expect(await userPage.locator("article").count()).toBe(5);
+      await expect(userPage.getByText("Total Books")).toBeVisible();
+      await expect(userPage.getByText("4 active books")).toBeVisible();
     },
   );
 });

@@ -1,215 +1,122 @@
+import { client } from "@repo/db/client";
 import { seed } from "@repo/db/seed";
 import { expect, test } from "./fixtures";
-
-async function openFilters(page: any) {
-  await page.getByRole("button", { name: "All Filters" }).click();
-}
-
-async function productPrices(page: any) {
-  const cards = await page.locator("article").allTextContents();
-  return cards.map((text: string) => {
-    const match = text.match(/\$(\d[\d,]*)/);
-    return match ? Number(match[1].replaceAll(",", "")) : 0;
-  });
-}
-
-async function firstProductDate(page: any) {
-  const text = await page.locator("article").first().innerText();
-  const match = text.match(/Added on ([A-Z][a-z]{2} \d{1,2}, \d{4})/);
-  return match?.[1] ?? "";
-}
 
 test.beforeEach(async () => {
   await seed();
 });
 
-test.describe("ADMINSTORE", () => {
-  test(
-    "product management page loads",
-    { tag: "@a2" },
-    async ({ userPage }) => {
-      await userPage.goto("/");
-
-      await expect(userPage.getByRole("heading", { name: "Product Management" })).toBeVisible();
-      await expect(userPage.getByRole("link", { name: "Create Product" })).toBeVisible();
-      await expect(userPage.getByRole("button", { name: "All Filters" })).toBeVisible();
-
-      await expect(userPage.locator("article")).toHaveCount(5);
-      const product = userPage
-        .locator("article")
-        .filter({ hasText: "GlidePro Wireless Mouse" });
-      await expect(product).toHaveCount(1);
-      await expect(product.getByText("$59")).toBeVisible();
-      await expect(product.getByText("Category: Accessories")).toBeVisible();
-      await expect(product.getByText("Stock: 64")).toBeVisible();
-      await expect(product.getByText("In stock")).toBeVisible();
-      await expect(product.getByRole("link", { name: "Edit" })).toBeVisible();
-      await expect(product.getByRole("button", { name: "Delete" })).toBeVisible();
-    },
-  );
-
-  test("filter drawer opens", { tag: "@a2" }, async ({ userPage }) => {
+test.describe("admin bookstore", () => {
+  test("dashboard and inventory show seeded books", { tag: "@a2" }, async ({ userPage }) => {
     await userPage.goto("/");
-    await openFilters(userPage);
 
-    await expect(userPage.getByRole("heading", { name: "Filters" })).toBeVisible();
-    await expect(userPage.getByRole("button", { name: "Close filters" })).toBeVisible();
-    await expect(userPage.getByLabel("Search product")).toBeVisible();
-    await expect(userPage.getByLabel("Collection")).toBeVisible();
-    await expect(userPage.getByLabel("Category")).toBeVisible();
-    await expect(userPage.getByLabel("Date added")).toBeVisible();
-    await expect(userPage.getByLabel("Stock status")).toBeVisible();
-    await expect(userPage.getByLabel("Sort by")).toBeVisible();
+    await expect(userPage.getByRole("heading", { name: "Admin Dashboard" })).toBeVisible();
+    await expect(userPage.getByText("Total Books")).toBeVisible();
+    await expect(userPage.getByText("4 active books")).toBeVisible();
+    await expect(userPage.getByRole("link", { name: "Add Book" }).first()).toBeVisible();
+
+    await userPage.getByRole("link", { name: "Inventory", exact: true }).click();
+    await expect(userPage.getByRole("heading", { name: "Inventory", exact: true })).toBeVisible();
+    await expect(userPage.getByRole("heading", { name: "Book Inventory" })).toBeVisible();
+    const atomicRow = userPage.getByRole("row", { name: /Atomic Habits/ });
+    await expect(atomicRow).toBeVisible();
+    await expect(atomicRow).toContainText("Nonfiction");
+    await expect(atomicRow).toContainText("$28");
+    await expect(atomicRow).toContainText("Oct 16, 2018");
   });
 
-  test("filter drawer closes", { tag: "@a2" }, async ({ userPage }) => {
-    await userPage.goto("/");
-    await openFilters(userPage);
+  test("inventory filters and sorts books", { tag: "@a2" }, async ({ userPage }) => {
+    await userPage.goto("/inventory");
 
-    await userPage.getByRole("button", { name: "Close filters" }).click();
+    await userPage.getByLabel("Search").fill("hobbit");
+    await expect(userPage.getByText("The Hobbit")).toBeVisible();
+    await expect(userPage.getByText("Atomic Habits")).not.toBeVisible();
 
-    await expect(userPage.getByRole("heading", { name: "Filters" })).not.toBeVisible();
+    await userPage.getByLabel("Search").fill("");
+    await userPage.getByLabel("Genre").selectOption("Nonfiction");
+    await expect(userPage.getByText("Atomic Habits")).toBeVisible();
+    await expect(userPage.getByText("Book Lovers")).not.toBeVisible();
+
+    await userPage.goto("/inventory");
+    await userPage.getByLabel("Sort").selectOption("date-asc");
+    await expect(userPage.locator("tbody tr").first()).toContainText("The Hobbit");
   });
 
-  test("product search filter works", { tag: "@a2" }, async ({ userPage }) => {
-    await userPage.goto("/");
-    await openFilters(userPage);
-
-    await userPage.getByLabel("Search product").fill("Vertex");
-
-    await expect(userPage.locator("article")).toHaveCount(1);
-    await expect(userPage.getByText("Vertex RGB Mechanical Keyboard")).toBeVisible();
-    await expect(userPage.getByText("AeroBook 14 Pro Laptop")).not.toBeVisible();
-  });
-
-  test("collection filter works", { tag: "@a2" }, async ({ userPage }) => {
-    await userPage.goto("/");
-    await openFilters(userPage);
-
-    await userPage.getByLabel("Collection").fill("Wireless");
-
-    await expect(userPage.locator("article")).toHaveCount(2);
-    await expect(userPage.getByText("PulseWave Noise-Cancelling Headphones")).toBeVisible();
-    await expect(userPage.getByText("GlidePro Wireless Mouse")).toBeVisible();
-  });
-
-  test("category filter works", { tag: "@a2" }, async ({ userPage }) => {
-    await userPage.goto("/");
-    await openFilters(userPage);
-
-    await userPage.getByLabel("Category").selectOption("Accessories");
-
-    await expect(userPage.locator("article")).toHaveCount(2);
-    await expect(userPage.getByText("MagDock 3-in-1 Charging Station")).toBeVisible();
-    await expect(userPage.getByText("GlidePro Wireless Mouse")).toBeVisible();
-    await expect(userPage.getByText("AeroBook 14 Pro Laptop")).not.toBeVisible();
-  });
-
-  test("stock status filter works", { tag: "@a2" }, async ({ userPage }) => {
-    await userPage.goto("/");
-    await openFilters(userPage);
-
-    await userPage.getByLabel("Stock status").selectOption("in-stock");
-    await expect(userPage.locator("article")).toHaveCount(5);
-
-    await userPage.getByLabel("Stock status").selectOption("out-of-stock");
-    await expect(userPage.locator("article")).toHaveCount(0);
-    await expect(userPage.getByText("No products matched your filters.")).toBeVisible();
-  });
-
-  test("price sorting works", { tag: "@a2" }, async ({ userPage }) => {
-    await userPage.goto("/");
-    await openFilters(userPage);
-
-    await userPage.getByLabel("Sort by").selectOption("price-asc");
-    let prices = await productPrices(userPage);
-    expect(prices).toEqual([...prices].sort((a, b) => a - b));
-
-    await userPage.getByLabel("Sort by").selectOption("price-desc");
-    prices = await productPrices(userPage);
-    expect(prices).toEqual([...prices].sort((a, b) => b - a));
-  });
-
-  test("date sorting works", { tag: "@a2" }, async ({ userPage }) => {
-    await userPage.goto("/");
-    await openFilters(userPage);
-
-    await userPage.getByLabel("Sort by").selectOption("date-desc");
-    await expect(userPage.locator("article").first()).toContainText(
-      "MagDock 3-in-1 Charging Station",
-    );
-
-    await userPage.getByLabel("Sort by").selectOption("date-asc");
-    expect(await firstProductDate(userPage)).toBe("Dec 16, 2012");
-  });
-
-  test("price and stock validation works", { tag: "@a2" }, async ({ userPage }) => {
+  test("create and edit forms use bookstore fields without active checkbox", { tag: "@a2" }, async ({ userPage }) => {
     await userPage.goto("/posts/create");
 
-    await userPage.getByLabel("Product Name").fill("Validation product");
-    await userPage.getByLabel("Category").fill("Accessories");
-    await userPage.getByLabel("Description").fill("A test product");
-    await userPage.getByLabel("Product Details").fill("Detailed product copy");
-    await userPage.getByLabel("Collections").fill("Testing");
-    await userPage.getByLabel("Image URL").fill("http://example.com/image.jpg");
+    await expect(userPage.getByRole("heading", { name: "Create Book" })).toBeVisible();
+    await expect(userPage.getByLabel("Book Title")).toBeVisible();
+    await expect(userPage.getByLabel("Genre")).toBeVisible();
+    await expect(userPage.getByLabel("Short Description")).toBeVisible();
+    await expect(userPage.getByLabel("Book Details")).toBeVisible();
+    await expect(userPage.getByLabel("Image URL")).toBeVisible();
+    await expect(userPage.getByLabel("Price AUD")).toBeVisible();
+    await expect(userPage.getByLabel("Stock Quantity")).toBeVisible();
+    await expect(userPage.getByLabel("Active in store")).not.toBeVisible();
 
-    await userPage.getByLabel("Price").fill("-1");
-    await userPage.getByLabel("Stock Quantity").fill("1.5");
-    await userPage.getByRole("button", { name: "Save" }).click();
-
-    await expect(userPage.getByText("Price must be 0 or more")).toBeVisible();
-    await expect(
-      userPage.getByText("Stock must be a whole number 0 or more"),
-    ).toBeVisible();
+    await userPage.goto("/post/atomic-habits");
+    await expect(userPage.getByRole("heading", { name: "Update Book" })).toBeVisible();
+    await expect(userPage.getByLabel("Book Title")).toBeVisible();
+    await expect(userPage.getByText("Active in store")).toBeVisible();
+    await expect(userPage.getByLabel("Active in store")).not.toBeVisible();
   });
 
-  test(
-    "create product form has store fields",
-    { tag: "@a2" },
-    async ({ userPage }) => {
-      await userPage.goto("/posts/create");
+  test("validation covers required bookstore fields", { tag: "@a2" }, async ({ userPage }) => {
+    await userPage.goto("/posts/create");
 
-      await expect(userPage.getByRole("heading", { name: "Create Product" })).toBeVisible();
-      await expect(userPage.getByLabel("Product Name")).toBeVisible();
-      await expect(userPage.getByLabel("Description")).toBeVisible();
-      await expect(userPage.getByLabel("Category")).toBeVisible();
-      await expect(userPage.getByLabel("Image URL")).toBeVisible();
-      await expect(userPage.getByLabel("Price")).toBeVisible();
-      await expect(userPage.getByLabel("Stock Quantity")).toBeVisible();
-      await expect(userPage.getByLabel("Active in store")).toBeVisible();
-    },
-  );
+    await userPage.getByRole("button", { name: "Create Book" }).click();
 
-  test(
-    "edit product form has store fields",
-    { tag: "@a2" },
-    async ({ userPage }) => {
-      await userPage.goto("/post/no-front-end-framework-is-the-best");
+    await expect(userPage.getByText("Book title is required")).toBeVisible();
+    await expect(userPage.getByText("Category is required")).toBeVisible();
+    await expect(userPage.getByText("Description is required")).toBeVisible();
+    await expect(userPage.getByText("Book details are required")).toBeVisible();
+    await expect(userPage.getByText("Image URL is required")).toBeVisible();
 
-      await expect(userPage.getByRole("heading", { name: "Update Product" })).toBeVisible();
-      await expect(userPage.getByLabel("Product Name")).toBeVisible();
-      await expect(userPage.getByLabel("Description")).toBeVisible();
-      await expect(userPage.getByLabel("Category")).toBeVisible();
-      await expect(userPage.getByLabel("Image URL")).toBeVisible();
-      await expect(userPage.getByLabel("Price")).toBeVisible();
-      await expect(userPage.getByLabel("Stock Quantity")).toBeVisible();
-      await expect(userPage.getByLabel("Active in store")).toBeVisible();
-    },
-  );
+    await userPage.getByLabel("Price AUD").fill("-1");
+    await userPage.getByLabel("Stock Quantity").fill("1.5");
+    await userPage.getByRole("button", { name: "Create Book" }).click();
 
-  test("delete product removes it from list", { tag: "@a2" }, async ({ userPage }) => {
-    await userPage.goto("/");
+    await expect(userPage.getByText("Price must be 0 or more")).toBeVisible();
+    await expect(userPage.getByText("Stock must be a whole number 0 or more")).toBeVisible();
+  });
 
-    const product = userPage
-      .locator("article")
-      .filter({ hasText: "MagDock 3-in-1 Charging Station" });
-    await expect(product).toHaveCount(1);
+  test("admin API updates a book without changing release date", { tag: "@a3" }, async ({ userPage }) => {
+    const before = await client.db.post.findUniqueOrThrow({
+      where: { urlId: "atomic-habits" },
+      select: { date: true },
+    });
 
-    await product.getByRole("button", { name: "Delete" }).click();
+    const response = await userPage.request.put("/api/posts", {
+      data: {
+        id: 5,
+        title: "Atomic Habits",
+        description: "Updated practical guidance for building better habits.",
+        content: "# Book details\n\n**Author:** James Clear",
+        imageUrl: "https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg",
+        category: "Nonfiction",
+        priceAud: 28,
+        stockQuantity: 35,
+        active: true,
+      },
+    });
+    expect(response.status()).toBe(200);
 
-    await expect(
-      userPage.getByText("MagDock 3-in-1 Charging Station"),
-    ).not.toBeVisible();
-    await expect(userPage.locator("article")).toHaveCount(4);
+    const after = await client.db.post.findUniqueOrThrow({
+      where: { urlId: "atomic-habits" },
+      select: { description: true, date: true },
+    });
+    expect(after.description).toBe("Updated practical guidance for building better habits.");
+    expect(after.date.toISOString()).toBe(before.date.toISOString());
+  });
+
+  test("can delete a book from inventory", { tag: "@a2" }, async ({ userPage }) => {
+    await userPage.goto("/inventory");
+
+    const row = userPage.getByRole("row", { name: /Book Lovers/ });
+    await expect(row).toBeVisible();
+    await row.getByRole("button", { name: "Delete" }).click();
+
+    await expect(userPage.getByText("Book Lovers")).not.toBeVisible();
   });
 });

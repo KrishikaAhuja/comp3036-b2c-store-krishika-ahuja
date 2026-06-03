@@ -1,135 +1,59 @@
-import { expect, test } from "./fixtures";
 import { seed } from "@repo/db/seed";
+import { expect, test } from "./fixtures";
 
-test.describe("CLIENTSTORE", () => {
-  test.beforeEach(async ({ page }) => {
-    await seed();
+function uniqueCustomerEmail() {
+  return `cart-${Date.now()}-${Math.random().toString(16).slice(2)}@example.com`;
+}
+
+test.beforeEach(async () => {
+  await seed();
+});
+
+test.describe("customer book bag", () => {
+  test("unauthenticated add redirects to customer sign in", { tag: "@a1" }, async ({ page }) => {
     await page.goto("/");
-    await page.evaluate(() => {
-      window.localStorage.clear();
+
+    const card = page.getByTestId("blog-post-5");
+    await card.getByRole("button", { name: "Flip Atomic Habits to details" }).click();
+    await card.getByRole("button", { name: "Add to Book Bag" }).click();
+    await expect(page).toHaveURL("/auth?next=%2F");
+  });
+
+  test("signed-in customer can add books and update quantities", { tag: "@a1" }, async ({ page }) => {
+    const email = uniqueCustomerEmail();
+    const registerResponse = await page.request.post("/api/auth/register", {
+      data: {
+        name: "Cart Customer",
+        email,
+        password: "password123",
+      },
     });
-  });
+    expect(registerResponse.status()).toBe(201);
+    const loginResponse = await page.request.post("/api/auth/login", {
+      data: {
+        email,
+        password: "password123",
+      },
+    });
+    expect(loginResponse.status()).toBe(200);
 
-  test("product catalog page loads", { tag: "@a1" }, async ({ page }) => {
     await page.goto("/");
+    const card = page.getByTestId("blog-post-5");
+    await card.getByRole("button", { name: "Flip Atomic Habits to details" }).click();
+    await card.getByRole("button", { name: "Add to Book Bag" }).click();
+    await expect(card.getByRole("button", { name: "Added to Book Bag" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Book Bag (1)" })).toBeVisible();
 
-    await expect(page.getByText("AeroBook 14 Pro Laptop")).toBeVisible();
-    await expect(page.locator('[data-test-id^="blog-post-"]')).toHaveCount(4);
-    await expect(page.getByRole("link", { name: "Cart (0)" })).toBeVisible();
-  });
-
-  test(
-    "product cards show product details and cart action",
-    { tag: "@a1" },
-    async ({ page }) => {
-      await page.goto("/");
-
-      const productCard = page.getByTestId("blog-post-1");
-      await expect(productCard).toBeVisible();
-      await expect(productCard.getByText("AeroBook 14 Pro Laptop")).toBeVisible();
-      await expect(productCard.getByText("$1,299")).toBeVisible();
-      await expect(productCard.getByText("Electronics")).toBeVisible();
-      await expect(productCard.getByText("18 in stock")).toBeVisible();
-      await expect(
-        productCard.getByRole("button", { name: "Add to Cart" }),
-      ).toBeVisible();
-      await expect(
-        productCard.getByRole("link", { name: "View Product" }),
-      ).toBeVisible();
-    },
-  );
-
-  test("category filtering works", { tag: "@a1" }, async ({ page }) => {
-    await page.goto("/");
-
-    await page.getByTitle("Category / Audio").click();
-
-    await expect(page).toHaveURL("/category/audio");
-    await expect(page.locator('[data-test-id^="blog-post-"]')).toHaveCount(1);
-    await expect(
-      page.getByText("PulseWave Noise-Cancelling Headphones"),
-    ).toBeVisible();
-    await expect(page.getByText("AeroBook 14 Pro Laptop")).not.toBeVisible();
-  });
-
-  test("search works", { tag: "@a1" }, async ({ page }) => {
-    await page.goto("/");
-
-    await page.getByPlaceholder("Search products...").fill("keyboard");
-
-    await expect(page).toHaveURL("/search?q=keyboard");
-    await expect(page.locator('[data-test-id^="blog-post-"]')).toHaveCount(1);
-    await expect(page.getByText("Vertex RGB Mechanical Keyboard")).toBeVisible();
-    await expect(
-      page.getByText("PulseWave Noise-Cancelling Headphones"),
-    ).not.toBeVisible();
-  });
-
-  test(
-    "adding to cart increases navbar cart count",
-    { tag: "@a1" },
-    async ({ page }) => {
-    await page.goto("/");
-
-    await expect(page.getByRole("link", { name: "Cart (0)" })).toBeVisible();
-    await page
-      .getByTestId("blog-post-1")
-      .getByRole("button", { name: "Add to Cart" })
-      .click();
-
-    await expect(page.getByRole("link", { name: "Cart (1)" })).toBeVisible();
-    },
-  );
-
-  test(
-    "cart page shows added product, quantity controls and total",
-    { tag: "@a1" },
-    async ({ page }) => {
-      await page.goto("/");
-      await page
-        .getByTestId("blog-post-1")
-        .getByRole("button", { name: "Add to Cart" })
-        .click();
-      await page.getByRole("link", { name: "Cart (1)" }).click();
-
-      await expect(page).toHaveURL("/cart");
-      await expect(page.getByText("AeroBook 14 Pro Laptop")).toBeVisible();
-      await expect(page.getByText("$1,299").first()).toBeVisible();
-      await expect(page.getByText("Total", { exact: true })).toBeVisible();
-      await expect(page.getByText("$1,299").last()).toBeVisible();
-      await expect(
-        page.getByRole("button", {
-          name: "Decrease AeroBook 14 Pro Laptop quantity",
-        }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole("button", {
-          name: "Increase AeroBook 14 Pro Laptop quantity",
-        }),
-      ).toBeVisible();
-
-      await page
-        .getByRole("button", {
-          name: "Increase AeroBook 14 Pro Laptop quantity",
-        })
-        .click();
-
-      await expect(page.getByRole("link", { name: "Cart (2)" })).toBeVisible();
-      await expect(page.getByText("$2,598", { exact: true })).toBeVisible();
-    },
-  );
-
-  test("removing an item empties the cart", { tag: "@a1" }, async ({ page }) => {
-    await page.goto("/");
-    await page
-      .getByTestId("blog-post-1")
-      .getByRole("button", { name: "Add to Cart" })
-      .click();
     await page.goto("/cart");
+    await expect(page.getByRole("heading", { name: "Book Bag" })).toBeVisible();
+    await expect(page.getByText("Atomic Habits")).toBeVisible();
+    await expect(page.getByText("$28", { exact: true }).last()).toBeVisible();
 
+    await page.getByRole("button", { name: "Increase Atomic Habits quantity" }).click();
+    await expect(page.getByText("$56", { exact: true }).last()).toBeVisible();
+
+    await page.getByRole("button", { name: "Decrease Atomic Habits quantity" }).click();
     await page.getByRole("button", { name: "Remove" }).click();
-
-    await expect(page.getByText("Your cart is empty.")).toBeVisible();
-    await expect(page.getByRole("link", { name: "Cart (0)" })).toBeVisible();
+    await expect(page.getByText("Your book bag is empty.")).toBeVisible();
   });
 });

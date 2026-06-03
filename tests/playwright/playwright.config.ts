@@ -15,7 +15,7 @@ const repoRoot = path.resolve(__dirname, "../..");
 process.chdir(repoRoot);
 process.env.DATABASE_URL = `file:${path
   .resolve(repoRoot, "packages/db/prisma/dev.db")
-  .replaceAll("\\", "/")}`;
+  .replace(/\\/g, "/")}`;
 
 /**
  * See https://playwright.dev/docs/test-configuration.

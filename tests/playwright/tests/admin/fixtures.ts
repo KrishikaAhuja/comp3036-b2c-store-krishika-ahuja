@@ -49,7 +49,7 @@ export const test = base.extend<MyFixtures>({
     await userPage.getByLabel("Email", { exact: true }).fill("admin@example.com");
     await userPage.getByLabel("Password", { exact: true }).fill("123");
     await userPage.getByText("Sign In", { exact: true }).click();
-    await userPage.getByText("Product Management", { exact: true }).waitFor();
+    await userPage.getByText("Admin Dashboard", { exact: true }).waitFor();
     await use(userPage);
     await context.close();
   },
