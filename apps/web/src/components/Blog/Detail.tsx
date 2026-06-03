@@ -36,7 +36,7 @@ export async function BlogDetail({ post }: { post: Post }) {
       className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-[var(--surface-muted)] bg-[var(--surface)] shadow-md dark:border-gray-700"
     >
       <div className="grid lg:grid-cols-[minmax(18rem,24rem)_1fr]">
-        <div className="flex items-center justify-center bg-[var(--surface-muted)] p-6 dark:bg-gray-800">
+        <div className="flex items-center justify-center bg-[#f1f1ed] p-6 dark:bg-gray-800">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={post.imageUrl}
@@ -67,7 +67,7 @@ export async function BlogDetail({ post }: { post: Post }) {
             {formatPrice(post)}
           </p>
 
-          <p className="w-fit rounded-full bg-[#efe1c9] px-3 py-1 text-sm font-semibold text-[var(--accent)] dark:bg-green-950 dark:text-green-300">
+          <p className="w-fit rounded-full bg-[#f1f1ed] px-3 py-1 text-sm font-semibold text-[var(--accent)] dark:bg-green-950 dark:text-green-300">
             {getStockQuantity(post)} copies available
           </p>
 
@@ -75,7 +75,7 @@ export async function BlogDetail({ post }: { post: Post }) {
             {post.tags.split(",").map((tag) => (
               <span
                 key={tag.trim()}
-                className="rounded-full bg-[#ead8bd] px-3 py-1 text-sm font-medium text-[var(--accent)] dark:bg-blue-950 dark:text-blue-300"
+                className="rounded-full bg-[#f1f1ed] px-3 py-1 text-sm font-medium text-[var(--accent)] dark:bg-blue-950 dark:text-blue-300"
               >
                 #{tag.trim()}
               </span>

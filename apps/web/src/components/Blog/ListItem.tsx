@@ -75,7 +75,7 @@ export function BlogListItem({ post }: { post: Post }) {
             {post.tags.split(",").map((tag) => (
               <span
                 key={tag.trim()}
-                className="rounded-md bg-[#ead8bd] px-2.5 py-1 text-xs font-medium text-[var(--accent)] dark:bg-gray-800 dark:text-gray-300"
+                className="rounded-md bg-[#f1f1ed] px-2.5 py-1 text-xs font-medium text-[var(--accent)] dark:bg-gray-800 dark:text-gray-300"
               >
                 #{tag.trim()}
               </span>
@@ -114,7 +114,7 @@ export function BlogListItem({ post }: { post: Post }) {
         >
           <Link
             href={`/post/${post.urlId}`}
-            className="flex min-h-[29rem] items-center justify-center bg-[var(--surface-muted)] p-4 dark:bg-gray-800"
+            className="flex min-h-[29rem] items-center justify-center bg-[#f1f1ed] p-4 dark:bg-gray-800"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img

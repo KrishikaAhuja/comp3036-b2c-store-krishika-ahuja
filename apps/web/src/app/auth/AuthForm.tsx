@@ -135,58 +135,23 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-6xl items-center px-4 py-10">
-      <div className="grid w-full overflow-hidden rounded-[2rem] border border-[var(--surface-muted)] bg-[var(--surface)]/95 shadow-2xl shadow-[#70412f]/12 backdrop-blur-2xl dark:border-white/10 dark:bg-gray-950/70 dark:shadow-black/40 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="relative hidden overflow-hidden bg-[linear-gradient(145deg,#2b1d17_0%,#70412f_58%,#2f5d50_100%)] p-8 text-[#fffdf8] lg:flex lg:flex-col lg:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#ded6c8]">
-              Bookstore Account
-            </p>
-            <h1 className="relative z-10 mt-5 max-w-sm text-5xl font-black leading-[0.95]">
-              Keep your shelf close.
-            </h1>
-          </div>
-          <div className="my-8 grid grid-cols-7 items-end gap-2">
-            {[112, 144, 96, 160, 128, 176, 112].map((height, index) => (
-                <span
-                  key={index}
-                  className="rounded-sm border border-[#fffdf8]/20 bg-[#fffdf8]/18"
-                  style={{ height }}
-                />
-              ))}
-          </div>
-          <div className="relative rounded-2xl border border-[#fffdf8]/25 bg-[#fffdf8]/12 p-5 backdrop-blur">
-            <div className="mb-3 flex gap-2">
-              <span className="rounded-full bg-[#fffdf8]/85 px-3 py-1 text-xs font-bold text-[#1f2722]">
-                saved reads
-              </span>
-              <span className="rounded-full bg-[#ded6c8] px-3 py-1 text-xs font-bold text-[#1f2722]">
-                book bag
-              </span>
-            </div>
-            <p className="text-sm leading-6 text-[#fffdf8]">
-              Save your account actions for signed-in readers while keeping the
-              shelves open for browsing.
-            </p>
-          </div>
+    <div className="mx-auto flex min-h-screen w-full max-w-md flex-col justify-center px-4 py-10">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--surface)] p-8 shadow-2xl shadow-[#4b1f2f]/12"
+      >
+        <div className="mb-6 text-center">
+          <h1 className="font-['Times_New_Roman',serif] text-3xl font-bold text-[var(--text)]">
+            {mode === "register" ? "Create your reader account" : "Reader sign in"}
+          </h1>
+          <p className="mt-2 text-sm text-[var(--text-secondary)]">
+            {mode === "register"
+              ? "Create an account for your book bag and reader actions."
+              : "Sign in to continue with your book bag and reader actions."}
+          </p>
         </div>
 
-        <div className="p-6 sm:p-10">
-          <div className="mb-6">
-            <p className="mb-3 inline-flex rounded-full bg-[var(--surface-muted)] px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-[var(--accent)] dark:bg-rose-950 dark:text-rose-100">
-              {mode === "register" ? "join the list" : "back again"}
-            </p>
-            <h2 className="text-3xl font-black text-[var(--text)]">
-              {mode === "register" ? "Create your reader account" : "Welcome back"}
-            </h2>
-            <p className="mt-2 text-sm text-[var(--text-secondary)]">
-              {mode === "register"
-                ? "Create your customer profile for your book bag and saved actions."
-                : "Sign in to continue with your book bag and reader actions."}
-            </p>
-          </div>
-
-          <div className="mb-6 grid grid-cols-2 rounded-full border border-[var(--surface-muted)] bg-[var(--background)] p-1 shadow-inner dark:border-gray-700 dark:bg-gray-900/80">
+        <div className="mb-6 grid grid-cols-2 rounded-xl border border-[var(--surface-muted)] bg-[var(--background)] p-1 shadow-inner dark:border-gray-700 dark:bg-gray-900/80">
           <button
             type="button"
             onClick={() => {
@@ -194,9 +159,9 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
               setError("");
               setConfirmPassword("");
             }}
-            className={`rounded-full px-3 py-2 text-sm font-bold transition ${
+            className={`rounded-lg px-3 py-2 text-sm font-bold transition ${
               mode === "login"
-                ? "bg-[var(--accent)] text-[var(--surface)] shadow-lg shadow-[#70412f]/20 dark:bg-white dark:text-gray-950"
+                ? "bg-[var(--accent)] text-[var(--surface)] shadow-lg shadow-[#4b1f2f]/20 dark:bg-white dark:text-gray-950"
                 : "text-[var(--text-secondary)] hover:text-[var(--text)]"
             }`}
           >
@@ -208,17 +173,17 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
               setMode("register");
               setError("");
             }}
-            className={`rounded-full px-3 py-2 text-sm font-bold transition ${
+            className={`rounded-lg px-3 py-2 text-sm font-bold transition ${
               mode === "register"
-                ? "bg-[var(--accent)] text-[var(--surface)] shadow-lg shadow-[#70412f]/20 dark:bg-white dark:text-gray-950"
+                ? "bg-[var(--accent)] text-[var(--surface)] shadow-lg shadow-[#4b1f2f]/20 dark:bg-white dark:text-gray-950"
                 : "text-[var(--text-secondary)] hover:text-[var(--text)]"
             }`}
           >
             Register
           </button>
-          </div>
+        </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-4">
           {mode === "register" && (
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium">
@@ -230,7 +195,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
                 type="text"
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[#70412f]/20 dark:border-gray-700 dark:bg-gray-900/80"
+                className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[#4b1f2f]/20 dark:border-gray-700 dark:bg-gray-900/80"
                 autoComplete="name"
                 required
               />
@@ -247,7 +212,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[#70412f]/20 dark:border-gray-700 dark:bg-gray-900/80"
+              className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[#4b1f2f]/20 dark:border-gray-700 dark:bg-gray-900/80"
               autoComplete="email"
               required
             />
@@ -263,7 +228,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[#70412f]/20 dark:border-gray-700 dark:bg-gray-900/80"
+              className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[#4b1f2f]/20 dark:border-gray-700 dark:bg-gray-900/80"
               minLength={mode === "register" ? MIN_PASSWORD_LENGTH : undefined}
               autoComplete={
                 mode === "register" ? "new-password" : "current-password"
@@ -288,7 +253,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
                 type="password"
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
-                className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[#70412f]/20 dark:border-gray-700 dark:bg-gray-900/80"
+                className="w-full rounded-2xl border border-[var(--surface-muted)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[#4b1f2f]/20 dark:border-gray-700 dark:bg-gray-900/80"
                 autoComplete="new-password"
                 minLength={MIN_PASSWORD_LENGTH}
                 required
@@ -305,7 +270,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
           <button
             type="submit"
             disabled={pending}
-            className="w-full rounded-2xl bg-[var(--accent)] px-4 py-3 text-sm font-black text-[var(--surface)] shadow-xl shadow-[#70412f]/25 transition hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
+            className="w-full rounded-2xl bg-[var(--accent)] px-4 py-3 text-sm font-black text-[var(--surface)] shadow-xl shadow-[#4b1f2f]/25 transition hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
           >
             {pending
               ? "Please wait"
@@ -313,9 +278,8 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
                 ? "Create account"
                 : "Sign in"}
           </button>
-          </form>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

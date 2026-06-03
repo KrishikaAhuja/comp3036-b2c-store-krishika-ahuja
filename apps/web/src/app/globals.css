@@ -5,19 +5,20 @@
 @config "../../tailwind.config.ts";
 
 :root {
-  --background: #f6f3ed;
-  --surface: #fffdf8;
-  --surface-muted: #ded6c8;
-  --foreground: #1f2722;
-  --text: #1f2722;
-  --textHover: #274f43;
-  --text-secondary: #5f675f;
-  --text-secondaryHover: #48534c;
-  --accent: #70412f;
-  --accent-hover: #563023;
-  --accent-secondary: #2f5d50;
-  --wsu: #70412f;
-  --wsu-light: #9a6a4f;
+  --background: #f7f7f4;
+  --surface: #ffffff;
+  --surface-muted: #e6e6e1;
+  --highlight: #8a6f4d;
+  --foreground: #2f2520;
+  --text: #2f2520;
+  --textHover: #4b1f2f;
+  --text-secondary: #6d625a;
+  --text-secondaryHover: #514741;
+  --accent: #4b1f2f;
+  --accent-hover: #351521;
+  --accent-secondary: #8a6f4d;
+  --wsu: #4b1f2f;
+  --wsu-light: #8a6f4d;
 }
 
 html[data-theme="dark"] {

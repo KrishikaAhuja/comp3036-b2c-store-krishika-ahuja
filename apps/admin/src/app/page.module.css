@@ -1,9 +1,9 @@
 .main {
   min-height: 100vh;
   background:
-    linear-gradient(90deg, rgba(112, 65, 47, 0.07) 1px, transparent 1px),
-    linear-gradient(#f6f3ed, #eeebe4);
-  background-size: 36px 100%, auto;
+    linear-gradient(rgba(75, 31, 47, 0.06) 1px, transparent 1px),
+    linear-gradient(#f7f7f4, #ededeb);
+  background-size: 100% 36px, auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,7 +19,7 @@
   border-radius: 20px;
   border: 1px solid var(--surface-muted);
 
-  box-shadow: 0 20px 50px rgba(112, 65, 47, 0.12);
+  box-shadow: 0 20px 50px rgba(75, 31, 47, 0.12);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -29,8 +29,10 @@
   width: 100%;
   max-width: 420px;
   margin: 0 0 12px;
-  font-size: 1.8rem;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 2rem;
   font-weight: 700;
+  letter-spacing: 0;
   color: var(--text);
   text-align: center;
 }
@@ -52,7 +54,7 @@
 
 .main input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(112, 65, 47, 0.16);
+  box-shadow: 0 0 0 3px rgba(75, 31, 47, 0.16);
 }
 
 .main button {
@@ -66,7 +68,7 @@
   color: var(--surface);
   cursor: pointer;
 
-  box-shadow: 0 6px 14px rgba(112, 65, 47, 0.25);
+  box-shadow: 0 6px 14px rgba(75, 31, 47, 0.25);
 }
 
 .main button:hover {
