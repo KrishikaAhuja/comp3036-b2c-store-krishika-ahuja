@@ -31,10 +31,12 @@ function getStockQuantity(post: Post) {
 
 export function BlogListItem({ post }: { post: Post }) {
   const [opened, setOpened] = useState(false);
+  const stockQuantity = getStockQuantity(post);
+  const outOfStock = stockQuantity <= 0;
 
   return (
     <article
-      className="h-full [perspective:1200px]"
+      className={`h-full [perspective:1200px] ${outOfStock ? "opacity-75 grayscale-[0.2]" : ""}`}
       data-test-id={`blog-post-${post.id}`}
     >
       <div className="relative min-h-[29rem] rounded-lg [transform-style:preserve-3d]">
@@ -83,7 +85,7 @@ export function BlogListItem({ post }: { post: Post }) {
           </div>
 
           <div className="mt-auto flex items-center justify-between gap-4 border-t border-gray-200 pt-4 text-sm text-[var(--text-secondary)] dark:border-gray-700">
-            <p>{getStockQuantity(post)} copies left</p>
+            <p>{outOfStock ? "Out of stock" : `${stockQuantity} copies left`}</p>
             <p>{post.likes} saving this read</p>
           </div>
 
@@ -95,6 +97,7 @@ export function BlogListItem({ post }: { post: Post }) {
                 title: post.title,
                 price: getProductPrice(post),
                 imageUrl: post.imageUrl,
+                stockQuantity,
               }}
             />
             <Link

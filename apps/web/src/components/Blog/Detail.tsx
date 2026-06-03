@@ -29,6 +29,8 @@ function getProductPrice(post: Post) {
 
 export async function BlogDetail({ post }: { post: Post }) {
   const content = await marked.parse(post.content);
+  const stockQuantity = getStockQuantity(post);
+  const outOfStock = stockQuantity <= 0;
 
   return (
     <article
@@ -68,7 +70,7 @@ export async function BlogDetail({ post }: { post: Post }) {
           </p>
 
           <p className="w-fit rounded-full bg-[#f1f1ed] px-3 py-1 text-sm font-semibold text-[var(--accent)] dark:bg-green-950 dark:text-green-300">
-            {getStockQuantity(post)} copies available
+            {outOfStock ? "Out of stock" : `${stockQuantity} copies available`}
           </p>
 
           <div className="flex flex-wrap gap-2">
@@ -95,6 +97,7 @@ export async function BlogDetail({ post }: { post: Post }) {
               title: post.title,
               price: getProductPrice(post),
               imageUrl: post.imageUrl,
+              stockQuantity,
             }}
           />
         </div>

@@ -20,6 +20,16 @@ test.describe("customer bookstore detail page", () => {
     await expect(item.getByTestId("content-markdown")).toContainText("James Clear");
   });
 
+  test("out of stock books are visible but cannot be added", { tag: "@a1" }, async ({ page }) => {
+    await page.goto("/post/the-hobbit");
+
+    const item = page.getByTestId("blog-post-3");
+    await expect(item.getByRole("link", { name: "The Hobbit" })).toBeVisible();
+    await expect(item.getByText("Out of stock", { exact: true })).toBeVisible();
+    await expect(item.getByRole("button", { name: "Out of Stock" })).toBeDisabled();
+    await expect(item.getByRole("button", { name: "Add to Book Bag" })).not.toBeVisible();
+  });
+
   test("each customer visit increments views", { tag: "@a1" }, async ({ page }) => {
     await page.goto("/post/the-silent-patient");
     await expect(page.getByText("684 saving this read")).not.toBeVisible();

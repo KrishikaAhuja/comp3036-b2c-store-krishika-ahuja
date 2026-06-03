@@ -59,6 +59,18 @@ test.describe("customer bookstore home", () => {
     await expect(item.getByText("35 copies left")).toBeVisible();
     await expect(item.getByRole("button", { name: "Add to Book Bag" })).toBeVisible();
     await expect(item.getByRole("link", { name: "View Book" })).toBeVisible();
+
+    const outOfStockItem = page.getByTestId("blog-post-3");
+    await expect(outOfStockItem.getByText("The Hobbit")).toBeVisible();
+    await expect(
+      outOfStockItem.getByText("Out of stock", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      outOfStockItem.getByRole("button", { name: "Out of Stock" }),
+    ).toBeDisabled();
+    await expect(
+      outOfStockItem.getByRole("button", { name: "Add to Book Bag" }),
+    ).not.toBeVisible();
   });
 
   test("search box routes to search page", { tag: "@a1" }, async ({ page }) => {
