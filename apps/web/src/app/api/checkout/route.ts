@@ -101,7 +101,7 @@ function validateCheckoutDetails(customer: CheckoutCustomer, payment: CheckoutPa
   return "";
 }
 
-function createMockTransactionId() {
+function createTransactionId() {
   const now = new Date();
   const date = [
     now.getFullYear(),
@@ -110,7 +110,7 @@ function createMockTransactionId() {
   ].join("");
   const suffix = Math.floor(1000 + Math.random() * 9000);
 
-  return `MOCK-${date}-${suffix}`;
+  return `TXN-${date}-${suffix}`;
 }
 
 export async function POST(req: NextRequest) {
@@ -180,7 +180,7 @@ export async function POST(req: NextRequest) {
   });
 
   const totalAud = orderItems.reduce((total, item) => total + item.lineTotalAud, 0);
-  const paymentReference = createMockTransactionId();
+  const paymentReference = createTransactionId();
 
   try {
     const orderId = await client.db.$transaction(async (tx) => {

@@ -230,7 +230,7 @@ export function CheckoutPageContent({
       <div>
         <h1 className="text-2xl font-semibold text-[var(--text)]">Checkout</h1>
         <p className="mt-1 text-sm text-[var(--text-secondary)]">
-          Complete your delivery details and mock payment.
+          Complete your delivery details and payment.
         </p>
       </div>
 
@@ -285,7 +285,7 @@ export function CheckoutPageContent({
                 }
                 className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
               >
-                <option value="mock_credit_card">Mock Credit Card</option>
+                <option value="mock_credit_card">Credit Card</option>
                 <option value="pay_on_delivery">Pay on Delivery</option>
               </select>
             </label>
@@ -331,7 +331,7 @@ export function CheckoutPageContent({
                   name="expiryDate"
                   value={form.expiryDate}
                   onChange={(event) => updateField("expiryDate", event.target.value)}
-                  placeholder="12/28"
+                  placeholder="mm/yy"
                   className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
                 />
               </label>

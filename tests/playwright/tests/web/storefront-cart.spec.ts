@@ -20,7 +20,7 @@ test.describe("customer book bag", () => {
     await expect(page).toHaveURL("/auth?next=%2F");
   });
 
-  test("signed-in customer can checkout with mock payment", { tag: "@a1" }, async ({ page }) => {
+  test("signed-in customer can checkout with card payment", { tag: "@a1" }, async ({ page }) => {
     const email = uniqueCustomerEmail();
     const registerResponse = await page.request.post("/api/auth/register", {
       data: {
@@ -71,7 +71,7 @@ test.describe("customer book bag", () => {
     await expect(
       page.getByText("Payment Successful! Thank you for your purchase."),
     ).toBeVisible();
-    await expect(page.getByText(/MOCK-\d{8}-\d{4}/)).toBeVisible();
+    await expect(page.getByText(/TXN-\d{8}-\d{4}/)).toBeVisible();
     await expect(page.locator("dl").getByText("Cart Customer", { exact: true })).toBeVisible();
     await expect(page.getByText("$56", { exact: true })).toBeVisible();
     await expect(page.getByRole("link", { name: "Book Bag (0)" })).toBeVisible();

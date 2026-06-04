@@ -79,7 +79,7 @@ export function CartPageContent() {
           Book Bag
         </h1>
         <p className="mt-1 text-sm text-[var(--text-secondary)]">
-          Review your reads before mock checkout.
+          Review your reads before checkout.
         </p>
       </div>
 
@@ -166,7 +166,7 @@ export function CartPageContent() {
             <span>{formatPrice(total)}</span>
           </div>
           <p className="mt-3 text-sm text-[var(--text-secondary)]">
-            Continue to the demo checkout to enter delivery and mock payment details.
+            Continue to checkout to enter delivery and payment details.
           </p>
           <Link
             href="/checkout"

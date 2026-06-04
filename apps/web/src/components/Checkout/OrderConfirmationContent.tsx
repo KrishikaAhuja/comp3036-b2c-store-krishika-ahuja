@@ -57,7 +57,7 @@ export function OrderConfirmationContent() {
           </div>
           <div>
             <dt className="font-semibold text-[var(--text-secondary)]">
-              Mock Transaction ID
+              Transaction ID
             </dt>
             <dd className="mt-1 text-lg font-semibold text-[var(--text)]">
               {confirmation.paymentReference}
