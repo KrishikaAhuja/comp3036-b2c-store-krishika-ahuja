@@ -4,22 +4,9 @@ export const visibleCustomerWhere = {
   role: "CUSTOMER" as const,
   NOT: [
     {
-      AND: [
-        { email: { startsWith: "cart-" } },
-        { email: { endsWith: "@example.com" } },
-      ],
-    },
-    {
-      AND: [
-        { email: { startsWith: "api-customer-" } },
-        { email: { endsWith: "@example.com" } },
-      ],
-    },
-    {
-      AND: [
-        { email: { startsWith: "customer-" } },
-        { email: { endsWith: "@example.com" } },
-      ],
+      email: {
+        endsWith: "@example.com",
+      },
     },
   ],
 };
