@@ -1,4 +1,5 @@
 import type { Post } from "@repo/db/data";
+import { BookOpenIcon } from "@heroicons/react/24/outline";
 import { CategoryList } from "./CategoryList";
 import { HistoryList } from "./HistoryList";
 import { TagList } from "./TagList";
@@ -11,21 +12,19 @@ export async function LeftMenu({ posts }: { posts: Post[] }) {
         <div className="mb-8">
           <Link
             href="/"
-            className="mb-4 inline-flex text-sm font-semibold text-[var(--text-secondary)] transition hover:text-[var(--accent)]"
+            className="group flex items-center gap-3 rounded-xl transition hover:text-[var(--accent)]"
           >
-            &larr; All Books
-          </Link>
-          <Link
-            href="/"
-            className="block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent)] transition hover:text-[var(--accent-hover)]"
-          >
-            Bookstore
-          </Link>
-          <Link
-            href="/"
-            className="mt-2 block text-2xl font-bold text-[var(--text)] transition hover:text-[var(--accent)]"
-          >
-            Books
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--accent)] text-[var(--surface)] shadow-sm transition group-hover:bg-[var(--accent-hover)]">
+              <BookOpenIcon className="h-6 w-6" aria-hidden="true" />
+            </span>
+            <span>
+              <span className="block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--accent)] transition group-hover:text-[var(--accent-hover)]">
+                Bookstore
+              </span>
+              <span className="mt-1 block text-2xl font-bold text-[var(--text)] transition group-hover:text-[var(--accent)]">
+                Books
+              </span>
+            </span>
           </Link>
           <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
             Browse books by genre, arrival date, and age range.

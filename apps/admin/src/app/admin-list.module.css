@@ -39,6 +39,11 @@
   font-weight: 700;
 }
 
+.brandMark svg {
+  height: 24px;
+  width: 24px;
+}
+
 .brand strong,
 .brand small {
   display: block;

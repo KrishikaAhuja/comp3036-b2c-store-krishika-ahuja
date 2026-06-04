@@ -1,4 +1,5 @@
 import styles from "./admin-list.module.css";
+import { BookOpenIcon } from "@heroicons/react/24/outline";
 import type { ReactNode } from "react";
 
 type AdminShellProps = {
@@ -25,7 +26,9 @@ export function AdminShell({
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
         <a href="/" className={styles.brand}>
-          <span className={styles.brandMark}>B</span>
+          <span className={styles.brandMark}>
+            <BookOpenIcon aria-hidden="true" />
+          </span>
           <span>
             <strong>Bookstore Admin</strong>
             <small>Operations</small>
