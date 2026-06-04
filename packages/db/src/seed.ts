@@ -8,6 +8,30 @@ const adminUser = {
   password: process.env.ADMIN_PASSWORD || process.env.PASSWORD || "123",
 };
 
+const generatedTestCustomerWhere = {
+  role: "CUSTOMER" as const,
+  OR: [
+    {
+      AND: [
+        { email: { startsWith: "cart-" } },
+        { email: { endsWith: "@example.com" } },
+      ],
+    },
+    {
+      AND: [
+        { email: { startsWith: "api-customer-" } },
+        { email: { endsWith: "@example.com" } },
+      ],
+    },
+    {
+      AND: [
+        { email: { startsWith: "customer-" } },
+        { email: { endsWith: "@example.com" } },
+      ],
+    },
+  ],
+};
+
 // function to seed (insert) data into the database
 export async function seed() {
   console.log("Seeding data"); // log message to show seeding started
@@ -37,6 +61,9 @@ export async function seed() {
 
     await tx.$executeRawUnsafe('DELETE FROM "OrderItem"');
     await tx.$executeRawUnsafe('DELETE FROM "Order"');
+    await tx.user.deleteMany({
+      where: generatedTestCustomerWhere,
+    });
 
     // delete all existing posts (clean database)
     await tx.post.deleteMany();
