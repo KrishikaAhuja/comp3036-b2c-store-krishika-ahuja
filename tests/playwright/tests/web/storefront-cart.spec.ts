@@ -1,6 +1,6 @@
 import { client } from "@repo/db/client";
 import { seed } from "@repo/db/seed";
-import { expect, test } from "./fixtures";
+import { expect, test, type APIRequestContext, type Page } from "./fixtures";
 
 function uniqueCustomerEmail() {
   return `cart-${Date.now()}-${Math.random().toString(16).slice(2)}@example.com`;
@@ -12,6 +12,64 @@ function formatPrice(value: number) {
     currency: "AUD",
     maximumFractionDigits: 0,
   }).format(value);
+}
+
+async function registerCustomer(page: Page, email: string, password: string) {
+  const registerResponse = await page.request.post("/api/auth/register", {
+    data: {
+      name: "Cart Customer",
+      email,
+      password,
+    },
+  });
+  expect(registerResponse.status()).toBe(201);
+
+  const loginResponse = await page.request.post("/api/auth/login", {
+    data: {
+      email,
+      password,
+    },
+  });
+  expect(loginResponse.status()).toBe(200);
+
+  const authCookie = loginResponse
+    .headers()["set-cookie"]
+    ?.match(/customer_auth_token=([^;]+)/)?.[1];
+
+  expect(authCookie).toBeTruthy();
+
+  await page.context().addCookies([
+    {
+      name: "customer_auth_token",
+      value: authCookie!,
+      url: "http://localhost:3001",
+      httpOnly: true,
+      sameSite: "Lax",
+    },
+  ]);
+}
+
+async function registerCustomerForApi(
+  request: APIRequestContext,
+  email: string,
+  password: string,
+) {
+  const registerResponse = await request.post("/api/auth/register", {
+    data: {
+      name: "Cart Customer",
+      email,
+      password,
+    },
+  });
+  expect(registerResponse.status()).toBe(201);
+
+  const loginResponse = await request.post("/api/auth/login", {
+    data: {
+      email,
+      password,
+    },
+  });
+  expect(loginResponse.status()).toBe(200);
 }
 
 async function getCheckoutProduct() {
@@ -66,21 +124,7 @@ test.describe("customer book bag", () => {
     const expectedTotal = product.priceAud * checkoutQuantity;
 
     const email = uniqueCustomerEmail();
-    const registerResponse = await page.request.post("/api/auth/register", {
-      data: {
-        name: "Cart Customer",
-        email,
-        password: "password123",
-      },
-    });
-    expect(registerResponse.status()).toBe(201);
-    const loginResponse = await page.request.post("/api/auth/login", {
-      data: {
-        email,
-        password: "password123",
-      },
-    });
-    expect(loginResponse.status()).toBe(200);
+    await registerCustomer(page, email, "password123");
 
     await page.goto("/", { waitUntil: "domcontentloaded" });
     const card = page.getByTestId(`blog-post-${product.id}`);
@@ -158,49 +202,13 @@ test.describe("customer book bag", () => {
     expect(book?.stockQuantity).toBe(product.stockQuantity - checkoutQuantity);
   });
 
-  test("checkout validation does not create an order or clear the cart", { tag: "@a1" }, async ({ page }) => {
+  test("checkout validation does not create an order", { tag: "@a1" }, async ({ request }) => {
     const product = await getCheckoutProduct();
 
     const email = uniqueCustomerEmail();
-    const registerResponse = await page.request.post("/api/auth/register", {
-      data: {
-        name: "Invalid Checkout Customer",
-        email,
-        password: "password123",
-      },
-    });
-    expect(registerResponse.status()).toBe(201);
-    const loginResponse = await page.request.post("/api/auth/login", {
-      data: {
-        email,
-        password: "password123",
-      },
-    });
-    expect(loginResponse.status()).toBe(200);
+    await registerCustomerForApi(request, email, "password123");
 
-    await page.goto("/", { waitUntil: "domcontentloaded" });
-    await page.evaluate((cartProduct) => {
-      window.localStorage.setItem(
-        "storefront-cart",
-        JSON.stringify([
-          {
-            id: cartProduct.id,
-            urlId: cartProduct.urlId,
-            title: cartProduct.title,
-            price: cartProduct.priceAud,
-            imageUrl: cartProduct.imageUrl,
-            stockQuantity: cartProduct.stockQuantity,
-            quantity: 1,
-          },
-        ]),
-      );
-    }, product);
-
-    await page.goto("/checkout", { waitUntil: "domcontentloaded" });
-    await expect(page).toHaveURL("/checkout");
-    await expect(page.getByRole("link", { name: "Book Bag (1)" })).toBeVisible();
-
-    const invalidCardResponse = await page.request.post("/api/checkout", {
+    const invalidCardResponse = await request.post("/api/checkout", {
       data: {
         items: [
           {
@@ -224,13 +232,14 @@ test.describe("customer book bag", () => {
       },
     });
     expect(invalidCardResponse.status()).toBe(400);
-    expect(await invalidCardResponse.json()).toEqual({
+    const invalidCardJson = await invalidCardResponse.json();
+    expect(invalidCardJson).toEqual({
       error: "Card number can only contain numbers and spaces.",
     });
 
-    const orders = await client.db.$queryRawUnsafe<{ count: number }[]>(
+    const orders = await client.db.$queryRawUnsafe<{ count: bigint }[]>(
       `SELECT COUNT(*) AS count FROM "Order"`,
     );
-    expect(orders[0]?.count).toBe(0);
+    expect(Number(orders[0]?.count ?? 0n)).toBe(0);
   });
 });

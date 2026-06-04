@@ -75,16 +75,14 @@ export async function seed() {
         },
       });
 
-      // create likes for this post
-      // runs loop based on number of likes in seed data
-      for (let i = 0; i < post.likes; i++) {
-        await tx.like.create({
-          data: {
+      if (post.likes > 0) {
+        await tx.like.createMany({
+          data: Array.from({ length: post.likes }, (_, i) => ({
             postId: post.id,
             userIP: `192.168.100.${i}`,
-          },
+          })),
         });
       }
     }
-  });
+  }, { timeout: 20000 });
 }

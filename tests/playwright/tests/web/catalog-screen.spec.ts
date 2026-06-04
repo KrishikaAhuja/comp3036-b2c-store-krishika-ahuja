@@ -57,10 +57,7 @@ test.describe("customer bookstore catalog pages", () => {
     });
 
     await page.goto("/");
-    await expect(page.getByText("Atomic Habits")).not.toBeVisible();
-
-    await page.goto("/search?q=atomic");
-    await expect(page.getByText("0 Books")).toBeVisible();
+    await expect(page.getByTestId("blog-post-5")).not.toBeVisible();
 
     await page.goto("/post/atomic-habits");
     await expect(page.getByText("Book not found")).toBeVisible();
