@@ -6,21 +6,65 @@ function uniqueCustomerEmail() {
   return `cart-${Date.now()}-${Math.random().toString(16).slice(2)}@example.com`;
 }
 
+function formatPrice(value: number) {
+  return new Intl.NumberFormat("en-AU", {
+    style: "currency",
+    currency: "AUD",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+async function getCheckoutProduct() {
+  const product = await client.db.post.findFirst({
+    where: {
+      active: true,
+      stockQuantity: {
+        gte: 2,
+      },
+    },
+    orderBy: {
+      id: "asc",
+    },
+    select: {
+      id: true,
+      urlId: true,
+      title: true,
+      imageUrl: true,
+      priceAud: true,
+      stockQuantity: true,
+    },
+  });
+
+  if (!product) {
+    throw new Error("Seed data must include an active product with at least two in stock.");
+  }
+
+  return product;
+}
+
 test.beforeEach(async () => {
   await seed();
 });
 
 test.describe("customer book bag", () => {
   test("unauthenticated add redirects to customer sign in", { tag: "@a1" }, async ({ page }) => {
+    const product = await getCheckoutProduct();
+
     await page.goto("/", { waitUntil: "domcontentloaded" });
 
-    const card = page.getByTestId("blog-post-5");
-    await card.getByRole("button", { name: "Flip Atomic Habits to details" }).click();
+    const card = page.getByTestId(`blog-post-${product.id}`);
+    await card
+      .getByRole("button", { name: `Flip ${product.title} to details` })
+      .click();
     await card.getByRole("button", { name: "Add to Book Bag" }).click();
     await expect(page).toHaveURL("/auth?next=%2F");
   });
 
   test("signed-in customer can checkout with card payment", { tag: "@a1" }, async ({ page }) => {
+    const product = await getCheckoutProduct();
+    const checkoutQuantity = 2;
+    const expectedTotal = product.priceAud * checkoutQuantity;
+
     const email = uniqueCustomerEmail();
     const registerResponse = await page.request.post("/api/auth/register", {
       data: {
@@ -39,24 +83,32 @@ test.describe("customer book bag", () => {
     expect(loginResponse.status()).toBe(200);
 
     await page.goto("/", { waitUntil: "domcontentloaded" });
-    const card = page.getByTestId("blog-post-5");
-    await card.getByRole("button", { name: "Flip Atomic Habits to details" }).click();
+    const card = page.getByTestId(`blog-post-${product.id}`);
+    await card
+      .getByRole("button", { name: `Flip ${product.title} to details` })
+      .click();
     await card.getByRole("button", { name: "Add to Book Bag" }).click();
     await expect(card.getByRole("button", { name: "Added to Book Bag" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Book Bag (1)" })).toBeVisible();
 
     await page.goto("/cart", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: "Book Bag" })).toBeVisible();
-    await expect(page.getByText("Atomic Habits")).toBeVisible();
-    await expect(page.getByText("$28", { exact: true }).last()).toBeVisible();
+    await expect(page.getByText(product.title)).toBeVisible();
+    await expect(
+      page.getByText(formatPrice(product.priceAud), { exact: true }).last(),
+    ).toBeVisible();
 
-    await page.getByRole("button", { name: "Increase Atomic Habits quantity" }).click();
-    await expect(page.getByText("$56", { exact: true }).last()).toBeVisible();
+    await page
+      .getByRole("button", { name: `Increase ${product.title} quantity` })
+      .click();
+    await expect(
+      page.getByText(formatPrice(expectedTotal), { exact: true }).last(),
+    ).toBeVisible();
 
     await page.getByRole("link", { name: "Proceed to Checkout" }).click();
     await expect(page).toHaveURL("/checkout");
     await expect(page.getByRole("heading", { name: "Checkout" })).toBeVisible();
-    await expect(page.getByText("Atomic Habits")).toBeVisible();
+    await expect(page.getByText(product.title)).toBeVisible();
 
     const checkoutForm = page.getByTestId("checkout-form");
     await checkoutForm.getByLabel("Phone Number").fill("0412 345 678");
@@ -72,8 +124,12 @@ test.describe("customer book bag", () => {
       page.getByText("Payment Successful! Thank you for your purchase."),
     ).toBeVisible();
     await expect(page.getByText(/TXN-\d{8}-\d{4}/)).toBeVisible();
-    await expect(page.locator("dl").getByText("Cart Customer", { exact: true })).toBeVisible();
-    await expect(page.getByText("$56", { exact: true })).toBeVisible();
+    await expect(
+      page.locator("dl").getByText("Cart Customer", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByText(formatPrice(expectedTotal), { exact: true }),
+    ).toBeVisible();
     await expect(page.getByRole("link", { name: "Book Bag (0)" })).toBeVisible();
 
     const orders = await client.db.$queryRawUnsafe<
@@ -86,23 +142,25 @@ test.describe("customer book bag", () => {
        LIMIT 1`,
     );
     expect(orders[0]).toEqual({
-      totalAud: 56,
-      quantity: 2,
-      title: "Atomic Habits",
+      totalAud: expectedTotal,
+      quantity: checkoutQuantity,
+      title: product.title,
     });
 
     const book = await client.db.post.findUnique({
       where: {
-        urlId: "atomic-habits",
+        urlId: product.urlId,
       },
       select: {
         stockQuantity: true,
       },
     });
-    expect(book?.stockQuantity).toBe(33);
+    expect(book?.stockQuantity).toBe(product.stockQuantity - checkoutQuantity);
   });
 
   test("checkout validation does not create an order or clear the cart", { tag: "@a1" }, async ({ page }) => {
+    const product = await getCheckoutProduct();
+
     const email = uniqueCustomerEmail();
     const registerResponse = await page.request.post("/api/auth/register", {
       data: {
@@ -121,23 +179,22 @@ test.describe("customer book bag", () => {
     expect(loginResponse.status()).toBe(200);
 
     await page.goto("/", { waitUntil: "domcontentloaded" });
-    await page.evaluate(() => {
+    await page.evaluate((cartProduct) => {
       window.localStorage.setItem(
         "storefront-cart",
         JSON.stringify([
           {
-            id: 5,
-            urlId: "atomic-habits",
-            title: "Atomic Habits",
-            price: 28,
-            imageUrl:
-              "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1655988385i/40121378.jpg",
-            stockQuantity: 35,
+            id: cartProduct.id,
+            urlId: cartProduct.urlId,
+            title: cartProduct.title,
+            price: cartProduct.priceAud,
+            imageUrl: cartProduct.imageUrl,
+            stockQuantity: cartProduct.stockQuantity,
             quantity: 1,
           },
         ]),
       );
-    });
+    }, product);
 
     await page.goto("/checkout", { waitUntil: "domcontentloaded" });
     await expect(page).toHaveURL("/checkout");
@@ -147,7 +204,7 @@ test.describe("customer book bag", () => {
       data: {
         items: [
           {
-            id: 5,
+            id: product.id,
             quantity: 1,
           },
         ],
