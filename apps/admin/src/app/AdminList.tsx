@@ -1,4 +1,5 @@
 import { AdminShell } from "./AdminShell";
+import type { AdminOrderSummary } from "./adminData";
 import styles from "./admin-list.module.css";
 
 type AdminStats = {
@@ -19,9 +20,11 @@ type AdminPost = {
 export default function AdminList({
   posts,
   stats,
+  recentOrders,
 }: {
   posts: AdminPost[];
   stats: AdminStats;
+  recentOrders: AdminOrderSummary[];
 }) {
   const totalStock = posts.reduce(
     (total, post) => total + (post.stockQuantity ?? 0),
@@ -63,6 +66,14 @@ export default function AdminList({
 
   function getAuthor(content: string) {
     return content.match(/\*\*Author:\*\*\s*([^\n]+)/)?.[1]?.trim() || "";
+  }
+
+  function formatDate(value: Date | string) {
+    return new Intl.DateTimeFormat("en-AU", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).format(new Date(value));
   }
 
   return (
@@ -121,10 +132,31 @@ export default function AdminList({
               View all orders
             </a>
           </div>
-          <div className={styles.emptyDashboardState}>
-            <strong>No orders yet</strong>
-            <span>New checkout orders will appear here when order storage is added.</span>
-          </div>
+          {recentOrders.length === 0 ? (
+            <div className={styles.emptyDashboardState}>
+              <strong>No orders yet</strong>
+              <span>Completed checkouts will appear here.</span>
+            </div>
+          ) : (
+            <div className={styles.dashboardList}>
+              {recentOrders.map((order) => (
+                <a
+                  key={order.id}
+                  href="/orders"
+                  className={styles.dashboardListItem}
+                >
+                  <span>
+                    <strong>Order #{order.id}</strong>
+                    <small>
+                      {order.customerName} · {order.itemCount} item
+                      {order.itemCount === 1 ? "" : "s"} · {formatDate(order.createdAt)}
+                    </small>
+                  </span>
+                  <em>{formatPrice(order.totalAud)}</em>
+                </a>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className={styles.panel}>

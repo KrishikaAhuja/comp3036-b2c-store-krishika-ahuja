@@ -120,11 +120,29 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await req.json();
-  const items = normalizeItems(body.items);
+  let body: unknown;
+
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json(
+      { error: "Checkout request is not valid JSON." },
+      { status: 400 },
+    );
+  }
+
+  const checkoutBody =
+    body && typeof body === "object"
+      ? (body as {
+          items?: unknown;
+          customer?: unknown;
+          payment?: unknown;
+        })
+      : {};
+  const items = normalizeItems(checkoutBody.items);
   const detailsError = validateCheckoutDetails(
-    (body.customer || {}) as CheckoutCustomer,
-    (body.payment || {}) as CheckoutPayment,
+    (checkoutBody.customer || {}) as CheckoutCustomer,
+    (checkoutBody.payment || {}) as CheckoutPayment,
   );
 
   if (items.length === 0) {
@@ -138,51 +156,51 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: detailsError }, { status: 400 });
   }
 
-  const books = await client.db.post.findMany({
-    where: {
-      id: {
-        in: items.map((item) => item.id),
-      },
-      active: true,
-    },
-    select: {
-      id: true,
-      title: true,
-      urlId: true,
-      imageUrl: true,
-      priceAud: true,
-      stockQuantity: true,
-    },
-  });
-
-  const orderItems = items.map((item) => {
-    const book = books.find((candidate) => candidate.id === item.id);
-
-    if (!book) {
-      throw new Error("A book in your bag is no longer available.");
-    }
-
-    if (book.stockQuantity < item.quantity) {
-      throw new Error(`${book.title} does not have enough stock.`);
-    }
-
-    const unitPriceAud = book.priceAud;
-
-    return {
-      postId: book.id,
-      title: book.title,
-      urlId: book.urlId,
-      imageUrl: book.imageUrl,
-      unitPriceAud,
-      quantity: item.quantity,
-      lineTotalAud: unitPriceAud * item.quantity,
-    };
-  });
-
-  const totalAud = orderItems.reduce((total, item) => total + item.lineTotalAud, 0);
-  const paymentReference = createTransactionId();
-
   try {
+    const books = await client.db.post.findMany({
+      where: {
+        id: {
+          in: items.map((item) => item.id),
+        },
+        active: true,
+      },
+      select: {
+        id: true,
+        title: true,
+        urlId: true,
+        imageUrl: true,
+        priceAud: true,
+        stockQuantity: true,
+      },
+    });
+
+    const orderItems = items.map((item) => {
+      const book = books.find((candidate) => candidate.id === item.id);
+
+      if (!book) {
+        throw new Error("A book in your bag is no longer available.");
+      }
+
+      if (book.stockQuantity < item.quantity) {
+        throw new Error(`${book.title} does not have enough stock.`);
+      }
+
+      const unitPriceAud = book.priceAud;
+
+      return {
+        postId: book.id,
+        title: book.title,
+        urlId: book.urlId,
+        imageUrl: book.imageUrl,
+        unitPriceAud,
+        quantity: item.quantity,
+        lineTotalAud: unitPriceAud * item.quantity,
+      };
+    });
+
+    const totalAud = orderItems.reduce((total, item) => total + item.lineTotalAud, 0);
+    const paymentReference = createTransactionId();
+
     const orderId = await client.db.$transaction(async (tx) => {
       await tx.$executeRawUnsafe(
         `INSERT INTO "Order" ("userId", "status", "paymentProvider", "paymentReference", "totalAud", "updatedAt")

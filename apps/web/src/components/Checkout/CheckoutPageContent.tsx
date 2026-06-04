@@ -70,6 +70,13 @@ function validateForm(form: CheckoutForm, items: CartItem[]) {
     return "Delivery address is required.";
   }
 
+  if (
+    form.paymentMethod !== "mock_credit_card" &&
+    form.paymentMethod !== "pay_on_delivery"
+  ) {
+    return "Select a valid payment method.";
+  }
+
   if (form.paymentMethod === "mock_credit_card") {
     const cardNumber = form.cardNumber.trim();
     const cardDigits = cardNumber.replace(/ /g, "");

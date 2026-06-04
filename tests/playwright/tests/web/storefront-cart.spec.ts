@@ -237,6 +237,54 @@ test.describe("customer book bag", () => {
       error: "Card number can only contain numbers and spaces.",
     });
 
+    const invalidPaymentResponse = await request.post("/api/checkout", {
+      data: {
+        items: [
+          {
+            id: product.id,
+            quantity: 1,
+          },
+        ],
+        customer: {
+          fullName: "Invalid Checkout Customer",
+          email,
+          phone: "0412 345 678",
+          deliveryAddress: "12 Book Lane, Sydney NSW",
+        },
+        payment: {
+          method: "bank_transfer",
+        },
+      },
+    });
+    expect(invalidPaymentResponse.status()).toBe(400);
+    expect(await invalidPaymentResponse.json()).toEqual({
+      error: "Select a valid payment method.",
+    });
+
+    const unavailableStockResponse = await request.post("/api/checkout", {
+      data: {
+        items: [
+          {
+            id: product.id,
+            quantity: product.stockQuantity + 1,
+          },
+        ],
+        customer: {
+          fullName: "Invalid Checkout Customer",
+          email,
+          phone: "0412 345 678",
+          deliveryAddress: "12 Book Lane, Sydney NSW",
+        },
+        payment: {
+          method: "pay_on_delivery",
+        },
+      },
+    });
+    expect(unavailableStockResponse.status()).toBe(400);
+    expect(await unavailableStockResponse.json()).toEqual({
+      error: `${product.title} does not have enough stock.`,
+    });
+
     const orders = await client.db.$queryRawUnsafe<{ count: bigint }[]>(
       `SELECT COUNT(*) AS count FROM "Order"`,
     );
