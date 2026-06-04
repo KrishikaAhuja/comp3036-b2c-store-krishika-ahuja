@@ -86,7 +86,6 @@ export function BlogListItem({ post }: { post: Post }) {
 
           <div className="mt-auto flex items-center justify-between gap-4 border-t border-gray-200 pt-4 text-sm text-[var(--text-secondary)] dark:border-gray-700">
             <p>{outOfStock ? "Out of stock" : `${stockQuantity} copies left`}</p>
-            <p>{post.likes} saving this read</p>
           </div>
 
           <div className="mt-4 grid gap-2 sm:grid-cols-2">

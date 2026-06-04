@@ -205,27 +205,6 @@ export default function AdminList({
             </div>
           )}
         </section>
-
-        <section className={`${styles.panel} ${styles.quickActionsPanel}`}>
-          <div className={styles.panelHeaderCompact}>
-            <p className={styles.eyebrow}>Shortcuts</p>
-            <h2>Quick Actions</h2>
-          </div>
-          <div className={styles.quickActionsGrid}>
-            <a href="/posts/create" className={styles.createButton}>
-              Add Book
-            </a>
-            <a href="/inventory" className={styles.secondaryButton}>
-              View Inventory
-            </a>
-            <a href="/orders" className={styles.secondaryButton}>
-              View Orders
-            </a>
-            <a href="http://localhost:3001" className={styles.secondaryButton}>
-              View Customer Site
-            </a>
-          </div>
-        </section>
       </section>
     </AdminShell>
   );

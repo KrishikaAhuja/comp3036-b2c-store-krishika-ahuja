@@ -19,7 +19,7 @@ test("renders book card data", async () => {
   await expect.element(getByText("01 Oct 2024")).toBeVisible();
   await expect.element(getByText("$24")).toBeVisible();
   await expect.element(getByText("12 copies left")).toBeVisible();
-  await expect.element(getByText("30 saving this read")).toBeVisible();
+  await expect.element(getByText("30 saving this read")).not.toBeVisible();
   await expect.element(getByText("Add to Book Bag")).toBeVisible();
   await expect.element(getByText("View Book")).toBeVisible();
 });
