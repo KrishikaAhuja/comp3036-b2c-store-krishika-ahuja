@@ -1,51 +1,34 @@
-import { history } from "@/functions/history";
+import { getHistoryRangeSlug, history } from "@/functions/history";
 import { type Post } from "@repo/db/data";
 import { SummaryItem } from "./SummaryItem";
 import { LinkList } from "./LinkList";
 
-const months = [
-  "",
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
 export async function HistoryList({
-  selectedYear,
-  selectedMonth,
+  selectedRange,
   posts,
 }: {
-  selectedYear?: string;
-  selectedMonth?: string;
+  selectedRange?: string;
   posts: Post[];
 }) {
-  // Build arrival archive links from product dates, newest month first.
+  // Build arrival archive links from product dates, newest range first.
   const historyItems = history(posts);
 
   return (
     <LinkList title="Arrivals">
-      {historyItems.map((item) => (
-        <SummaryItem
-          key={`${item.year}-${item.month}`}
-          name={`${months[item.month]}, ${item.year}`}
-          count={item.count}
-          isSelected={
-            selectedYear === String(item.year) &&
-            selectedMonth === String(item.month)
-          }
-          link={`/history/${item.year}/${item.month}`}
-          title={`Arrivals / ${months[item.month]}, ${item.year}`}
-        />
-      ))}
+      {historyItems.map((item) => {
+        const slug = getHistoryRangeSlug(item.startYear, item.endYear);
+
+        return (
+          <SummaryItem
+            key={slug}
+            name={slug}
+            count={item.count}
+            isSelected={selectedRange === slug}
+            link={`/history/${slug}`}
+            title={`Arrivals / ${slug}`}
+          />
+        );
+      })}
     </LinkList>
   );
 }

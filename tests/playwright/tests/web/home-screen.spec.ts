@@ -38,10 +38,10 @@ test.describe("customer bookstore home", () => {
     await checkItem(page, "Category / Children", "/category/children", 2);
     await checkItem(page, "Category / Nonfiction", "/category/nonfiction", 3);
 
-    await checkItem(page, "Arrivals / May, 2022", "/history/2022/5", 1);
-    await checkItem(page, "Arrivals / February, 2019", "/history/2019/2", 1);
-    await checkItem(page, "Arrivals / October, 2018", "/history/2018/10", 1);
-    await checkItem(page, "Arrivals / September, 1937", "/history/1937/9", 1);
+    await checkItem(page, "Arrivals / 2020-2029", "/history/2020-2029", 4);
+    await checkItem(page, "Arrivals / 2010-2019", "/history/2010-2019", 5);
+    await checkItem(page, "Arrivals / 2000-2009", "/history/2000-2009", 1);
+    await checkItem(page, "Arrivals / 1930-1939", "/history/1930-1939", 1);
     await expect(page.getByText("December, 2012")).not.toBeVisible();
 
     await checkItem(page, "Age Range / Adult", "/tags/adult", 10);

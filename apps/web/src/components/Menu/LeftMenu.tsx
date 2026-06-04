@@ -39,7 +39,7 @@ export async function LeftMenu({ posts }: { posts: Post[] }) {
               <CategoryList posts={posts} />
             </li>
             <li>
-              <HistoryList selectedYear="" selectedMonth="" posts={posts} />
+              <HistoryList selectedRange="" posts={posts} />
             </li>
             <li>
               <TagList selectedTag="" posts={posts} />

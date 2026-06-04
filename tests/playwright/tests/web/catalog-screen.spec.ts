@@ -29,12 +29,13 @@ test.describe("customer bookstore catalog pages", () => {
     await expect(page.getByText("A Wrinkle in Time")).toBeVisible();
   });
 
-  test("arrival pages filter active books by release month", { tag: "@a1" }, async ({ page }) => {
-    await page.goto("/history/2018/10");
+  test("arrival pages filter active books by release year range", { tag: "@a1" }, async ({ page }) => {
+    await page.goto("/history/2010-2019");
     await expect(page.getByText("Atomic Habits")).toBeVisible();
     await expect(page.getByText("Listed 16 Oct 2018")).toBeVisible();
+    await expect(page.getByText("Sapiens")).toBeVisible();
 
-    await page.goto("/history/2012/12");
+    await page.goto("/history/1990-1999");
     await expect(page.getByText("0 Books")).toBeVisible();
     await expect(page.getByText("Wonder")).not.toBeVisible();
   });

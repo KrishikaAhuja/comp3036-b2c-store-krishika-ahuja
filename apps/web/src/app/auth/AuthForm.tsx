@@ -44,7 +44,7 @@ function getAdminUrl() {
   return "";
 }
 
-export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
+export function AuthForm() {
   const router = useRouter();
   const [mode, setMode] = useState<AuthMode>("login");
   const [name, setName] = useState("");
@@ -125,7 +125,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
         return;
       }
 
-      router.push(nextPath);
+      router.push("/");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
