@@ -13,18 +13,20 @@ test.describe("customer bookstore catalog pages", () => {
     await expect(page.getByText("The Hobbit")).not.toBeVisible();
 
     await page.goto("/category/children");
-    await expect(page.getByText("0 Books")).toBeVisible();
+    await expect(page.getByText("Matilda")).toBeVisible();
+    await expect(page.getByText("Charlotte's Web")).toBeVisible();
     await expect(page.getByText("Wonder")).not.toBeVisible();
   });
 
   test("age range pages filter active books by tag", { tag: "@a1" }, async ({ page }) => {
     await page.goto("/tags/adult");
-    await expect(page.locator("article")).toHaveCount(3);
+    await expect(page.locator("article")).toHaveCount(10);
     await expect(page.getByText("Atomic Habits")).toBeVisible();
 
     await page.goto("/tags/ages-12");
-    await expect(page.locator("article")).toHaveCount(1);
+    await expect(page.locator("article")).toHaveCount(2);
     await expect(page.getByText("The Hobbit")).toBeVisible();
+    await expect(page.getByText("A Wrinkle in Time")).toBeVisible();
   });
 
   test("arrival pages filter active books by release month", { tag: "@a1" }, async ({ page }) => {

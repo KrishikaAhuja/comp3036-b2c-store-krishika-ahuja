@@ -12,7 +12,7 @@ test.describe("admin bookstore", () => {
 
     await expect(userPage.getByRole("heading", { name: "Admin Dashboard" })).toBeVisible();
     await expect(userPage.getByText("Total Books")).toBeVisible();
-    await expect(userPage.getByText("4 active books")).toBeVisible();
+    await expect(userPage.getByText("14 active books")).toBeVisible();
     await expect(userPage.getByRole("link", { name: "Add Book" }).first()).toBeVisible();
 
     await userPage.getByRole("link", { name: "Inventory", exact: true }).click();

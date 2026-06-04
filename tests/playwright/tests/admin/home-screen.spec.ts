@@ -68,7 +68,7 @@ test.describe("ADMIN HOME SCREEN", () => {
       ).toBeVisible();
 
       await expect(userPage.getByText("Total Books")).toBeVisible();
-      await expect(userPage.getByText("4 active books")).toBeVisible();
+      await expect(userPage.getByText("14 active books")).toBeVisible();
     },
   );
 });
