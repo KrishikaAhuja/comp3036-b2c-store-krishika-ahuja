@@ -17,18 +17,14 @@ const generatedTestCustomerWhere = {
       },
     },
     {
-      AND: [
-        {
-          email: {
-            startsWith: "orders-",
-          },
-        },
-        {
-          email: {
-            endsWith: "@book.test",
-          },
-        },
-      ],
+      email: {
+        endsWith: "@book.test",
+      },
+    },
+    {
+      email: {
+        startsWith: "real-customer-",
+      },
     },
   ],
 };

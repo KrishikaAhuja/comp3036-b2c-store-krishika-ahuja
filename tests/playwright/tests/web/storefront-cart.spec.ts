@@ -258,6 +258,7 @@ test.describe("customer book bag", () => {
     await card
       .getByRole("button", { name: `Flip ${product.title} to details` })
       .click();
+    await page.waitForTimeout(800);
     await card.getByRole("button", { name: "Add to Book Bag" }).click();
     await expect(page.getByRole("link", { name: "Book Bag (1)" })).toBeVisible();
 

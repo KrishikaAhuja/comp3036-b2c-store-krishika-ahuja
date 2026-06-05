@@ -50,7 +50,7 @@ test.beforeEach(async () => {
 
 test.describe("customer purchase history", () => {
   test("requires customer sign in", { tag: "@a1" }, async ({ page }) => {
-    await page.goto("/purchase-history");
+    await page.goto("/purchase-history", { waitUntil: "domcontentloaded" });
 
     await expect(page).toHaveURL("/auth?next=/purchase-history");
   });
