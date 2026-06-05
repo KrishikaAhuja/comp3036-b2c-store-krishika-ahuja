@@ -181,7 +181,11 @@ test.describe("customer purchase history", () => {
     const checkoutForm = page.getByTestId("checkout-form");
     await expect(page.getByText(product.title)).toBeVisible();
     await checkoutForm.getByLabel("Phone Number").fill("0412 345 678");
-    await checkoutForm.getByLabel("Delivery Address").fill("12 Book Lane, Sydney NSW");
+    await checkoutForm.getByLabel("House or Building Number").fill("12");
+    await checkoutForm.getByLabel("Street Name").fill("Book Lane");
+    await checkoutForm.getByLabel("Suburb or Area").fill("Sydney");
+    await checkoutForm.getByLabel("State").fill("NSW");
+    await checkoutForm.getByLabel("Postcode").fill("2000");
     await checkoutForm.getByLabel("Payment Method").selectOption("pay_on_delivery");
     await checkoutForm.getByRole("button", { name: "Place Order" }).click();
 

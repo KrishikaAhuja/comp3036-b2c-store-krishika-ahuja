@@ -15,7 +15,11 @@ type CheckoutForm = {
   fullName: string;
   email: string;
   phone: string;
-  deliveryAddress: string;
+  buildingNumber: string;
+  streetName: string;
+  suburb: string;
+  state: string;
+  postcode: string;
   paymentMethod: PaymentMethod;
   cardholderName: string;
   cardNumber: string;
@@ -27,7 +31,11 @@ const initialForm: CheckoutForm = {
   fullName: "",
   email: "",
   phone: "",
-  deliveryAddress: "",
+  buildingNumber: "",
+  streetName: "",
+  suburb: "",
+  state: "",
+  postcode: "",
   paymentMethod: "mock_credit_card",
   cardholderName: "",
   cardNumber: "",
@@ -49,6 +57,12 @@ function textFromForm(formData: FormData, key: string) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function isValidPhoneNumber(value: string) {
+  const digits = value.replace(/\D/g, "");
+
+  return /^0\d{9}$/.test(digits);
+}
+
 function validateForm(form: CheckoutForm, items: CartItem[]) {
   if (items.length === 0) {
     return "Your book bag is empty.";
@@ -66,8 +80,48 @@ function validateForm(form: CheckoutForm, items: CartItem[]) {
     return "Phone number is required.";
   }
 
-  if (!form.deliveryAddress.trim()) {
-    return "Delivery address is required.";
+  if (!isValidPhoneNumber(form.phone)) {
+    return "Enter a valid 10-digit Australian phone number.";
+  }
+
+  if (!form.buildingNumber.trim()) {
+    return "House or building number is required.";
+  }
+
+  if (!/^\d+$/.test(form.buildingNumber.trim())) {
+    return "House or building number can only contain numbers.";
+  }
+
+  if (!form.streetName.trim()) {
+    return "Street name is required.";
+  }
+
+  if (!/^[A-Za-z ]+$/.test(form.streetName.trim())) {
+    return "Street name can only contain letters and spaces.";
+  }
+
+  if (!form.suburb.trim()) {
+    return "Suburb or area is required.";
+  }
+
+  if (!/^[A-Za-z ]+$/.test(form.suburb.trim())) {
+    return "Suburb or area can only contain letters and spaces.";
+  }
+
+  if (!form.state.trim()) {
+    return "State is required.";
+  }
+
+  if (!/^[A-Za-z]{2,3}$/.test(form.state.trim())) {
+    return "State must be 2 or 3 letters.";
+  }
+
+  if (!form.postcode.trim()) {
+    return "Postcode is required.";
+  }
+
+  if (!/^\d{4}$/.test(form.postcode.trim())) {
+    return "Postcode must contain exactly 4 numbers.";
   }
 
   if (
@@ -107,6 +161,15 @@ function validateForm(form: CheckoutForm, items: CartItem[]) {
   }
 
   return "";
+}
+
+function buildDeliveryAddress(form: CheckoutForm) {
+  return [
+    `${form.buildingNumber.trim()} ${form.streetName.trim()}`,
+    form.suburb.trim(),
+    form.state.trim().toUpperCase(),
+    form.postcode.trim(),
+  ].join(", ");
 }
 
 export function CheckoutPageContent({
@@ -161,7 +224,11 @@ export function CheckoutPageContent({
       fullName: textFromForm(formData, "fullName"),
       email: textFromForm(formData, "email"),
       phone: textFromForm(formData, "phone"),
-      deliveryAddress: textFromForm(formData, "deliveryAddress"),
+      buildingNumber: textFromForm(formData, "buildingNumber"),
+      streetName: textFromForm(formData, "streetName"),
+      suburb: textFromForm(formData, "suburb"),
+      state: textFromForm(formData, "state"),
+      postcode: textFromForm(formData, "postcode"),
       paymentMethod: textFromForm(formData, "paymentMethod") as PaymentMethod,
       cardholderName: textFromForm(formData, "cardholderName"),
       cardNumber: textFromForm(formData, "cardNumber"),
@@ -193,7 +260,7 @@ export function CheckoutPageContent({
             fullName: submittedForm.fullName,
             email: submittedForm.email,
             phone: submittedForm.phone,
-            deliveryAddress: submittedForm.deliveryAddress,
+            deliveryAddress: buildDeliveryAddress(submittedForm),
           },
           payment: {
             method: submittedForm.paymentMethod,
@@ -299,16 +366,63 @@ export function CheckoutPageContent({
             </label>
           </div>
 
-          <label className="block space-y-2 text-sm font-semibold text-[var(--text)]">
-            <span>Delivery Address</span>
-            <textarea
-              name="deliveryAddress"
-              value={form.deliveryAddress}
-              onChange={(event) => updateField("deliveryAddress", event.target.value)}
-              rows={4}
-              className="w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 py-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
-            />
-          </label>
+          <fieldset className="space-y-4 border-t border-[var(--surface-muted)] pt-5 dark:border-gray-700">
+            <legend className="text-sm font-semibold text-[var(--text)]">
+              Delivery Address
+            </legend>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="space-y-2 text-sm font-semibold text-[var(--text)]">
+                <span>House or Building Number</span>
+                <input
+                  name="buildingNumber"
+                  value={form.buildingNumber}
+                  onChange={(event) =>
+                    updateField("buildingNumber", event.target.value)
+                  }
+                  inputMode="numeric"
+                  className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                />
+              </label>
+              <label className="space-y-2 text-sm font-semibold text-[var(--text)]">
+                <span>Street Name</span>
+                <input
+                  name="streetName"
+                  value={form.streetName}
+                  onChange={(event) => updateField("streetName", event.target.value)}
+                  className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                />
+              </label>
+              <label className="space-y-2 text-sm font-semibold text-[var(--text)]">
+                <span>Suburb or Area</span>
+                <input
+                  name="suburb"
+                  value={form.suburb}
+                  onChange={(event) => updateField("suburb", event.target.value)}
+                  className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                />
+              </label>
+              <label className="space-y-2 text-sm font-semibold text-[var(--text)]">
+                <span>State</span>
+                <input
+                  name="state"
+                  value={form.state}
+                  onChange={(event) => updateField("state", event.target.value)}
+                  maxLength={3}
+                  className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm uppercase outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                />
+              </label>
+              <label className="space-y-2 text-sm font-semibold text-[var(--text)] md:col-span-2">
+                <span>Postcode</span>
+                <input
+                  name="postcode"
+                  value={form.postcode}
+                  onChange={(event) => updateField("postcode", event.target.value)}
+                  inputMode="numeric"
+                  className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                />
+              </label>
+            </div>
+          </fieldset>
 
           {form.paymentMethod === "mock_credit_card" ? (
             <div className="grid gap-4 border-t border-[var(--surface-muted)] pt-5 md:grid-cols-2 dark:border-gray-700">

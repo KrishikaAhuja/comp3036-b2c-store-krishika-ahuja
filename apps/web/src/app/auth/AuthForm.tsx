@@ -52,6 +52,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [pending, setPending] = useState(false);
 
   function validateForm() {
@@ -88,6 +89,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    setNotice("");
 
     const validationError = validateForm();
 
@@ -105,6 +107,13 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
           email,
           password,
         });
+
+        setMode("login");
+        setName("");
+        setPassword("");
+        setConfirmPassword("");
+        setNotice("Account created. Please sign in to continue.");
+        return;
       }
 
       const loginResult = await submitAuthForm("/api/auth/login", {
@@ -158,6 +167,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
             onClick={() => {
               setMode("login");
               setError("");
+              setNotice("");
               setConfirmPassword("");
             }}
             className={`rounded-lg px-3 py-2 text-sm font-bold transition ${
@@ -173,6 +183,7 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
             onClick={() => {
               setMode("register");
               setError("");
+              setNotice("");
             }}
             className={`rounded-lg px-3 py-2 text-sm font-bold transition ${
               mode === "register"
@@ -265,6 +276,12 @@ export function AuthForm({ nextPath = "/" }: { nextPath?: string }) {
           {error && (
             <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
               {error}
+            </p>
+          )}
+
+          {notice && (
+            <p className="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700">
+              {notice}
             </p>
           )}
 

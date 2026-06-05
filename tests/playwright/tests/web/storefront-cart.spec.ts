@@ -1,6 +1,12 @@
 import { client } from "@repo/db/client";
 import { seed } from "@repo/db/seed";
-import { expect, test, type APIRequestContext, type Page } from "./fixtures";
+import {
+  expect,
+  test,
+  type APIRequestContext,
+  type Locator,
+  type Page,
+} from "./fixtures";
 
 const webUrl = process.env.E2E_WEB_URL ?? "http://localhost:3001";
 
@@ -102,6 +108,14 @@ async function getCheckoutProduct() {
   return product;
 }
 
+async function fillDeliveryAddress(form: Locator) {
+  await form.getByLabel("House or Building Number").fill("12");
+  await form.getByLabel("Street Name").fill("Book Lane");
+  await form.getByLabel("Suburb or Area").fill("Sydney");
+  await form.getByLabel("State").fill("NSW");
+  await form.getByLabel("Postcode").fill("2000");
+}
+
 test.beforeEach(async () => {
   await seed();
 });
@@ -135,7 +149,7 @@ test.describe("customer book bag", () => {
       .getByRole("button", { name: `Flip ${product.title} to details` })
       .click();
     await card.getByRole("button", { name: "Add to Book Bag" }).click();
-    await expect(card.getByRole("button", { name: "Added to Book Bag" })).toBeVisible();
+    await expect(card.getByRole("button", { name: "Added to Book Bag" })).toBeDisabled();
     await expect(page.getByRole("link", { name: "Book Bag (1)" })).toBeVisible();
 
     await page.goto("/cart", { waitUntil: "domcontentloaded" });
@@ -159,7 +173,7 @@ test.describe("customer book bag", () => {
 
     const checkoutForm = page.getByTestId("checkout-form");
     await checkoutForm.getByLabel("Phone Number").fill("0412 345 678");
-    await checkoutForm.getByLabel("Delivery Address").fill("12 Book Lane, Sydney NSW");
+    await fillDeliveryAddress(checkoutForm);
     await checkoutForm.getByLabel("Cardholder Name").fill("Cart Customer");
     await checkoutForm.getByLabel("Card Number").fill("1234 5678 9012 3456");
     await checkoutForm.getByLabel("Expiry Date (MM/YY)").fill("12/28");
@@ -234,6 +248,41 @@ test.describe("customer book bag", () => {
     await expect(page.getByRole("link", { name: "Book Bag (0)" })).toBeVisible();
   });
 
+  test("checkout validates structured delivery address fields", { tag: "@a1" }, async ({ page }) => {
+    const product = await getCheckoutProduct();
+    const email = uniqueCustomerEmail();
+    await registerCustomer(page, email, "password123");
+
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    const card = page.getByTestId(`blog-post-${product.id}`);
+    await card
+      .getByRole("button", { name: `Flip ${product.title} to details` })
+      .click();
+    await card.getByRole("button", { name: "Add to Book Bag" }).click();
+    await expect(page.getByRole("link", { name: "Book Bag (1)" })).toBeVisible();
+
+    await page.goto("/checkout", { waitUntil: "domcontentloaded" });
+    const checkoutForm = page.getByTestId("checkout-form");
+    await checkoutForm.getByLabel("Phone Number").fill("0412 345 678");
+    await checkoutForm.getByLabel("House or Building Number").fill("Unit 12!");
+    await checkoutForm.getByLabel("Street Name").fill("Book Lane");
+    await checkoutForm.getByLabel("Suburb or Area").fill("Sydney");
+    await checkoutForm.getByLabel("State").fill("NSW");
+    await checkoutForm.getByLabel("Postcode").fill("20AA");
+    await checkoutForm.getByRole("button", { name: "Place Order" }).click();
+
+    await expect(
+      page.getByText("House or building number can only contain numbers."),
+    ).toBeVisible();
+
+    await checkoutForm.getByLabel("House or Building Number").fill("12");
+    await checkoutForm.getByRole("button", { name: "Place Order" }).click();
+
+    await expect(
+      page.getByText("Postcode must contain exactly 4 numbers."),
+    ).toBeVisible();
+  });
+
   test("signed-in customer can checkout with pay on delivery", { tag: "@a1" }, async ({ page }) => {
     const product = await getCheckoutProduct();
     const email = uniqueCustomerEmail();
@@ -246,14 +295,14 @@ test.describe("customer book bag", () => {
       .click();
     await page.waitForTimeout(800);
     await card.getByRole("button", { name: "Add to Book Bag" }).click();
-    await expect(card.getByRole("button", { name: "Added to Book Bag" })).toBeVisible();
+    await expect(card.getByRole("button", { name: "Added to Book Bag" })).toBeDisabled();
     await expect(page.getByRole("link", { name: "Book Bag (1)" })).toBeVisible();
 
     await page.goto("/checkout", { waitUntil: "domcontentloaded" });
     const checkoutForm = page.getByTestId("checkout-form");
     await expect(page.getByText(product.title)).toBeVisible();
     await checkoutForm.getByLabel("Phone Number").fill("0412 345 678");
-    await checkoutForm.getByLabel("Delivery Address").fill("12 Book Lane, Sydney NSW");
+    await fillDeliveryAddress(checkoutForm);
     await checkoutForm.getByLabel("Payment Method").selectOption("pay_on_delivery");
     await expect(checkoutForm.getByLabel("Card Number")).not.toBeVisible();
     await checkoutForm.getByRole("button", { name: "Place Order" }).click();
