@@ -34,6 +34,8 @@ export default async function Page() {
             id="password"
             name="password"
             type="password"
+            minLength={8}
+            required
             className={pageStyles.input}
           />
 

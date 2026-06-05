@@ -278,8 +278,8 @@ test.describe("customer purchase history", () => {
     const adminPage = await adminContext.newPage();
     try {
       await adminPage.goto(adminUrl);
-      await adminPage.getByLabel("Email", { exact: true }).fill("admin@example.com");
-      await adminPage.getByLabel("Password", { exact: true }).fill("123");
+      await adminPage.getByLabel("Email", { exact: true }).fill("admin@book.test");
+      await adminPage.getByLabel("Password", { exact: true }).fill("AdminPass123!");
       await adminPage.getByText("Sign In", { exact: true }).click();
       await adminPage.getByText("Admin Dashboard", { exact: true }).waitFor();
       await adminPage.goto(`${adminUrl}/orders`);

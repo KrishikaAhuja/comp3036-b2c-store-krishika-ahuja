@@ -31,8 +31,8 @@ test.describe("ADMIN HOME SCREEN", () => {
       await page.goto("/");
 
       // HOME SCREEN > Authenticate the current admin using database credentials.
-      await page.getByLabel("Email", { exact: true }).fill("admin@example.com");
-      await page.getByLabel("Password", { exact: true }).fill("123");
+      await page.getByLabel("Email", { exact: true }).fill("admin@book.test");
+      await page.getByLabel("Password", { exact: true }).fill("AdminPass123!");
       await page.getByText("Sign In", { exact: true }).click();
 
       await expect(page.getByText("Admin Dashboard")).toBeVisible();

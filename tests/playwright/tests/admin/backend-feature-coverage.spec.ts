@@ -5,8 +5,8 @@ import { expect, test, type APIRequestContext } from "./fixtures";
 async function loginAdmin(request: APIRequestContext) {
   const response = await request.post("/api/auth", {
     data: {
-      email: "admin@example.com",
-      password: "123",
+      email: "admin@book.test",
+      password: "AdminPass123!",
     },
     maxRedirects: 0,
   });
@@ -38,8 +38,8 @@ test.describe("backend admin feature coverage", () => {
   }) => {
     const response = await request.post("/api/auth", {
       data: {
-        email: "admin@example.com",
-        password: "123",
+        email: "admin@book.test",
+        password: "AdminPass123!",
       },
       maxRedirects: 0,
     });

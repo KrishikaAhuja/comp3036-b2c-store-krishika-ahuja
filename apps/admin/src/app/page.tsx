@@ -55,7 +55,13 @@ export default async function Home({ searchParams }: HomeProps) {
 
           <label htmlFor="password">Password</label>
 
-          <input id="password" name="password" type="password" />
+          <input
+            id="password"
+            name="password"
+            type="password"
+            minLength={8}
+            required
+          />
 
           {/* This button submits the login form. */}
           <button type="submit">Sign In</button>

@@ -37,6 +37,8 @@ export default async function Page({ // This page receives a dynamic route param
             id="password"
             name="password"
             type="password"
+            minLength={8}
+            required
             className={pageStyles.input}
           />
 

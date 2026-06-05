@@ -2,11 +2,36 @@ import bcrypt from "bcryptjs";
 import { client } from "./client.js"; // imports Prisma client to interact with DB
 import { posts } from "./data.js"; // imports sample posts data
 
+const DEFAULT_ADMIN_EMAIL = "admin@book.test";
+const DEFAULT_ADMIN_PASSWORD = "AdminPass123!";
+
 const adminUser = {
   name: process.env.ADMIN_NAME || "Admin User",
-  email: process.env.ADMIN_EMAIL || "admin@example.com",
-  password: process.env.ADMIN_PASSWORD || process.env.PASSWORD || "123",
+  email: process.env.ADMIN_EMAIL || DEFAULT_ADMIN_EMAIL,
+  password:
+    process.env.ADMIN_PASSWORD || process.env.PASSWORD || DEFAULT_ADMIN_PASSWORD,
 };
+
+function validateAdminUser() {
+  const email = adminUser.email.trim().toLowerCase();
+  const password = adminUser.password;
+
+  if (email.endsWith("@example.com")) {
+    throw new Error(
+      "ADMIN_EMAIL must not use example.com. Set ADMIN_EMAIL to a real admin address before seeding.",
+    );
+  }
+
+  if (password.length < 8) {
+    throw new Error("ADMIN_PASSWORD must be at least 8 characters.");
+  }
+
+  if (!/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password)) {
+    throw new Error(
+      "ADMIN_PASSWORD must include uppercase, lowercase, and number characters.",
+    );
+  }
+}
 
 const generatedTestCustomerWhere = {
   role: "CUSTOMER" as const,
@@ -32,6 +57,7 @@ const generatedTestCustomerWhere = {
 // function to seed (insert) data into the database
 export async function seed() {
   console.log("Seeding data"); // log message to show seeding started
+  validateAdminUser();
 
   const adminPasswordHash = await bcrypt.hash(adminUser.password, 10);
 
