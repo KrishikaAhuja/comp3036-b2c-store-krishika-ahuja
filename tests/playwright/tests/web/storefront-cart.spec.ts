@@ -235,9 +235,12 @@ test.describe("customer book bag", () => {
       .click();
     await page.waitForTimeout(800);
     await card.getByRole("button", { name: "Add to Book Bag" }).click();
+    await expect(card.getByRole("button", { name: "Added to Book Bag" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Book Bag (1)" })).toBeVisible();
 
     await page.goto("/checkout", { waitUntil: "domcontentloaded" });
     const checkoutForm = page.getByTestId("checkout-form");
+    await expect(page.getByText(product.title)).toBeVisible();
     await checkoutForm.getByLabel("Phone Number").fill("0412 345 678");
     await checkoutForm.getByLabel("Delivery Address").fill("12 Book Lane, Sydney NSW");
     await checkoutForm.getByLabel("Payment Method").selectOption("pay_on_delivery");
