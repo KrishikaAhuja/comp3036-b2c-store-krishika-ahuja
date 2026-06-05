@@ -4,6 +4,8 @@ import { AdminShell } from "../AdminShell";
 import { getAdminShellStats, getRecentOrders } from "../adminData";
 import styles from "../admin-list.module.css";
 
+export const dynamic = "force-dynamic";
+
 function formatPrice(value: number) {
   return new Intl.NumberFormat("en-AU", {
     style: "currency",

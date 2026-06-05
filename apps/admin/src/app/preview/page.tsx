@@ -4,6 +4,8 @@ import { AdminShell } from "../AdminShell";
 import { getAdminShellStats } from "../adminData";
 import styles from "../admin-list.module.css";
 
+export const dynamic = "force-dynamic";
+
 const customerPreviewUrl = new URL(
   process.env.CUSTOMER_SITE_URL || "http://localhost:3001",
 );

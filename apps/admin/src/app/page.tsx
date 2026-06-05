@@ -8,6 +8,8 @@ import {
 import styles from "./page.module.css"; // imports CSS styles for this page
 import AdminList from "./AdminList"; // imports the admin list component that displays all posts
 
+export const dynamic = "force-dynamic";
+
 // This type describes the props received by the Home page.
 // searchParams contains values from the URL query string.
 // Example: /admin?error=invalid means searchParams.error will be "invalid".

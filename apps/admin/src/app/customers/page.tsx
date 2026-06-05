@@ -5,6 +5,8 @@ import { AdminShell } from "../AdminShell";
 import { getAdminShellStats, visibleCustomerWhere } from "../adminData";
 import styles from "../admin-list.module.css";
 
+export const dynamic = "force-dynamic";
+
 export default async function CustomersPage() {
   const loggedIn = await isLoggedIn();
 
