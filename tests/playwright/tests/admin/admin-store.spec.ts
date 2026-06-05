@@ -165,7 +165,12 @@ test.describe("admin bookstore", () => {
     await userPage.getByRole("button", { name: "Create Book" }).click();
 
     await expect(userPage.getByText("Price must be 0 or more")).toBeVisible();
-    await expect(userPage.getByText("Stock must be a whole number 0 or more")).toBeVisible();
+    await expect(userPage.getByText("Stock must be a whole number")).toBeVisible();
+
+    await userPage.getByLabel("Stock Quantity").fill("-1");
+    await userPage.getByRole("button", { name: "Create Book" }).click();
+
+    await expect(userPage.getByText("Stock cannot be negative")).toBeVisible();
   });
 
   test("admin API updates a book without changing release date", { tag: "@a3" }, async ({ userPage }) => {

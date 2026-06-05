@@ -78,7 +78,7 @@ test.describe("backend admin feature coverage", () => {
     expect(body.urlId).toBe("api-coverage-symbols-spaces");
   });
 
-  test("admin API clamps invalid price and stock updates", { tag: "@a3" }, async ({
+  test("admin API rejects negative stock updates", { tag: "@a3" }, async ({
     request,
   }) => {
     await loginAdmin(request);
@@ -91,16 +91,14 @@ test.describe("backend admin feature coverage", () => {
         content: "# Book details\n\n**Author:** James Clear",
         imageUrl: "https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg",
         category: "Nonfiction",
-        priceAud: -99,
+        priceAud: 28,
         stockQuantity: -12,
         active: true,
       },
     });
-    const body = await response.json();
 
-    expect(response.status()).toBe(200);
-    expect(body.priceAud).toBe(0);
-    expect(body.stockQuantity).toBe(0);
+    expect(response.status()).toBe(400);
+    expect(await response.json()).toEqual({ error: "Stock cannot be negative" });
   });
 
   test("admin API toggles product visibility", { tag: "@a3" }, async ({ request }) => {

@@ -46,8 +46,10 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
     }
 
     const parsedStock = Number(stockQuantity);
-    if (!Number.isInteger(parsedStock) || parsedStock < 0) {
-      newErrors.stockQuantity = "Stock must be a whole number 0 or more";
+    if (!Number.isInteger(parsedStock)) {
+      newErrors.stockQuantity = "Stock must be a whole number";
+    } else if (parsedStock < 0) {
+      newErrors.stockQuantity = "Stock cannot be negative";
     }
 
     if (!imageUrl.trim()) { // Image URL required

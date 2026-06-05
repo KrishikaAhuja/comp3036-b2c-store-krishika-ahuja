@@ -126,6 +126,79 @@ test.describe("customer purchase history", () => {
     await expect(page.getByText("Qty 2").first()).toBeVisible();
   });
 
+  test("shows only the signed-in customer's orders", { tag: "@a1" }, async ({ page }) => {
+    const email = uniqueCustomerEmail();
+    await registerCustomer(page, email, "password123");
+
+    const signedInCustomer = await client.db.user.findUniqueOrThrow({
+      where: {
+        email,
+      },
+    });
+    const otherCustomer = await client.db.user.create({
+      data: {
+        name: "Other History Customer",
+        email: uniqueCustomerEmail(),
+        passwordHash: "test-only-password-hash",
+        role: "CUSTOMER",
+      },
+    });
+    const product = await client.db.post.findFirstOrThrow({
+      where: {
+        active: true,
+      },
+      orderBy: {
+        id: "asc",
+      },
+    });
+
+    const visibleOrder = await client.db.order.create({
+      data: {
+        userId: signedInCustomer.id,
+        status: "PAID",
+        paymentProvider: "mock_credit_card",
+        paymentReference: "TXN-VISIBLE-HISTORY",
+        totalAud: product.priceAud,
+        items: {
+          create: {
+            postId: product.id,
+            title: product.title,
+            urlId: product.urlId,
+            imageUrl: product.imageUrl,
+            unitPriceAud: product.priceAud,
+            quantity: 1,
+            lineTotalAud: product.priceAud,
+          },
+        },
+      },
+    });
+    const hiddenOrder = await client.db.order.create({
+      data: {
+        userId: otherCustomer.id,
+        status: "PAID",
+        paymentProvider: "mock_credit_card",
+        paymentReference: "TXN-HIDDEN-HISTORY",
+        totalAud: product.priceAud,
+        items: {
+          create: {
+            postId: product.id,
+            title: product.title,
+            urlId: product.urlId,
+            imageUrl: product.imageUrl,
+            unitPriceAud: product.priceAud,
+            quantity: 1,
+            lineTotalAud: product.priceAud,
+          },
+        },
+      },
+    });
+
+    await page.goto("/purchase-history", { waitUntil: "domcontentloaded" });
+
+    await expect(page.getByText(`Order #${visibleOrder.id}`)).toBeVisible();
+    await expect(page.getByText(`Order #${hiddenOrder.id}`)).not.toBeVisible();
+  });
+
   test("signed-in customers can navigate from the header", { tag: "@a1" }, async ({ page }) => {
     const email = uniqueCustomerEmail();
     await registerCustomer(page, email, "password123");
