@@ -5,11 +5,23 @@ import { posts } from "./data.js"; // imports sample posts data
 const DEFAULT_ADMIN_EMAIL = "admin@book.test";
 const DEFAULT_ADMIN_PASSWORD = "AdminPass123!";
 
+function isValidAdminPassword(password: string) {
+  return (
+    password.length >= 8 &&
+    /[a-z]/.test(password) &&
+    /[A-Z]/.test(password) &&
+    /\d/.test(password)
+  );
+}
+
 const adminUser = {
   name: process.env.ADMIN_NAME || "Admin User",
   email: process.env.ADMIN_EMAIL || DEFAULT_ADMIN_EMAIL,
-  password:
-    process.env.ADMIN_PASSWORD || process.env.PASSWORD || DEFAULT_ADMIN_PASSWORD,
+  password: process.env.ADMIN_PASSWORD
+    ? process.env.ADMIN_PASSWORD
+    : process.env.PASSWORD && isValidAdminPassword(process.env.PASSWORD)
+      ? process.env.PASSWORD
+      : DEFAULT_ADMIN_PASSWORD,
 };
 
 function validateAdminUser() {
@@ -26,7 +38,7 @@ function validateAdminUser() {
     throw new Error("ADMIN_PASSWORD must be at least 8 characters.");
   }
 
-  if (!/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password)) {
+  if (!isValidAdminPassword(password)) {
     throw new Error(
       "ADMIN_PASSWORD must include uppercase, lowercase, and number characters.",
     );
