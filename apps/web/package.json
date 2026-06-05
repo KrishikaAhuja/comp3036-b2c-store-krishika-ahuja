@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev --turbopack -p 3001",
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=4096 next build",
-    "build:postgres": "pnpm --filter @repo/db db:generate:postgres && cross-env NODE_OPTIONS=--max-old-space-size=4096 next build",
+    "build:postgres": "node ../../packages/db/scripts/with-postgres-schema.mjs \"pnpm --filter @repo/db db:generate && pnpm --filter @repo/web build\"",
     "start": "next start",
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit",
