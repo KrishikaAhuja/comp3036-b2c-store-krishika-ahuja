@@ -45,6 +45,10 @@ function validateAdminUser() {
   }
 }
 
+function isPostgresDatabase() {
+  return /^postgres(ql)?:\/\//.test(process.env.DATABASE_URL || "");
+}
+
 const generatedTestCustomerWhere = {
   role: "CUSTOMER" as const,
   OR: [
@@ -135,6 +139,12 @@ export async function seed() {
           })),
         });
       }
+    }
+
+    if (isPostgresDatabase()) {
+      await tx.$executeRawUnsafe(
+        `SELECT setval(pg_get_serial_sequence('"Post"', 'id'), COALESCE((SELECT MAX(id) FROM "Post"), 1), true)`,
+      );
     }
   }, { timeout: 20000 });
 }

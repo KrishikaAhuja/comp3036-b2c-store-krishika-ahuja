@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(CUSTOMER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  orders       Order[]
+}
+
+model Post {
+  id            Int      @id @default(autoincrement())
+  urlId         String   @unique
+  title         String
+  content       String
+  description   String
+  imageUrl      String
+  category      String
+  tags          String
+  priceAud      Int      @default(0)
+  stockQuantity Int      @default(0)
+  date          DateTime @default(now())
+  views         Int      @default(0)
+  active        Boolean  @default(true)
+  Likes         Like[]
+  orderItems    OrderItem[]
+}
+
+model Like {
+  postId Int
+  userIP String
+  Post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@id([postId, userIP])
+}
+
+model Order {
+  id               Int         @id @default(autoincrement())
+  userId           Int
+  status           String      @default("PAID")
+  paymentProvider  String      @default("mock")
+  paymentReference String?
+  totalAud         Int
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items            OrderItem[]
+
+  @@index([userId])
+}
+
+model OrderItem {
+  id             Int    @id @default(autoincrement())
+  orderId        Int
+  postId         Int?
+  title          String
+  urlId          String
+  imageUrl       String
+  unitPriceAud   Int
+  quantity       Int
+  lineTotalAud   Int
+  order          Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  post           Post?  @relation(fields: [postId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([postId])
+}

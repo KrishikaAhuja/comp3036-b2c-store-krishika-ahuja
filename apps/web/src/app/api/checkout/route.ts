@@ -224,35 +224,23 @@ export async function POST(req: NextRequest) {
     const orderStatus = paymentMethod === "pay_on_delivery" ? "NOT_PAID" : "PAID";
 
     const orderId = await client.db.$transaction(async (tx) => {
-      await tx.$executeRawUnsafe(
-        `INSERT INTO "Order" ("userId", "status", "paymentProvider", "paymentReference", "totalAud", "updatedAt")
-         VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
-        user.id,
-        orderStatus,
-        paymentMethod,
-        paymentReference,
-        totalAud,
-      );
-
-      const rows = await tx.$queryRawUnsafe<{ id: number }[]>(
-        `SELECT last_insert_rowid() AS id`,
-      );
-      const createdOrderId = Number(rows[0]?.id);
+      const createdOrder = await tx.order.create({
+        data: {
+          userId: user.id,
+          status: orderStatus,
+          paymentProvider: paymentMethod,
+          paymentReference,
+          totalAud,
+          items: {
+            create: orderItems,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
 
       for (const item of orderItems) {
-        await tx.$executeRawUnsafe(
-          `INSERT INTO "OrderItem" ("orderId", "postId", "title", "urlId", "imageUrl", "unitPriceAud", "quantity", "lineTotalAud")
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-          createdOrderId,
-          item.postId,
-          item.title,
-          item.urlId,
-          item.imageUrl,
-          item.unitPriceAud,
-          item.quantity,
-          item.lineTotalAud,
-        );
-
         const updated = await tx.post.updateMany({
           where: {
             id: item.postId,
@@ -272,7 +260,7 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      return createdOrderId;
+      return createdOrder.id;
     });
 
     return NextResponse.json({
