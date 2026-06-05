@@ -19,6 +19,6 @@ test("returns tags with count", async () => {
   ).toEqual([
     { name: "A", count: 2 },
     { name: "B", count: 1 },
-    { name: "C", count: 2 },
+    { name: "C", count: 2 }, 
   ]);
 });
