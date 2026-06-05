@@ -12,10 +12,10 @@ test.describe("admin bookstore", () => {
 
     await expect(userPage.getByRole("heading", { name: "Admin Dashboard" })).toBeVisible();
     await expect(userPage.getByText("Total Books")).toBeVisible();
-    await expect(userPage.getByText("14 active books")).toBeVisible();
+    await expect(userPage.getByText("14 live in store")).toBeVisible();
     await expect(userPage.getByRole("link", { name: "Add Book" }).first()).toBeVisible();
     await expect(
-      userPage.getByRole("link", { name: "Preview Customer Site" }),
+      userPage.getByRole("link", { name: "Preview Store" }),
     ).toHaveAttribute("href", "/preview");
 
     await userPage.getByRole("link", { name: "Inventory", exact: true }).click();
