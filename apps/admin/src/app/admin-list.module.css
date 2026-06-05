@@ -1,6 +1,6 @@
 .shell {
   min-height: 100vh;
-  background: #f7f7f4;
+  background: #f4f6f8;
   color: var(--text);
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr);
@@ -8,7 +8,7 @@
 
 .sidebar {
   min-height: 100vh;
-  background: #241a16;
+  background: #18212f;
   color: #fffdf8;
   padding: 24px 18px;
   display: flex;
@@ -30,8 +30,8 @@
   width: 42px;
   height: 42px;
   border-radius: 10px;
-  background: #d2a47b;
-  color: #241a16;
+  background: #7dd3fc;
+  color: #102033;
   display: grid;
   place-items: center;
   font-family: "Times New Roman", Times, serif;
@@ -75,33 +75,12 @@
 
 .nav a:hover,
 .navActive {
-  background: rgba(255, 255, 255, 0.11);
+  background: rgba(125, 211, 252, 0.16);
   color: #ffffff;
 }
 
-.sidebarPanel {
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.07);
-  padding: 16px;
-  margin-top: auto;
-}
-
-.sidebarPanel span,
-.sidebarPanel small {
-  display: block;
-  color: #cfc6be;
-  font-size: 0.82rem;
-}
-
-.sidebarPanel strong {
-  display: block;
-  margin: 8px 0 4px;
-  font-size: 1.1rem;
-}
-
 .logoutForm {
-  margin: 0;
+  margin: auto 0 0;
 }
 
 .logoutButton {
@@ -202,7 +181,7 @@
 .statCardWarning,
 .panel {
   border: 1px solid var(--surface-muted);
-  border-radius: 14px;
+  border-radius: 12px;
   background: #ffffff;
   box-shadow: 0 12px 30px rgba(36, 26, 22, 0.07);
 }
@@ -210,6 +189,18 @@
 .statCard,
 .statCardWarning {
   padding: 18px;
+}
+
+.statCard {
+  border-top: 4px solid #38bdf8;
+}
+
+.statCard:nth-child(2) {
+  border-top-color: #22c55e;
+}
+
+.statCard:nth-child(3) {
+  border-top-color: #a78bfa;
 }
 
 .statCard span,
@@ -236,6 +227,7 @@
 
 .statCardWarning {
   border-color: #f4c7c7;
+  border-top: 4px solid #f97316;
   background: #fff7f7;
 }
 
@@ -250,12 +242,15 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
-  align-items: start;
+  align-items: stretch;
 }
 
 .panel {
   min-width: 0;
+  min-height: 330px;
   padding: 18px;
+  display: flex;
+  flex-direction: column;
 }
 
 .panelHeader,
@@ -496,6 +491,12 @@
   gap: 10px;
 }
 
+.panel > .dashboardList,
+.panel > .salesChart,
+.panel > .emptyDashboardState {
+  flex: 1;
+}
+
 .dashboardListItem {
   min-width: 0;
   border: 1px solid var(--surface-muted);
@@ -541,6 +542,89 @@
   font-style: normal;
   font-weight: 800;
   white-space: nowrap;
+}
+
+.salesChart {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.salesBarRow {
+  min-width: 0;
+  border: 1px solid #d8e4ef;
+  border-radius: 12px;
+  background: #f8fbff;
+  color: var(--text);
+  padding: 12px;
+  text-decoration: none;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 12px;
+}
+
+.salesBarRow:hover {
+  border-color: #38bdf8;
+  background: #f0f9ff;
+}
+
+.salesRank {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: #0f172a;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.salesBarContent {
+  min-width: 0;
+  display: grid;
+  gap: 7px;
+}
+
+.salesBarHeader {
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.salesBarHeader strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.salesBarHeader em {
+  color: #0f766e;
+  font-size: 0.84rem;
+  font-style: normal;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.salesTrack {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.salesBar {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #38bdf8, #22c55e);
+}
+
+.salesBarContent small {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
 }
 
 .customerStat {

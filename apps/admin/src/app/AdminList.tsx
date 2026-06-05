@@ -1,5 +1,5 @@
 import { AdminShell } from "./AdminShell";
-import type { AdminOrderSummary } from "./adminData";
+import type { AdminOrderSummary, BestSellingBookSummary } from "./adminData";
 import styles from "./admin-list.module.css";
 
 type AdminStats = {
@@ -21,10 +21,12 @@ export default function AdminList({
   posts,
   stats,
   recentOrders,
+  bestSellingBooks,
 }: {
   posts: AdminPost[];
   stats: AdminStats;
   recentOrders: AdminOrderSummary[];
+  bestSellingBooks: BestSellingBookSummary[];
 }) {
   const totalStock = posts.reduce(
     (total, post) => total + (post.stockQuantity ?? 0),
@@ -49,6 +51,10 @@ export default function AdminList({
   const recentlyAdded = [...posts]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
+  const highestSalesQuantity = Math.max(
+    ...bestSellingBooks.map((book) => book.quantitySold),
+    0,
+  );
 
   const stockValueAud = new Intl.NumberFormat("en-AU", {
     style: "currency",
@@ -79,8 +85,6 @@ export default function AdminList({
   return (
     <AdminShell
       active="dashboard"
-      activeBooks={activeBooks}
-      outOfStockCount={outOfStockCount}
     >
       <header className={styles.header}>
         <div>
@@ -89,9 +93,6 @@ export default function AdminList({
         </div>
 
         <div className={styles.headerActions}>
-          <a href="/preview" className={styles.secondaryButton}>
-            Preview Customer Site
-          </a>
           <a href="/posts/create" className={styles.createButton}>
             Add Book
           </a>
@@ -203,10 +204,47 @@ export default function AdminList({
             <p className={styles.eyebrow}>Sales</p>
             <h2>Best Selling Books</h2>
           </div>
-          <div className={styles.emptyDashboardState}>
-            <strong>No sales data yet</strong>
-            <span>Top selling books will show here after order items are tracked.</span>
-          </div>
+          {bestSellingBooks.length === 0 ? (
+            <div className={styles.emptyDashboardState}>
+              <strong>No sales data yet</strong>
+              <span>Top selling books will show here after customers place orders.</span>
+            </div>
+          ) : (
+            <div className={styles.salesChart} aria-label="Best selling books chart">
+              {bestSellingBooks.map((book, index) => {
+                const width =
+                  highestSalesQuantity > 0
+                    ? Math.max(
+                        10,
+                        Math.round((book.quantitySold / highestSalesQuantity) * 100),
+                      )
+                    : 0;
+
+                return (
+                  <a
+                    key={`${book.postId ?? book.urlId}-${book.title}`}
+                    href={`/post/${book.urlId}`}
+                    className={styles.salesBarRow}
+                  >
+                    <span className={styles.salesRank}>{index + 1}</span>
+                    <span className={styles.salesBarContent}>
+                      <span className={styles.salesBarHeader}>
+                        <strong>{book.title}</strong>
+                        <em>{book.quantitySold} sold</em>
+                      </span>
+                      <span className={styles.salesTrack}>
+                        <span
+                          className={styles.salesBar}
+                          style={{ width: `${width}%` }}
+                        />
+                      </span>
+                      <small>{formatPrice(book.revenueAud)} revenue</small>
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+          )}
         </section>
 
         <section className={styles.panel}>

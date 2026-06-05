@@ -10,9 +10,27 @@ const adminUser = {
 
 const generatedTestCustomerWhere = {
   role: "CUSTOMER" as const,
-  email: {
-    endsWith: "@example.com",
-  },
+  OR: [
+    {
+      email: {
+        endsWith: "@example.com",
+      },
+    },
+    {
+      AND: [
+        {
+          email: {
+            startsWith: "orders-",
+          },
+        },
+        {
+          email: {
+            endsWith: "@book.test",
+          },
+        },
+      ],
+    },
+  ],
 };
 
 // function to seed (insert) data into the database

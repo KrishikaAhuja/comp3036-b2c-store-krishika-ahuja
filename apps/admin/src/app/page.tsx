@@ -1,6 +1,10 @@
 import { client } from "@repo/db/client"; // imports the Prisma database client so we can read posts from the database
 import { isLoggedIn } from "../utils/auth"; // imports the login check function
-import { getRecentOrders, visibleCustomerWhere } from "./adminData";
+import {
+  getBestSellingBooks,
+  getRecentOrders,
+  visibleCustomerWhere,
+} from "./adminData";
 import styles from "./page.module.css"; // imports CSS styles for this page
 import AdminList from "./AdminList"; // imports the admin list component that displays all posts
 
@@ -72,11 +76,12 @@ export default async function Home({ searchParams }: HomeProps) {
     },
   });
 
-  const [customerCount, recentOrders] = await Promise.all([
+  const [customerCount, recentOrders, bestSellingBooks] = await Promise.all([
     client.db.user.count({
       where: visibleCustomerWhere,
     }),
     getRecentOrders(5),
+    getBestSellingBooks(5),
   ]);
 
   // Pass the database posts into AdminList so it can display, filter, and manage them.
@@ -87,6 +92,7 @@ export default async function Home({ searchParams }: HomeProps) {
         customerCount,
       }}
       recentOrders={recentOrders}
+      bestSellingBooks={bestSellingBooks}
     />
   );
 }

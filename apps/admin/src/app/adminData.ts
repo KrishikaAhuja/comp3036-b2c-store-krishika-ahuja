@@ -2,13 +2,6 @@ import { client } from "@repo/db/client";
 
 export const visibleCustomerWhere = {
   role: "CUSTOMER" as const,
-  NOT: [
-    {
-      email: {
-        endsWith: "@example.com",
-      },
-    },
-  ],
 };
 
 export async function getAdminShellStats() {
@@ -35,6 +28,14 @@ export type AdminOrderSummary = {
   totalAud: number;
   itemCount: number;
   createdAt: Date;
+};
+
+export type BestSellingBookSummary = {
+  postId: number | null;
+  title: string;
+  urlId: string;
+  quantitySold: number;
+  revenueAud: number;
 };
 
 export async function getRecentOrders(limit = 5): Promise<AdminOrderSummary[]> {
@@ -67,5 +68,31 @@ export async function getRecentOrders(limit = 5): Promise<AdminOrderSummary[]> {
     totalAud: order.totalAud,
     itemCount: order.items.reduce((total, item) => total + item.quantity, 0),
     createdAt: order.createdAt,
+  }));
+}
+
+export async function getBestSellingBooks(
+  limit = 5,
+): Promise<BestSellingBookSummary[]> {
+  const items = await client.db.orderItem.groupBy({
+    by: ["postId", "title", "urlId"],
+    _sum: {
+      quantity: true,
+      lineTotalAud: true,
+    },
+    orderBy: {
+      _sum: {
+        quantity: "desc",
+      },
+    },
+    take: limit,
+  });
+
+  return items.map((item) => ({
+    postId: item.postId,
+    title: item.title,
+    urlId: item.urlId,
+    quantitySold: item._sum.quantity ?? 0,
+    revenueAud: item._sum.lineTotalAud ?? 0,
   }));
 }
