@@ -140,37 +140,3 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(created);
 }
 
-// Toggles post between active and inactive
-export async function PATCH(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
-  const unauthorized = await getUnauthorizedResponse();
-
-  if (unauthorized) {
-    return unauthorized;
-  }
-
-  const { id } = await context.params;
-  const postId = Number(id);
-
-  // Find the post first
-  const post = await client.db.post.findUnique({
-    where: { id: postId },
-  });
-
-  // If post does not exist, return 404
-  if (!post) {
-    return NextResponse.json({ error: "Not found" }, { status: 404 });
-  }
-
-  // Flip active value
-  const updated = await client.db.post.update({
-    where: { id: postId },
-    data: {
-      active: !post.active,
-    },
-  });
-
-  return NextResponse.json(updated);
-}
