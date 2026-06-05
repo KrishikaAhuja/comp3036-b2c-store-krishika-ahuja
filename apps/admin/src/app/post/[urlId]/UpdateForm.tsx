@@ -141,8 +141,8 @@ export default function UpdateForm({ post }: { post: any }) { // Receives one po
                 : "Update catalog details, cover art, pricing, and stock."}
             </p>
           </div>
-          <Link href="/" className={styles.exitButton}>
-            Back to Dashboard
+          <Link href="/inventory" className={styles.exitButton}>
+            Back to Inventory
           </Link>
         </div>
 

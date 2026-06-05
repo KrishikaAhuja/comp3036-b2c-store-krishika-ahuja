@@ -87,6 +87,10 @@ test.describe("admin bookstore", () => {
 
     await userPage.goto("/post/atomic-habits");
     await expect(userPage.getByRole("heading", { name: "Update Book" })).toBeVisible();
+    await expect(userPage.getByRole("link", { name: "Back to Inventory" })).toHaveAttribute(
+      "href",
+      "/inventory",
+    );
     await expect(userPage.getByLabel("Book Title")).toBeVisible();
     await expect(userPage.getByText("Active in store")).toBeVisible();
     await expect(userPage.getByLabel("Active in store")).not.toBeVisible();

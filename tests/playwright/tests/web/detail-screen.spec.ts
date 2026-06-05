@@ -10,6 +10,10 @@ test.describe("customer bookstore detail page", () => {
     await page.goto("/post/atomic-habits");
 
     const item = page.getByTestId("blog-post-5");
+    await expect(item.getByRole("link", { name: "Back to Books" })).toHaveAttribute(
+      "href",
+      "/",
+    );
     await expect(item.getByRole("link", { name: "Atomic Habits" })).toBeVisible();
     await expect(item.getByText("Nonfiction", { exact: true })).toBeVisible();
     await expect(item.getByText("Listed 16 Oct 2018")).toBeVisible();
