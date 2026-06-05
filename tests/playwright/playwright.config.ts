@@ -118,16 +118,16 @@ export default defineConfig({
     {
       reuseExistingServer: false,
       command: process.env.CI
-        ? `pnpm --filter @repo/db db:push:skip-generate && pnpm --filter admin start -- -p ${adminPort}`
-        : `pnpm --filter @repo/db db:push:skip-generate && pnpm --filter admin exec next dev --turbopack -p ${adminPort}`,
+        ? `pnpm --filter @repo/db db:push:skip-generate && pnpm --filter @repo/admin exec next start -p ${adminPort}`
+        : `pnpm --filter @repo/db db:push:skip-generate && pnpm --filter @repo/admin exec next dev --turbopack -p ${adminPort}`,
       url: adminUrl,
       timeout: 120_000,
     },
     {
       reuseExistingServer: false,
       command: process.env.CI
-        ? `pnpm --filter web start -- -p ${webPort}`
-        : `pnpm --filter web exec next dev --turbopack -p ${webPort}`,
+        ? `pnpm --filter @repo/web exec next start -p ${webPort}`
+        : `pnpm --filter @repo/web exec next dev --turbopack -p ${webPort}`,
       url: webUrl,
       timeout: 120_000,
     },
