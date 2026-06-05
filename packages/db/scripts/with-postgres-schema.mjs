@@ -99,6 +99,7 @@ try {
   await assertActiveProvider("postgresql");
   await run("pnpm --filter @repo/db db:generate");
   await assertGeneratedClientProvider("postgresql");
+  await run("pnpm --filter @repo/db build");
   await run(command);
 } finally {
   await writeFile(sqliteSchemaPath, originalSchema);

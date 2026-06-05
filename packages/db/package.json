@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "main": "./dist/client.js",
+  "module": "./dist/client.js",
+  "types": "./dist/client.d.ts",
   "scripts": {
     "db:generate": "prisma generate",
     "db:generate:postgres": "prisma generate --schema prisma/schema.postgres.prisma",
@@ -21,16 +24,24 @@
     "build": "tsc"
   },
   "exports": {
+    ".": {
+      "types": "./dist/client.d.ts",
+      "import": "./dist/client.js",
+      "default": "./dist/client.js"
+    },
     "./client": {
-      "types": "./src/client.ts",
+      "types": "./dist/client.d.ts",
+      "import": "./dist/client.js",
       "default": "./dist/client.js"
     },
     "./data": {
-      "types": "./src/data.ts",
+      "types": "./dist/data.d.ts",
+      "import": "./dist/data.js",
       "default": "./dist/data.js"
     },
     "./seed": {
-      "types": "./src/seed.ts",
+      "types": "./dist/seed.d.ts",
+      "import": "./dist/seed.js",
       "default": "./dist/seed.js"
     }
   },
