@@ -193,9 +193,7 @@ test.describe("customer feature coverage", () => {
     await form.getByLabel("Phone Number").fill("12345");
     await form.getByRole("button", { name: "Place Order" }).click();
 
-    await expect(
-      page.getByText("Enter a valid 10-digit Australian phone number."),
-    ).toBeVisible();
+    await expect(page.getByText("Enter any 10 digits")).toBeVisible();
   });
 
   test("checkout requires a house or building number", { tag: "@a1" }, async ({ page }) => {
@@ -208,10 +206,15 @@ test.describe("customer feature coverage", () => {
     await form.getByLabel("House or Building Number").fill("");
     await form.getByRole("button", { name: "Place Order" }).click();
 
-    await expect(page.getByText("House or building number is required.")).toBeVisible();
+    await expect(
+      form
+        .locator("label")
+        .filter({ hasText: "House or Building Number" })
+        .getByText("Required"),
+    ).toBeVisible();
   });
 
-  test("checkout rejects nonnumeric house or building numbers", { tag: "@a1" }, async ({
+  test("checkout accepts mixed house or building numbers", { tag: "@a1" }, async ({
     page,
   }) => {
     await signInCustomer(page);
@@ -221,63 +224,70 @@ test.describe("customer feature coverage", () => {
     const form = page.getByTestId("checkout-form");
     await fillValidCheckoutForm(form);
     await form.getByLabel("House or Building Number").fill("12A!");
+    await form.getByLabel("Payment Method").selectOption("pay_on_delivery");
+    await form.getByRole("button", { name: "Place Order" }).click();
+
+    await expect(page).toHaveURL(/\/order-confirmation\?orderId=\d+/);
+  });
+
+  test("checkout requires a street name", { tag: "@a1" }, async ({ page }) => {
+    await signInCustomer(page);
+    await setCart(page);
+
+    await page.goto("/checkout");
+    const form = page.getByTestId("checkout-form");
+    await fillValidCheckoutForm(form);
+    await form.getByLabel("Street Name").fill("");
     await form.getByRole("button", { name: "Place Order" }).click();
 
     await expect(
-      page.getByText("House or building number can only contain numbers."),
+      form.locator("label").filter({ hasText: "Street Name" }).getByText("Required"),
     ).toBeVisible();
   });
 
-  test("checkout rejects street names with symbols", { tag: "@a1" }, async ({ page }) => {
+  test("checkout requires a suburb or area", { tag: "@a1" }, async ({ page }) => {
     await signInCustomer(page);
     await setCart(page);
 
     await page.goto("/checkout");
     const form = page.getByTestId("checkout-form");
     await fillValidCheckoutForm(form);
-    await form.getByLabel("Street Name").fill("Book Lane 12!");
+    await form.getByLabel("Suburb or Area").fill("");
     await form.getByRole("button", { name: "Place Order" }).click();
 
-    await expect(page.getByText("Street name can only contain letters and spaces.")).toBeVisible();
+    await expect(
+      form.locator("label").filter({ hasText: "Suburb or Area" }).getByText("Required"),
+    ).toBeVisible();
   });
 
-  test("checkout rejects suburb names with symbols", { tag: "@a1" }, async ({ page }) => {
+  test("checkout requires a state", { tag: "@a1" }, async ({ page }) => {
     await signInCustomer(page);
     await setCart(page);
 
     await page.goto("/checkout");
     const form = page.getByTestId("checkout-form");
     await fillValidCheckoutForm(form);
-    await form.getByLabel("Suburb or Area").fill("Sydney 2000");
+    await form.getByLabel("State").fill("");
     await form.getByRole("button", { name: "Place Order" }).click();
 
-    await expect(page.getByText("Suburb or area can only contain letters and spaces.")).toBeVisible();
+    await expect(
+      form.locator("label").filter({ hasText: "State" }).getByText("Required"),
+    ).toBeVisible();
   });
 
-  test("checkout requires a valid state abbreviation", { tag: "@a1" }, async ({ page }) => {
+  test("checkout requires a postcode", { tag: "@a1" }, async ({ page }) => {
     await signInCustomer(page);
     await setCart(page);
 
     await page.goto("/checkout");
     const form = page.getByTestId("checkout-form");
     await fillValidCheckoutForm(form);
-    await form.getByLabel("State").fill("N1");
+    await form.getByLabel("Postcode").fill("");
     await form.getByRole("button", { name: "Place Order" }).click();
 
-    await expect(page.getByText("State must be 2 or 3 letters.")).toBeVisible();
-  });
-
-  test("checkout requires a four digit postcode", { tag: "@a1" }, async ({ page }) => {
-    await signInCustomer(page);
-    await setCart(page);
-
-    await page.goto("/checkout");
-    const form = page.getByTestId("checkout-form");
-    await fillValidCheckoutForm(form);
-    await form.getByLabel("Postcode").fill("200");
-    await form.getByRole("button", { name: "Place Order" }).click();
-
-    await expect(page.getByText("Postcode must contain exactly 4 numbers.")).toBeVisible();
+    await expect(
+      form.locator("label").filter({ hasText: "Postcode" }).getByText("Required"),
+    ).toBeVisible();
   });
 
   test("checkout offers card and pay on delivery methods", { tag: "@a1" }, async ({ page }) => {

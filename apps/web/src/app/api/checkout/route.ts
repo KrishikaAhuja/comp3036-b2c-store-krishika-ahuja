@@ -44,11 +44,7 @@ function text(value: unknown) {
 function isValidPhoneNumber(value: string) {
   const digits = value.replace(/\D/g, "");
 
-  return /^0\d{9}$/.test(digits);
-}
-
-function isFullDeliveryAddress(value: string) {
-  return value.length >= 12 && /\d/.test(value) && value.includes(",");
+  return /^\d{10}$/.test(digits);
 }
 
 function getPaymentMethod(payment: CheckoutPayment): PaymentMethod {
@@ -77,15 +73,11 @@ function validateCheckoutDetails(customer: CheckoutCustomer, payment: CheckoutPa
   }
 
   if (!isValidPhoneNumber(phone)) {
-    return "Enter a valid 10-digit Australian phone number.";
+    return "Enter any 10 digits for the phone number.";
   }
 
   if (!deliveryAddress) {
     return "Delivery address is required.";
-  }
-
-  if (!isFullDeliveryAddress(deliveryAddress)) {
-    return "Enter a full delivery address with street number, suburb, and state.";
   }
 
   if (method !== "mock_credit_card" && method !== "pay_on_delivery") {

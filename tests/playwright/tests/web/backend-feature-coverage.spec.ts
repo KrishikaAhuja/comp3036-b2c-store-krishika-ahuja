@@ -144,11 +144,11 @@ test.describe("backend customer feature coverage", () => {
 
     expect(response.status()).toBe(400);
     expect(await response.json()).toEqual({
-      error: "Enter a valid 10-digit Australian phone number.",
+      error: "Enter any 10 digits for the phone number.",
     });
   });
 
-  test("checkout API rejects incomplete delivery addresses", { tag: "@a3" }, async ({
+  test("checkout API rejects empty delivery addresses", { tag: "@a3" }, async ({
     request,
   }) => {
     const email = await registerCustomer(request);
@@ -161,14 +161,14 @@ test.describe("backend customer feature coverage", () => {
           fullName: "Backend Customer",
           email,
           phone: "0412 345 678",
-          deliveryAddress: "Book Lane",
+          deliveryAddress: "",
         },
       }),
     });
 
     expect(response.status()).toBe(400);
     expect(await response.json()).toEqual({
-      error: "Enter a full delivery address with street number, suburb, and state.",
+      error: "Delivery address is required.",
     });
   });
 

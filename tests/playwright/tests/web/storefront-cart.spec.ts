@@ -248,7 +248,7 @@ test.describe("customer book bag", () => {
     await expect(page.getByRole("link", { name: "Book Bag (0)" })).toBeVisible();
   });
 
-  test("checkout validates structured delivery address fields", { tag: "@a1" }, async ({ page }) => {
+  test("checkout validates required delivery address fields", { tag: "@a1" }, async ({ page }) => {
     const product = await getCheckoutProduct();
     const email = uniqueCustomerEmail();
     await registerCustomer(page, email, "password123");
@@ -265,22 +265,25 @@ test.describe("customer book bag", () => {
     await page.goto("/checkout", { waitUntil: "domcontentloaded" });
     const checkoutForm = page.getByTestId("checkout-form");
     await checkoutForm.getByLabel("Phone Number").fill("0412 345 678");
-    await checkoutForm.getByLabel("House or Building Number").fill("Unit 12!");
+    await checkoutForm.getByLabel("House or Building Number").fill("");
     await checkoutForm.getByLabel("Street Name").fill("Book Lane");
     await checkoutForm.getByLabel("Suburb or Area").fill("Sydney");
     await checkoutForm.getByLabel("State").fill("NSW");
-    await checkoutForm.getByLabel("Postcode").fill("20AA");
+    await checkoutForm.getByLabel("Postcode").fill("");
     await checkoutForm.getByRole("button", { name: "Place Order" }).click();
 
     await expect(
-      page.getByText("House or building number can only contain numbers."),
+      checkoutForm
+        .locator("label")
+        .filter({ hasText: "House or Building Number" })
+        .getByText("Required"),
     ).toBeVisible();
 
-    await checkoutForm.getByLabel("House or Building Number").fill("12");
-    await checkoutForm.getByRole("button", { name: "Place Order" }).click();
-
     await expect(
-      page.getByText("Postcode must contain exactly 4 numbers."),
+      checkoutForm
+        .locator("label")
+        .filter({ hasText: "Postcode" })
+        .getByText("Required"),
     ).toBeVisible();
   });
 

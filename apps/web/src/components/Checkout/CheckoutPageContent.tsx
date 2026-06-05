@@ -27,6 +27,8 @@ type CheckoutForm = {
   cvv: string;
 };
 
+type CheckoutFieldErrors = Partial<Record<keyof CheckoutForm, string>>;
+
 const initialForm: CheckoutForm = {
   fullName: "",
   email: "",
@@ -60,75 +62,55 @@ function textFromForm(formData: FormData, key: string) {
 function isValidPhoneNumber(value: string) {
   const digits = value.replace(/\D/g, "");
 
-  return /^0\d{9}$/.test(digits);
+  return /^\d{10}$/.test(digits);
 }
 
 function validateForm(form: CheckoutForm, items: CartItem[]) {
+  const fieldErrors: CheckoutFieldErrors = {};
+
   if (items.length === 0) {
-    return "Your book bag is empty.";
+    return { formError: "Your book bag is empty.", fieldErrors };
   }
 
   if (!form.fullName.trim()) {
-    return "Full name is required.";
+    fieldErrors.fullName = "Required";
   }
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
-    return "Enter a valid email address.";
+    fieldErrors.email = "Enter a valid email address";
   }
 
   if (!form.phone.trim()) {
-    return "Phone number is required.";
-  }
-
-  if (!isValidPhoneNumber(form.phone)) {
-    return "Enter a valid 10-digit Australian phone number.";
+    fieldErrors.phone = "Required";
+  } else if (!isValidPhoneNumber(form.phone)) {
+    fieldErrors.phone = "Enter any 10 digits";
   }
 
   if (!form.buildingNumber.trim()) {
-    return "House or building number is required.";
-  }
-
-  if (!/^\d+$/.test(form.buildingNumber.trim())) {
-    return "House or building number can only contain numbers.";
+    fieldErrors.buildingNumber = "Required";
   }
 
   if (!form.streetName.trim()) {
-    return "Street name is required.";
-  }
-
-  if (!/^[A-Za-z ]+$/.test(form.streetName.trim())) {
-    return "Street name can only contain letters and spaces.";
+    fieldErrors.streetName = "Required";
   }
 
   if (!form.suburb.trim()) {
-    return "Suburb or area is required.";
-  }
-
-  if (!/^[A-Za-z ]+$/.test(form.suburb.trim())) {
-    return "Suburb or area can only contain letters and spaces.";
+    fieldErrors.suburb = "Required";
   }
 
   if (!form.state.trim()) {
-    return "State is required.";
-  }
-
-  if (!/^[A-Za-z]{2,3}$/.test(form.state.trim())) {
-    return "State must be 2 or 3 letters.";
+    fieldErrors.state = "Required";
   }
 
   if (!form.postcode.trim()) {
-    return "Postcode is required.";
-  }
-
-  if (!/^\d{4}$/.test(form.postcode.trim())) {
-    return "Postcode must contain exactly 4 numbers.";
+    fieldErrors.postcode = "Required";
   }
 
   if (
     form.paymentMethod !== "mock_credit_card" &&
     form.paymentMethod !== "pay_on_delivery"
   ) {
-    return "Select a valid payment method.";
+    fieldErrors.paymentMethod = "Select a valid payment method";
   }
 
   if (form.paymentMethod === "mock_credit_card") {
@@ -136,31 +118,27 @@ function validateForm(form: CheckoutForm, items: CartItem[]) {
     const cardDigits = cardNumber.replace(/ /g, "");
 
     if (!form.cardholderName.trim()) {
-      return "Cardholder name is required.";
+      fieldErrors.cardholderName = "Required";
     }
 
     if (!cardNumber) {
-      return "Card number is required.";
-    }
-
-    if (!/^[\d ]+$/.test(cardNumber)) {
-      return "Card number can only contain numbers and spaces.";
-    }
-
-    if (!/^\d{16}$/.test(cardDigits)) {
-      return "Card number must contain exactly 16 digits.";
+      fieldErrors.cardNumber = "Required";
+    } else if (!/^[\d ]+$/.test(cardNumber)) {
+      fieldErrors.cardNumber = "Numbers and spaces only";
+    } else if (!/^\d{16}$/.test(cardDigits)) {
+      fieldErrors.cardNumber = "Must be exactly 16 digits";
     }
 
     if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(form.expiryDate.trim())) {
-      return "Expiry date must use MM/YY format.";
+      fieldErrors.expiryDate = "Use MM/YY";
     }
 
     if (!/^\d{3}$/.test(form.cvv.trim())) {
-      return "CVV must contain exactly 3 digits.";
+      fieldErrors.cvv = "Must be exactly 3 digits";
     }
   }
 
-  return "";
+  return { formError: "", fieldErrors };
 }
 
 function buildDeliveryAddress(form: CheckoutForm) {
@@ -187,6 +165,7 @@ export function CheckoutPageContent({
     email: customerEmail,
   });
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<CheckoutFieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
 
   function refreshCart() {
@@ -214,11 +193,48 @@ export function CheckoutPageContent({
       ...current,
       [field]: value,
     }));
+    setFieldErrors((current) => {
+      if (!current[field]) {
+        return current;
+      }
+
+      const next = { ...current };
+      delete next[field];
+      return next;
+    });
+  }
+
+  function fieldClass(field: keyof CheckoutForm) {
+    const borderClass = fieldErrors[field]
+      ? "border-gray-500 focus:border-gray-600"
+      : "border-[var(--surface-muted)] focus:border-[var(--accent)] dark:border-gray-700";
+
+    return `h-11 w-full rounded-md border ${borderClass} bg-[var(--background)] px-3 text-sm outline-none`;
+  }
+
+  function FieldHeader({
+    label,
+    field,
+  }: {
+    label: string;
+    field: keyof CheckoutForm;
+  }) {
+    return (
+      <span className="flex items-center justify-between gap-3">
+        <span>{label}</span>
+        {fieldErrors[field] ? (
+          <span className="text-xs font-medium text-gray-500">
+            {fieldErrors[field]}
+          </span>
+        ) : null}
+      </span>
+    );
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    setFieldErrors({});
     const formData = new FormData(event.currentTarget);
     const submittedForm: CheckoutForm = {
       fullName: textFromForm(formData, "fullName"),
@@ -236,10 +252,11 @@ export function CheckoutPageContent({
       cvv: textFromForm(formData, "cvv"),
     };
 
-    const validationError = validateForm(submittedForm, items);
+    const validation = validateForm(submittedForm, items);
 
-    if (validationError) {
-      setError(validationError);
+    if (validation.formError || Object.keys(validation.fieldErrors).length > 0) {
+      setError(validation.formError);
+      setFieldErrors(validation.fieldErrors);
       return;
     }
 
@@ -274,7 +291,8 @@ export function CheckoutPageContent({
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Checkout could not be completed.");
+        setError(result.error || "Checkout could not be completed.");
+        return;
       }
 
       clearCart();
@@ -309,12 +327,6 @@ export function CheckoutPageContent({
         </p>
       </div>
 
-      {error ? (
-        <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
-          {error}
-        </p>
-      ) : null}
-
       <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">
         <form
           data-test-id="checkout-form"
@@ -324,41 +336,41 @@ export function CheckoutPageContent({
         >
           <div className="grid gap-4 md:grid-cols-2">
             <label className="space-y-2 text-sm font-semibold text-[var(--text)]">
-              <span>Full Name</span>
+              <FieldHeader label="Full Name" field="fullName" />
               <input
                 name="fullName"
                 value={form.fullName}
                 onChange={(event) => updateField("fullName", event.target.value)}
-                className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                className={fieldClass("fullName")}
               />
             </label>
             <label className="space-y-2 text-sm font-semibold text-[var(--text)]">
-              <span>Email Address</span>
+              <FieldHeader label="Email Address" field="email" />
               <input
                 name="email"
                 value={form.email}
                 onChange={(event) => updateField("email", event.target.value)}
-                className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                className={fieldClass("email")}
               />
             </label>
             <label className="space-y-2 text-sm font-semibold text-[var(--text)]">
-              <span>Phone Number</span>
+              <FieldHeader label="Phone Number" field="phone" />
               <input
                 name="phone"
                 value={form.phone}
                 onChange={(event) => updateField("phone", event.target.value)}
-                className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                className={fieldClass("phone")}
               />
             </label>
             <label className="space-y-2 text-sm font-semibold text-[var(--text)]">
-              <span>Payment Method</span>
+              <FieldHeader label="Payment Method" field="paymentMethod" />
               <select
                 name="paymentMethod"
                 value={form.paymentMethod}
                 onChange={(event) =>
                   updateField("paymentMethod", event.target.value as PaymentMethod)
                 }
-                className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                className={fieldClass("paymentMethod")}
               >
                 <option value="mock_credit_card">Credit Card</option>
                 <option value="pay_on_delivery">Pay on Delivery</option>
@@ -372,53 +384,53 @@ export function CheckoutPageContent({
             </legend>
             <div className="grid gap-4 md:grid-cols-2">
               <label className="space-y-2 text-sm font-semibold text-[var(--text)]">
-                <span>House or Building Number</span>
+                <FieldHeader
+                  label="House or Building Number"
+                  field="buildingNumber"
+                />
                 <input
                   name="buildingNumber"
                   value={form.buildingNumber}
                   onChange={(event) =>
                     updateField("buildingNumber", event.target.value)
                   }
-                  inputMode="numeric"
-                  className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                  className={fieldClass("buildingNumber")}
                 />
               </label>
               <label className="space-y-2 text-sm font-semibold text-[var(--text)]">
-                <span>Street Name</span>
+                <FieldHeader label="Street Name" field="streetName" />
                 <input
                   name="streetName"
                   value={form.streetName}
                   onChange={(event) => updateField("streetName", event.target.value)}
-                  className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                  className={fieldClass("streetName")}
                 />
               </label>
               <label className="space-y-2 text-sm font-semibold text-[var(--text)]">
-                <span>Suburb or Area</span>
+                <FieldHeader label="Suburb or Area" field="suburb" />
                 <input
                   name="suburb"
                   value={form.suburb}
                   onChange={(event) => updateField("suburb", event.target.value)}
-                  className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                  className={fieldClass("suburb")}
                 />
               </label>
               <label className="space-y-2 text-sm font-semibold text-[var(--text)]">
-                <span>State</span>
+                <FieldHeader label="State" field="state" />
                 <input
                   name="state"
                   value={form.state}
                   onChange={(event) => updateField("state", event.target.value)}
-                  maxLength={3}
-                  className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm uppercase outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                  className={fieldClass("state")}
                 />
               </label>
               <label className="space-y-2 text-sm font-semibold text-[var(--text)] md:col-span-2">
-                <span>Postcode</span>
+                <FieldHeader label="Postcode" field="postcode" />
                 <input
                   name="postcode"
                   value={form.postcode}
                   onChange={(event) => updateField("postcode", event.target.value)}
-                  inputMode="numeric"
-                  className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                  className={fieldClass("postcode")}
                 />
               </label>
             </div>
@@ -427,47 +439,51 @@ export function CheckoutPageContent({
           {form.paymentMethod === "mock_credit_card" ? (
             <div className="grid gap-4 border-t border-[var(--surface-muted)] pt-5 md:grid-cols-2 dark:border-gray-700">
               <label className="space-y-2 text-sm font-semibold text-[var(--text)]">
-                <span>Cardholder Name</span>
+                <FieldHeader label="Cardholder Name" field="cardholderName" />
                 <input
                   name="cardholderName"
                   value={form.cardholderName}
                   onChange={(event) =>
                     updateField("cardholderName", event.target.value)
                   }
-                  className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                  className={fieldClass("cardholderName")}
                 />
               </label>
               <label className="space-y-2 text-sm font-semibold text-[var(--text)]">
-                <span>Card Number</span>
+                <FieldHeader label="Card Number" field="cardNumber" />
                 <input
                   name="cardNumber"
                   value={form.cardNumber}
                   onChange={(event) => updateField("cardNumber", event.target.value)}
                   inputMode="numeric"
-                  className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                  className={fieldClass("cardNumber")}
                 />
               </label>
               <label className="space-y-2 text-sm font-semibold text-[var(--text)]">
-                <span>Expiry Date (MM/YY)</span>
+                <FieldHeader label="Expiry Date (MM/YY)" field="expiryDate" />
                 <input
                   name="expiryDate"
                   value={form.expiryDate}
                   onChange={(event) => updateField("expiryDate", event.target.value)}
                   placeholder="mm/yy"
-                  className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                  className={fieldClass("expiryDate")}
                 />
               </label>
               <label className="space-y-2 text-sm font-semibold text-[var(--text)]">
-                <span>CVV</span>
+                <FieldHeader label="CVV" field="cvv" />
                 <input
                   name="cvv"
                   value={form.cvv}
                   onChange={(event) => updateField("cvv", event.target.value)}
                   inputMode="numeric"
-                  className="h-11 w-full rounded-md border border-[var(--surface-muted)] bg-[var(--background)] px-3 text-sm outline-none focus:border-[var(--accent)] dark:border-gray-700"
+                  className={fieldClass("cvv")}
                 />
               </label>
             </div>
+          ) : null}
+
+          {error ? (
+            <p className="text-sm font-medium text-gray-600">{error}</p>
           ) : null}
 
           <button
