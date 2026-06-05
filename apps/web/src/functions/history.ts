@@ -1,26 +1,69 @@
-export function history(posts: { date: Date; active: boolean }[]) {
-  const counts: Record<string, { year: number; month: number; count: number }> = {};
+export type HistoryRange = {
+  startYear: number;
+  endYear: number;
+  count: number;
+};
 
-  // Group active products by arrival month for the storefront sidebar.
+export function getHistoryRange(year: number) {
+  const startYear = Math.floor(year / 10) * 10;
+
+  return {
+    startYear,
+    endYear: startYear + 9,
+  };
+}
+
+export function getHistoryRangeSlug(startYear: number, endYear: number) {
+  return `${startYear}-${endYear}`;
+}
+
+export function parseHistoryRangeSlug(slug: string) {
+  const match = slug.match(/^(\d{4})-(\d{4})$/);
+
+  if (!match) {
+    return null;
+  }
+
+  const startYear = Number(match[1]);
+  const endYear = Number(match[2]);
+
+  if (!Number.isInteger(startYear) || endYear !== startYear + 9) {
+    return null;
+  }
+
+  return {
+    startYear,
+    endYear,
+  };
+}
+
+export function isPostInHistoryRange(
+  post: { date: Date },
+  range: { startYear: number; endYear: number },
+) {
+  const year = new Date(post.date).getFullYear();
+
+  return year >= range.startYear && year <= range.endYear;
+}
+
+export function history(posts: { date: Date; active: boolean }[]): HistoryRange[] {
+  const counts: Record<string, HistoryRange> = {};
+
+  // Group active products by arrival decade so the sidebar stays compact.
   posts
     .filter((post) => post.active)
     .forEach((post) => {
       const date = new Date(post.date);
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
-
-      const key = `${year}-${month}`;
+      const { startYear, endYear } = getHistoryRange(date.getFullYear());
+      const key = getHistoryRangeSlug(startYear, endYear);
 
       if (!counts[key]) {
-        counts[key] = { year, month, count: 1 };
+        counts[key] = { startYear, endYear, count: 1 };
       } else {
         counts[key].count++;
       }
     });
 
-  // Newest arrival groups appear first for customers browsing recent products.
-  return Object.values(counts).sort((a, b) => {
-    if (b.year !== a.year) return b.year - a.year;
-    return b.month - a.month;
-  });
+  // Newest ranges appear first for customers browsing recent products.
+  return Object.values(counts).sort((a, b) => b.startYear - a.startYear);
 }

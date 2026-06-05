@@ -1,8 +1,24 @@
 import { redirect } from "next/navigation";
 import { isLoggedIn } from "../../utils/auth";
 import { AdminShell } from "../AdminShell";
-import { getAdminShellStats } from "../adminData";
+import { getAdminShellStats, getRecentOrders } from "../adminData";
 import styles from "../admin-list.module.css";
+
+function formatPrice(value: number) {
+  return new Intl.NumberFormat("en-AU", {
+    style: "currency",
+    currency: "AUD",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+function formatDate(value: Date) {
+  return new Intl.DateTimeFormat("en-AU", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(value);
+}
 
 export default async function OrdersPage() {
   const loggedIn = await isLoggedIn();
@@ -11,7 +27,10 @@ export default async function OrdersPage() {
     redirect("/");
   }
 
-  const shellStats = await getAdminShellStats();
+  const [shellStats, orders] = await Promise.all([
+    getAdminShellStats(),
+    getRecentOrders(25),
+  ]);
 
   return (
     <AdminShell active="orders" {...shellStats}>
@@ -25,16 +44,51 @@ export default async function OrdersPage() {
       <section className={styles.panel}>
         <div className={styles.panelHeaderCompact}>
           <p className={styles.eyebrow}>Order Queue</p>
-          <h2>Checkout history is not connected yet</h2>
+          <h2>Recent checkout orders</h2>
         </div>
-        <div className={styles.placeholderBlock}>
-          <strong>Ready for the next data model</strong>
-          <span>
-            Your current database has books, likes, and users, but no Order
-            table. This page is set up as the admin destination for orders once
-            checkout persistence is added.
-          </span>
-        </div>
+        {orders.length === 0 ? (
+          <div className={styles.placeholderBlock}>
+            <strong>No orders yet</strong>
+            <span>Completed mock payment checkouts will appear here.</span>
+          </div>
+        ) : (
+          <div className={styles.tableWrap}>
+            <table className={styles.inventoryTable}>
+              <thead>
+                <tr>
+                  <th>Order</th>
+                  <th>Customer</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Transaction</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((order) => (
+                  <tr key={order.id}>
+                    <td>#{order.id}</td>
+                    <td>
+                      <strong>{order.customerName}</strong>
+                      <br />
+                      <small>{order.customerEmail}</small>
+                    </td>
+                    <td>
+                      {order.itemCount} item{order.itemCount === 1 ? "" : "s"}
+                    </td>
+                    <td>{formatPrice(order.totalAud)}</td>
+                    <td>
+                      <span className={styles.readyBadge}>{order.status}</span>
+                    </td>
+                    <td>{order.paymentReference || "Not recorded"}</td>
+                    <td>{formatDate(order.createdAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
     </AdminShell>
   );

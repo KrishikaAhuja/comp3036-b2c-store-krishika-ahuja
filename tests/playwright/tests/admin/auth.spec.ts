@@ -1,7 +1,9 @@
 import { expect, test } from "./fixtures";
+import { seed } from "@repo/db/seed";
 
 test.describe("ADMIN AUTH", () => {
   test.beforeEach(async ({ context }) => {
+    await seed();
     await context.clearCookies();
   });
 
@@ -142,6 +144,38 @@ test.describe("ADMIN AUTH", () => {
 
       const postsResponse = await request.get("/api/posts");
       expect(postsResponse.status()).toBe(200);
+    },
+  );
+
+  test(
+    "admin product API filters products by search and visibility",
+    { tag: "@a3" },
+    async ({ request }) => {
+      const loginResponse = await request.post("/api/auth", {
+        data: {
+          email: "admin@example.com",
+          password: "123",
+        },
+        maxRedirects: 0,
+      });
+      expect(loginResponse.status()).toBe(303);
+
+      const activeSearchResponse = await request.get(
+        "/api/posts?content=Atomic&visibility=active",
+      );
+      expect(activeSearchResponse.status()).toBe(200);
+      const activePosts = await activeSearchResponse.json();
+      expect(activePosts).toHaveLength(1);
+      expect(activePosts[0]).toMatchObject({
+        title: "Atomic Habits",
+        active: true,
+      });
+
+      const inactiveSearchResponse = await request.get(
+        "/api/posts?content=Atomic&visibility=inactive",
+      );
+      expect(inactiveSearchResponse.status()).toBe(200);
+      expect(await inactiveSearchResponse.json()).toEqual([]);
     },
   );
 });

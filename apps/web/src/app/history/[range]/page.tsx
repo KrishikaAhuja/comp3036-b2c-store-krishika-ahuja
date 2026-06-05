@@ -1,6 +1,11 @@
 import { AppLayout } from "@/components/Layout/AppLayout";
 import { Main } from "@/components/Main";
+import {
+  isPostInHistoryRange,
+  parseHistoryRangeSlug,
+} from "@/functions/history";
 import { getActiveProducts } from "@/functions/products";
+import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -8,24 +13,21 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: Promise<{ tag: string }>;
+  params: Promise<{ range: string }>;
   searchParams?: Promise<{ preview?: string }>;
 }) {
-  const { tag } = await params;
+  const { range } = await params;
   const preview = (await searchParams)?.preview === "admin";
+  const parsedRange = parseHistoryRangeSlug(range);
+
+  if (!parsedRange) {
+    notFound();
+  }
+
   const posts = await getActiveProducts();
-
-  // Normalize route text and stored age ranges so "Ages 12+" matches /tags/ages-12.
-  const normalizedTag = tag.toLowerCase().replace(/[^a-z0-9]/g, "");
-
-  const filteredPosts = posts.filter((post) => {
-    const normalizedPostTags = post.tags
-      .toLowerCase()
-      .split(",")
-      .map((t) => t.trim().replace(/[^a-z0-9]/g, ""));
-
-    return normalizedPostTags.includes(normalizedTag);
-  });
+  const filteredPosts = posts.filter((post) =>
+    isPostInHistoryRange(post, parsedRange),
+  );
 
   return (
     <AppLayout preview={preview}>

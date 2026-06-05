@@ -8,6 +8,13 @@ const adminUser = {
   password: process.env.ADMIN_PASSWORD || process.env.PASSWORD || "123",
 };
 
+const generatedTestCustomerWhere = {
+  role: "CUSTOMER" as const,
+  email: {
+    endsWith: "@example.com",
+  },
+};
+
 // function to seed (insert) data into the database
 export async function seed() {
   console.log("Seeding data"); // log message to show seeding started
@@ -34,6 +41,12 @@ export async function seed() {
 
     // delete all existing likes first (to avoid foreign key issues)
     await tx.like.deleteMany();
+
+    await tx.$executeRawUnsafe('DELETE FROM "OrderItem"');
+    await tx.$executeRawUnsafe('DELETE FROM "Order"');
+    await tx.user.deleteMany({
+      where: generatedTestCustomerWhere,
+    });
 
     // delete all existing posts (clean database)
     await tx.post.deleteMany();
@@ -62,16 +75,14 @@ export async function seed() {
         },
       });
 
-      // create likes for this post
-      // runs loop based on number of likes in seed data
-      for (let i = 0; i < post.likes; i++) {
-        await tx.like.create({
-          data: {
+      if (post.likes > 0) {
+        await tx.like.createMany({
+          data: Array.from({ length: post.likes }, (_, i) => ({
             postId: post.id,
             userIP: `192.168.100.${i}`,
-          },
+          })),
         });
       }
     }
-  });
+  }, { timeout: 20000 });
 }

@@ -16,6 +16,7 @@ process.chdir(repoRoot);
 process.env.DATABASE_URL = `file:${path
   .resolve(repoRoot, "packages/db/prisma/dev.db")
   .replace(/\\/g, "/")}`;
+process.env.JWT_SECRET ??= "secret";
 
 /**
  * See https://playwright.dev/docs/test-configuration.

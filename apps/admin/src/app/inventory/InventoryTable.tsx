@@ -17,6 +17,7 @@ type AdminPost = {
 };
 
 export function InventoryTable({ posts }: { posts: AdminPost[] }) {
+  const [rows, setRows] = useState(posts);
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
   const [date, setDate] = useState("");
@@ -48,15 +49,15 @@ export function InventoryTable({ posts }: { posts: AdminPost[] }) {
   const categories = useMemo(() => {
     return Array.from(
       new Set(
-        posts
+        rows
           .map((post) => String(post.category ?? "").trim())
           .filter(Boolean),
       ),
     ).sort((a, b) => a.localeCompare(b));
-  }, [posts]);
+  }, [rows]);
 
   const filtered = useMemo(() => {
-    let result = [...posts];
+    let result = [...rows];
 
     if (content) {
       const search = content.toLowerCase();
@@ -104,7 +105,7 @@ export function InventoryTable({ posts }: { posts: AdminPost[] }) {
     }
 
     return result;
-  }, [posts, content, category, date, stockStatus, sort]);
+  }, [rows, content, category, date, stockStatus, sort]);
 
   return (
     <section className={styles.panel}>
@@ -114,7 +115,7 @@ export function InventoryTable({ posts }: { posts: AdminPost[] }) {
           <h2>Book Inventory</h2>
         </div>
         <p className={styles.resultsText}>
-          Showing {filtered.length} of {posts.length}
+          Showing {filtered.length} of {rows.length}
         </p>
       </div>
 
@@ -259,10 +260,15 @@ export function InventoryTable({ posts }: { posts: AdminPost[] }) {
                         <button
                           type="button"
                           onClick={async () => {
-                            await fetch(`/api/posts/${post.id}`, {
+                            const response = await fetch(`/api/posts/${post.id}`, {
                               method: "DELETE",
                             });
-                            window.location.reload();
+
+                            if (response.ok) {
+                              setRows((current) =>
+                                current.filter((row) => row.id !== post.id),
+                              );
+                            }
                           }}
                           className={styles.deleteButton}
                         >

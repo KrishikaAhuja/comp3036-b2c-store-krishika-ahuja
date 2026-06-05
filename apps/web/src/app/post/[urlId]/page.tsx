@@ -11,11 +11,14 @@ export const dynamic = "force-dynamic";
 // It receives urlId from the existing /post route.
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: Promise<{ urlId: string }>;
+  searchParams?: Promise<{ preview?: string }>;
 }) {
   // Gets the urlId from the page route params.
   const { urlId } = await params;
+  const preview = (await searchParams)?.preview === "admin";
 
   // Finds the product in the database using the legacy urlId field.
   // Likes are included so we can count likes and check if the user liked the post.
@@ -62,8 +65,8 @@ export default async function Page({
 
   // Shows the book detail page with cover, metadata, and markdown content.
   return (
-    <AppLayout>
-      <BlogDetail post={displayPost} />
+    <AppLayout preview={preview}>
+      <BlogDetail post={displayPost} readOnly={preview} />
     </AppLayout>
   );
 }

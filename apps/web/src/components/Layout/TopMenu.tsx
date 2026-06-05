@@ -16,9 +16,11 @@ function debounce<T extends (...args: Any[]) => Any>(fn: T, delay = 300) {
 export function TopMenu({
   query,
   userName,
+  preview = false,
 }: {
   query?: string;
   userName?: string;
+  preview?: boolean;
 }) {
   const router = useRouter();
 
@@ -26,7 +28,17 @@ export function TopMenu({
   const handleSearch = debounce(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const search = event.target.value;
-      router.push(`/search?q=${search}`);
+      const params = new URLSearchParams();
+
+      if (search) {
+        params.set("q", search);
+      }
+
+      if (preview) {
+        params.set("preview", "admin");
+      }
+
+      router.push(`/search?${params.toString()}`);
     },
   );
 
@@ -49,7 +61,7 @@ export function TopMenu({
       </form>
 
       <div className="flex flex-wrap items-center justify-end gap-3">
-        {userName ? (
+        {preview ? null : userName ? (
           <>
             <span className="rounded-md border border-[var(--surface-muted)] px-3 py-2 text-sm font-medium text-[var(--text)] dark:border-gray-700">
               Account: {userName}
@@ -70,7 +82,7 @@ export function TopMenu({
             Sign in
           </Link>
         )}
-        <CartNavLink />
+        {preview ? null : <CartNavLink />}
         <ThemeSwitch />
       </div>
     </div>

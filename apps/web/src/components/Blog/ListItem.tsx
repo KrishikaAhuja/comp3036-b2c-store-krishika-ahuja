@@ -29,12 +29,21 @@ function getStockQuantity(post: Post) {
   return post.stockQuantity ?? post.likes;
 }
 
-export function BlogListItem({ post }: { post: Post }) {
+export function BlogListItem({
+  post,
+  readOnly = false,
+}: {
+  post: Post;
+  readOnly?: boolean;
+}) {
   const [opened, setOpened] = useState(false);
+  const stockQuantity = getStockQuantity(post);
+  const outOfStock = stockQuantity <= 0;
+  const detailHref = `/post/${post.urlId}${readOnly ? "?preview=admin" : ""}`;
 
   return (
     <article
-      className="h-full [perspective:1200px]"
+      className={`h-full [perspective:1200px] ${outOfStock ? "opacity-75 grayscale-[0.2]" : ""}`}
       data-test-id={`blog-post-${post.id}`}
     >
       <div className="relative min-h-[29rem] rounded-lg [transform-style:preserve-3d]">
@@ -53,7 +62,7 @@ export function BlogListItem({ post }: { post: Post }) {
           </div>
 
           <Link
-            href={`/post/${post.urlId}`}
+            href={detailHref}
             className="mt-4 text-lg font-semibold leading-snug text-[var(--foreground)] transition hover:text-[var(--accent)]"
           >
             {post.title}
@@ -83,22 +92,24 @@ export function BlogListItem({ post }: { post: Post }) {
           </div>
 
           <div className="mt-auto flex items-center justify-between gap-4 border-t border-gray-200 pt-4 text-sm text-[var(--text-secondary)] dark:border-gray-700">
-            <p>{getStockQuantity(post)} copies left</p>
-            <p>{post.likes} saving this read</p>
+            <p>{outOfStock ? "Out of stock" : `${stockQuantity} copies left`}</p>
           </div>
 
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            <AddToCartButton
-              product={{
-                id: post.id,
-                urlId: post.urlId,
-                title: post.title,
-                price: getProductPrice(post),
-                imageUrl: post.imageUrl,
-              }}
-            />
+            {readOnly ? null : (
+              <AddToCartButton
+                product={{
+                  id: post.id,
+                  urlId: post.urlId,
+                  title: post.title,
+                  price: getProductPrice(post),
+                  imageUrl: post.imageUrl,
+                  stockQuantity,
+                }}
+              />
+            )}
             <Link
-              href={`/post/${post.urlId}`}
+              href={detailHref}
               className="inline-flex h-10 items-center justify-center rounded-md bg-[var(--accent)] px-4 text-sm font-semibold text-[var(--surface)] transition hover:bg-[var(--accent-hover)]"
             >
               View Book
@@ -113,7 +124,7 @@ export function BlogListItem({ post }: { post: Post }) {
           aria-hidden={opened}
         >
           <Link
-            href={`/post/${post.urlId}`}
+            href={detailHref}
             className="flex min-h-[29rem] items-center justify-center bg-[#f1f1ed] p-4 dark:bg-gray-800"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}

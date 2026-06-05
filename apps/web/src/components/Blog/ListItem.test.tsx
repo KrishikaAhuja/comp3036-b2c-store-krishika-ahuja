@@ -4,7 +4,8 @@ import { post1 } from "./List.test";
 import { BlogListItem } from "./ListItem";
 
 test("renders book card data", async () => {
-  const { getByLabelText, getByText } = render(<BlogListItem post={post1} />);
+  const component = render(<BlogListItem post={post1} />);
+  const { getByLabelText, getByText } = component;
 
   await expect
     .element(getByLabelText("Flip The Test Mystery to details"))
@@ -19,7 +20,7 @@ test("renders book card data", async () => {
   await expect.element(getByText("01 Oct 2024")).toBeVisible();
   await expect.element(getByText("$24")).toBeVisible();
   await expect.element(getByText("12 copies left")).toBeVisible();
-  await expect.element(getByText("30 saving this read")).toBeVisible();
+  expect(component.baseElement.textContent).not.toContain("30 saving this read");
   await expect.element(getByText("Add to Book Bag")).toBeVisible();
   await expect.element(getByText("View Book")).toBeVisible();
 });

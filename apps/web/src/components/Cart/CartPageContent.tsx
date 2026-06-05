@@ -79,7 +79,7 @@ export function CartPageContent() {
           Book Bag
         </h1>
         <p className="mt-1 text-sm text-[var(--text-secondary)]">
-          Review your reads before checkout is added later.
+          Review your reads before checkout.
         </p>
       </div>
 
@@ -166,8 +166,14 @@ export function CartPageContent() {
             <span>{formatPrice(total)}</span>
           </div>
           <p className="mt-3 text-sm text-[var(--text-secondary)]">
-            Checkout and payment are not available yet.
+            Continue to checkout to enter delivery and payment details.
           </p>
+          <Link
+            href="/checkout"
+            className="mt-4 inline-flex h-10 w-full items-center justify-center rounded-md bg-[var(--accent)] px-4 text-sm font-semibold text-[var(--surface)] transition hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            Proceed to Checkout
+          </Link>
         </div>
       </div>
     </div>

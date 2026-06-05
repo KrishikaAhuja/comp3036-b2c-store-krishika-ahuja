@@ -12,8 +12,11 @@ test.describe("admin bookstore", () => {
 
     await expect(userPage.getByRole("heading", { name: "Admin Dashboard" })).toBeVisible();
     await expect(userPage.getByText("Total Books")).toBeVisible();
-    await expect(userPage.getByText("4 active books")).toBeVisible();
+    await expect(userPage.getByText("14 active books")).toBeVisible();
     await expect(userPage.getByRole("link", { name: "Add Book" }).first()).toBeVisible();
+    await expect(
+      userPage.getByRole("link", { name: "Preview Customer Site" }),
+    ).toHaveAttribute("href", "/preview");
 
     await userPage.getByRole("link", { name: "Inventory", exact: true }).click();
     await expect(userPage.getByRole("heading", { name: "Inventory", exact: true })).toBeVisible();
@@ -23,6 +26,86 @@ test.describe("admin bookstore", () => {
     await expect(atomicRow).toContainText("Nonfiction");
     await expect(atomicRow).toContainText("$28");
     await expect(atomicRow).toContainText("Oct 16, 2018");
+  });
+
+  test("orders page shows completed customer purchases", { tag: "@a2" }, async ({ userPage }) => {
+    const customer = await client.db.user.create({
+      data: {
+        name: "Orders Customer",
+        email: `orders-${Date.now()}@book.test`,
+        passwordHash: "test-only-password-hash",
+        role: "CUSTOMER",
+      },
+    });
+    const product = await client.db.post.findFirstOrThrow({
+      where: {
+        active: true,
+      },
+      orderBy: {
+        id: "asc",
+      },
+    });
+    const order = await client.db.order.create({
+      data: {
+        userId: customer.id,
+        status: "PAID",
+        paymentProvider: "mock",
+        paymentReference: "TXN-TEST-1234",
+        totalAud: product.priceAud,
+        items: {
+          create: {
+            postId: product.id,
+            title: product.title,
+            urlId: product.urlId,
+            imageUrl: product.imageUrl,
+            unitPriceAud: product.priceAud,
+            quantity: 1,
+            lineTotalAud: product.priceAud,
+          },
+        },
+      },
+    });
+
+    await userPage.goto("/orders");
+
+    await expect(
+      userPage.getByRole("heading", { name: "Orders", exact: true }),
+    ).toBeVisible();
+    const row = userPage.getByRole("row", { name: new RegExp(`#${order.id}`) });
+    await expect(row).toContainText("Orders Customer");
+    await expect(row).toContainText("1 item");
+    await expect(row).toContainText("TXN-TEST-1234");
+    await expect(row).toContainText("PAID");
+  });
+
+  test("customer site preview stays inside admin", { tag: "@a2" }, async ({ userPage }) => {
+    await userPage.goto("/");
+
+    await userPage.getByRole("link", { name: "Preview Store" }).click();
+
+    await expect(userPage).toHaveURL("/preview");
+    await expect(
+      userPage.getByRole("heading", { name: "Customer Preview" }),
+    ).toBeVisible();
+    await expect(
+      userPage.getByText("Administrative read-only preview of the customer storefront"),
+    ).toBeVisible();
+    await expect(userPage.getByText("Customer browsing")).not.toBeVisible();
+
+    const preview = userPage.frameLocator(
+      'iframe[title="Customer storefront preview"]',
+    );
+    await expect(preview.getByPlaceholder("Search books...")).toBeVisible();
+    await expect(preview.getByText("Browse books by genre")).toBeVisible();
+    await expect(preview.getByRole("link", { name: /Mystery/ })).toBeVisible();
+    await expect(preview.getByRole("button", { name: /theme|mode/i })).toBeVisible();
+    await expect(preview.getByText(/Account:/)).not.toBeVisible();
+    await expect(preview.getByRole("link", { name: /Book Bag/ })).not.toBeVisible();
+    await expect(preview.getByRole("button", { name: "Add to Book Bag" })).not.toBeVisible();
+
+    const card = preview.locator("[data-test-id^='blog-post-']").first();
+    await card.getByRole("button", { name: /Flip .* to details/ }).click();
+    await expect(card.getByRole("button", { name: "Back to cover" })).toBeVisible();
   });
 
   test("inventory filters and sorts books", { tag: "@a2" }, async ({ userPage }) => {
@@ -57,6 +140,10 @@ test.describe("admin bookstore", () => {
 
     await userPage.goto("/post/atomic-habits");
     await expect(userPage.getByRole("heading", { name: "Update Book" })).toBeVisible();
+    await expect(userPage.getByRole("link", { name: "Back to Inventory" })).toHaveAttribute(
+      "href",
+      "/inventory",
+    );
     await expect(userPage.getByLabel("Book Title")).toBeVisible();
     await expect(userPage.getByText("Active in store")).toBeVisible();
     await expect(userPage.getByLabel("Active in store")).not.toBeVisible();

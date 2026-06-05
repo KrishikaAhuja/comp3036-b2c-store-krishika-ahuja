@@ -4,6 +4,7 @@ export type CartProduct = {
   title: string;
   price: number;
   imageUrl?: string;
+  stockQuantity?: number;
 };
 
 export type CartItem = CartProduct & {
@@ -100,4 +101,8 @@ export function updateCartItemQuantity(productId: number, quantity: number) {
 
 export function removeCartItem(productId: number) {
   writeStoredCart(readStoredCart().filter((item) => item.id !== productId));
+}
+
+export function clearCart() {
+  writeStoredCart([]);
 }

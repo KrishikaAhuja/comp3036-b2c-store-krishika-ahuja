@@ -6,9 +6,11 @@ import { SummaryItem } from "./SummaryItem";
 export async function TagList({
   selectedTag,
   posts,
+  preview = false,
 }: {
   selectedTag?: string;
   posts: Post[];
+  preview?: boolean;
 }) {
   // Tags are used as customer-facing age ranges in the sidebar.
   const postTags = (await tags(posts)) as {
@@ -24,7 +26,7 @@ export async function TagList({
           name={item.name}
           count={item.count}
           isSelected={selectedTag === item.name}
-          link={`/tags/${item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`}
+          link={`/tags/${item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}${preview ? "?preview=admin" : ""}`}
           title={`Age Range / ${item.name}`}
         />
       ))}

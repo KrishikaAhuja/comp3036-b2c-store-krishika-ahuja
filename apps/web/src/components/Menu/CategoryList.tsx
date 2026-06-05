@@ -3,7 +3,17 @@ import type { Post } from "@repo/db/data";
 import { SummaryItem } from "./SummaryItem";
 import { LinkList } from "./LinkList";
 
-export function CategoryList({ posts }: { posts: Post[] }) {
+function previewLink(link: string, preview: boolean) {
+  return preview ? `${link}?preview=admin` : link;
+}
+
+export function CategoryList({
+  posts,
+  preview = false,
+}: {
+  posts: Post[];
+  preview?: boolean;
+}) {
   const baseCategories = categories(posts);
 
   // Keep the main store departments visible even when a category currently has no products.
@@ -29,7 +39,10 @@ export function CategoryList({ posts }: { posts: Post[] }) {
           count={item.count}
           name={item.name}
           isSelected={false}
-          link={`/category/${item.name.trim().toLowerCase().replaceAll(" ", "-")}`}
+          link={previewLink(
+            `/category/${item.name.trim().toLowerCase().replaceAll(" ", "-")}`,
+            preview,
+          )}
           title={`Category / ${item.name.trim()}`}
         />
       ))}

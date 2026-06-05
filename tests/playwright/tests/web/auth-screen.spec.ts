@@ -103,6 +103,31 @@ test.describe("CUSTOMER AUTH SCREEN", () => {
   );
 
   test(
+    "returns customers to protected pages after sign in",
+    { tag: "@a1" },
+    async ({ page }) => {
+      const email = uniqueCustomerEmail();
+
+      const response = await page.request.post("/api/auth/register", {
+        data: {
+          name: "Redirect Customer",
+          email,
+          password: "password123",
+        },
+      });
+      expect(response.status()).toBe(201);
+
+      await page.goto("/auth?next=/cart");
+      await page.getByLabel("Email").fill(email);
+      await page.getByLabel("Password", { exact: true }).fill("password123");
+      await page.getByRole("button", { name: "Sign in" }).click();
+
+      await expect(page).toHaveURL("/cart");
+      await expect(page.getByRole("heading", { name: "Book Bag" })).toBeVisible();
+    },
+  );
+
+  test(
     "shows an error for incorrect customer login",
     { tag: "@a1" },
     async ({ page }) => {

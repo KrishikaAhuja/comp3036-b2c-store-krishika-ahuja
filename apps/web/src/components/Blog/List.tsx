@@ -1,7 +1,13 @@
 import type { Post } from "@repo/db/data";
 import { BlogListItem } from "./ListItem";
 
-export function BlogList({ posts }: { posts: Post[] }) {
+export function BlogList({
+  posts,
+  readOnly = false,
+}: {
+  posts: Post[];
+  readOnly?: boolean;
+}) {
   const activePosts = posts.filter((post) => post.active);
 
   if (activePosts.length === 0) {
@@ -11,7 +17,7 @@ export function BlogList({ posts }: { posts: Post[] }) {
   return (
     <div className="grid gap-6 py-6 sm:grid-cols-2 xl:grid-cols-3">
       {activePosts.map((post) => (
-        <BlogListItem key={post.id} post={post} />
+        <BlogListItem key={post.id} post={post} readOnly={readOnly} />
       ))}
     </div>
   );

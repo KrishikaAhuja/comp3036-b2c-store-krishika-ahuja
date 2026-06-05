@@ -2,7 +2,7 @@ import { client } from "@repo/db/client";
 import { redirect } from "next/navigation";
 import { isLoggedIn } from "../../utils/auth";
 import { AdminShell } from "../AdminShell";
-import { getAdminShellStats } from "../adminData";
+import { getAdminShellStats, visibleCustomerWhere } from "../adminData";
 import styles from "../admin-list.module.css";
 
 export default async function CustomersPage() {
@@ -14,9 +14,7 @@ export default async function CustomersPage() {
 
   const [users, shellStats] = await Promise.all([
     client.db.user.findMany({
-      where: {
-        role: "CUSTOMER",
-      },
+      where: visibleCustomerWhere,
       orderBy: {
         createdAt: "desc",
       },
