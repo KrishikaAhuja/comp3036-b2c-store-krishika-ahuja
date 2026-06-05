@@ -89,8 +89,8 @@ export default function AdminList({
         </div>
 
         <div className={styles.headerActions}>
-          <a href="http://localhost:3001" className={styles.secondaryButton}>
-            View Customer Site
+          <a href="/preview" className={styles.secondaryButton}>
+            Preview Customer Site
           </a>
           <a href="/posts/create" className={styles.createButton}>
             Add Book

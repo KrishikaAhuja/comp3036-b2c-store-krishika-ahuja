@@ -14,6 +14,9 @@ test.describe("admin bookstore", () => {
     await expect(userPage.getByText("Total Books")).toBeVisible();
     await expect(userPage.getByText("14 active books")).toBeVisible();
     await expect(userPage.getByRole("link", { name: "Add Book" }).first()).toBeVisible();
+    await expect(
+      userPage.getByRole("link", { name: "Preview Customer Site" }),
+    ).toHaveAttribute("href", "/preview");
 
     await userPage.getByRole("link", { name: "Inventory", exact: true }).click();
     await expect(userPage.getByRole("heading", { name: "Inventory", exact: true })).toBeVisible();
@@ -23,6 +26,56 @@ test.describe("admin bookstore", () => {
     await expect(atomicRow).toContainText("Nonfiction");
     await expect(atomicRow).toContainText("$28");
     await expect(atomicRow).toContainText("Oct 16, 2018");
+  });
+
+  test("orders page shows completed customer purchases", { tag: "@a2" }, async ({ userPage }) => {
+    const customer = await client.db.user.create({
+      data: {
+        name: "Orders Customer",
+        email: `orders-${Date.now()}@book.test`,
+        passwordHash: "test-only-password-hash",
+        role: "CUSTOMER",
+      },
+    });
+    const product = await client.db.post.findFirstOrThrow({
+      where: {
+        active: true,
+      },
+      orderBy: {
+        id: "asc",
+      },
+    });
+    const order = await client.db.order.create({
+      data: {
+        userId: customer.id,
+        status: "PAID",
+        paymentProvider: "mock",
+        paymentReference: "TXN-TEST-1234",
+        totalAud: product.priceAud,
+        items: {
+          create: {
+            postId: product.id,
+            title: product.title,
+            urlId: product.urlId,
+            imageUrl: product.imageUrl,
+            unitPriceAud: product.priceAud,
+            quantity: 1,
+            lineTotalAud: product.priceAud,
+          },
+        },
+      },
+    });
+
+    await userPage.goto("/orders");
+
+    await expect(
+      userPage.getByRole("heading", { name: "Orders", exact: true }),
+    ).toBeVisible();
+    const row = userPage.getByRole("row", { name: new RegExp(`#${order.id}`) });
+    await expect(row).toContainText("Orders Customer");
+    await expect(row).toContainText("1 item");
+    await expect(row).toContainText("TXN-TEST-1234");
+    await expect(row).toContainText("PAID");
   });
 
   test("customer site preview stays inside admin", { tag: "@a2" }, async ({ userPage }) => {

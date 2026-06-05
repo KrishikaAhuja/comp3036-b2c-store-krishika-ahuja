@@ -114,6 +114,7 @@ test.describe("customer book bag", () => {
     await card
       .getByRole("button", { name: `Flip ${product.title} to details` })
       .click();
+    await page.waitForTimeout(800);
     await card.getByRole("button", { name: "Add to Book Bag" }).click();
     await expect(page).toHaveURL("/auth?next=%2F");
   });
@@ -202,6 +203,62 @@ test.describe("customer book bag", () => {
     expect(book?.stockQuantity).toBe(product.stockQuantity - checkoutQuantity);
   });
 
+  test("signed-in customer can remove an item from the cart", { tag: "@a1" }, async ({ page }) => {
+    const product = await getCheckoutProduct();
+    const email = uniqueCustomerEmail();
+    await registerCustomer(page, email, "password123");
+
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    const card = page.getByTestId(`blog-post-${product.id}`);
+    await card
+      .getByRole("button", { name: `Flip ${product.title} to details` })
+      .click();
+    await card.getByRole("button", { name: "Add to Book Bag" }).click();
+    await expect(page.getByRole("link", { name: "Book Bag (1)" })).toBeVisible();
+
+    await page.goto("/cart", { waitUntil: "domcontentloaded" });
+    await page.getByRole("button", { name: "Remove" }).click();
+
+    await expect(page.getByText("Your book bag is empty.")).toBeVisible();
+    await expect(page.getByRole("link", { name: "Book Bag (0)" })).toBeVisible();
+  });
+
+  test("signed-in customer can checkout with pay on delivery", { tag: "@a1" }, async ({ page }) => {
+    const product = await getCheckoutProduct();
+    const email = uniqueCustomerEmail();
+    await registerCustomer(page, email, "password123");
+
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+    const card = page.getByTestId(`blog-post-${product.id}`);
+    await card
+      .getByRole("button", { name: `Flip ${product.title} to details` })
+      .click();
+    await page.waitForTimeout(800);
+    await card.getByRole("button", { name: "Add to Book Bag" }).click();
+
+    await page.goto("/checkout", { waitUntil: "domcontentloaded" });
+    const checkoutForm = page.getByTestId("checkout-form");
+    await checkoutForm.getByLabel("Phone Number").fill("0412 345 678");
+    await checkoutForm.getByLabel("Delivery Address").fill("12 Book Lane, Sydney NSW");
+    await checkoutForm.getByLabel("Payment Method").selectOption("pay_on_delivery");
+    await expect(checkoutForm.getByLabel("Card Number")).not.toBeVisible();
+    await checkoutForm.getByRole("button", { name: "Place Order" }).click();
+
+    await expect(page).toHaveURL(/\/order-confirmation\?orderId=\d+/);
+    await expect(page.getByText(/TXN-\d{8}-\d{4}/)).toBeVisible();
+
+    const latestOrder = await client.db.order.findFirst({
+      orderBy: {
+        id: "desc",
+      },
+      include: {
+        items: true,
+      },
+    });
+    expect(latestOrder?.totalAud).toBe(product.priceAud);
+    expect(latestOrder?.items[0]?.title).toBe(product.title);
+  });
+
   test("checkout validation does not create an order", { tag: "@a1" }, async ({ request }) => {
     const product = await getCheckoutProduct();
 
@@ -288,6 +345,33 @@ test.describe("customer book bag", () => {
     const orders = await client.db.$queryRawUnsafe<{ count: bigint }[]>(
       `SELECT COUNT(*) AS count FROM "Order"`,
     );
-    expect(Number(orders[0]?.count ?? 0n)).toBe(0);
+    expect(Number(orders[0]?.count ?? 0)).toBe(0);
+  });
+
+  test("checkout API requires a customer session", { tag: "@a3" }, async ({ request }) => {
+    const product = await getCheckoutProduct();
+
+    const response = await request.post("/api/checkout", {
+      data: {
+        items: [
+          {
+            id: product.id,
+            quantity: 1,
+          },
+        ],
+        customer: {
+          fullName: "Guest Checkout",
+          email: "guest@example.com",
+          phone: "0412 345 678",
+          deliveryAddress: "12 Book Lane, Sydney NSW",
+        },
+        payment: {
+          method: "pay_on_delivery",
+        },
+      },
+    });
+
+    expect(response.status()).toBe(401);
+    expect(await response.json()).toEqual({ error: "Unauthorized" });
   });
 });
