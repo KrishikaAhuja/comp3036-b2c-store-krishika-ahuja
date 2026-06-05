@@ -11,6 +11,7 @@ type AdminPost = {
   title: string;
   content: string;
   urlId: string;
+  imageUrl: string;
   priceAud: number | null;
   stockQuantity: number | null;
   date: Date | string;
@@ -51,10 +52,6 @@ export default function AdminList({
   const recentlyAdded = [...posts]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
-  const highestSalesQuantity = Math.max(
-    ...bestSellingBooks.map((book) => book.quantitySold),
-    0,
-  );
 
   const stockValueAud = new Intl.NumberFormat("en-AU", {
     style: "currency",
@@ -183,15 +180,18 @@ export default function AdminList({
                   <a
                     key={post.id}
                     href={`/post/${post.urlId}`}
-                    className={styles.dashboardListItem}
+                    className={styles.alertBookItem}
                   >
-                    <span>
-                      <strong>{post.title}</strong>
-                      <small>{stock} in stock</small>
+                    <img src={post.imageUrl} alt="" />
+                    <span className={styles.alertBookText}>
+                      <span>
+                        <strong>{post.title}</strong>
+                        <small>{stock} in stock</small>
+                      </span>
+                      <em className={stock <= 0 ? styles.outBadge : styles.lowBadge}>
+                        {stock <= 0 ? "Out of stock" : "Low stock"}
+                      </em>
                     </span>
-                    <em className={stock <= 0 ? styles.outBadge : styles.lowBadge}>
-                      {stock <= 0 ? "Out of stock" : "Low stock"}
-                    </em>
                   </a>
                 );
               })}
@@ -210,39 +210,27 @@ export default function AdminList({
               <span>Top selling books will show here after customers place orders.</span>
             </div>
           ) : (
-            <div className={styles.salesChart} aria-label="Best selling books chart">
-              {bestSellingBooks.map((book, index) => {
-                const width =
-                  highestSalesQuantity > 0
-                    ? Math.max(
-                        10,
-                        Math.round((book.quantitySold / highestSalesQuantity) * 100),
-                      )
-                    : 0;
-
-                return (
-                  <a
-                    key={`${book.postId ?? book.urlId}-${book.title}`}
-                    href={`/post/${book.urlId}`}
-                    className={styles.salesBarRow}
-                  >
-                    <span className={styles.salesRank}>{index + 1}</span>
-                    <span className={styles.salesBarContent}>
-                      <span className={styles.salesBarHeader}>
-                        <strong>{book.title}</strong>
-                        <em>{book.quantitySold} sold</em>
-                      </span>
-                      <span className={styles.salesTrack}>
-                        <span
-                          className={styles.salesBar}
-                          style={{ width: `${width}%` }}
-                        />
-                      </span>
-                      <small>{formatPrice(book.revenueAud)} revenue</small>
-                    </span>
-                  </a>
-                );
-              })}
+            <div className={styles.simpleTableWrap}>
+              <table className={styles.simpleTable}>
+                <thead>
+                  <tr>
+                    <th>Book</th>
+                    <th>Sold</th>
+                    <th>Revenue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bestSellingBooks.map((book) => (
+                    <tr key={`${book.postId ?? book.urlId}-${book.title}`}>
+                      <td>
+                        <a href={`/post/${book.urlId}`}>{book.title}</a>
+                      </td>
+                      <td>{book.quantitySold}</td>
+                      <td>{formatPrice(book.revenueAud)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </section>

@@ -1,260 +1,242 @@
-# Assignment 2 - Blog - Client App
+# Bookstore Application
 
-The goal of this assignment is to implement all the client side functionality.
-Example implementation is in the image below.
+This project is a full-stack bookstore application built as a monorepo. It includes a customer-facing storefront and an administrator dashboard for managing the store.
 
-## Success Criteria
+## API Documentation
 
-- ✅ All of the tests must be passing
-- ✅ You must be able to explain any code in the codebase
+### Overview
 
-## 👾 Requirements - Assignment 2.1 - Client
+The application consists of:
 
-> 💡Idea! Create a new issue in your repository, where you can track the completion of these items. Just copy paste them into the issue and mark them as complete as you go. Make sure you copy the source from README.md not the preview text.
+- **Customer Storefront** - customers can browse books, search and filter the catalogue, like books, add items to a cart, complete a mock checkout, and view purchase history.
+- **Admin Dashboard** - administrators can sign in, manage inventory, create and edit books, view orders, view customers, and monitor store activity.
 
-### HOME SCREEN
+Main features:
 
-- [ ] User must see only the "active" posts
-- [ ] User must see the list of blog post categories, where each category points to UI showing only posts of that category
-- [ ] User must see the list of blog post tags, where each tag points to UI showing only posts of that category
-- [ ] User must see the history of blog posts, showing month and year, where each moth, year tuple points to UI showing only posts of that category
-- [ ] Tags and history items shown are only considered from active posts
-- [ ] The list shows the following items:
-  - blog title, pointing to detail page
-  - short description
-  - date
-  - image
-  - tags
-  - likes
-  - views
-- [ ] User must be able to switch between dark and light theme with a button
-      The dark theme setting is stored in the "data-theme" attribute on html element
-- [ ] There is a search functionality that filters blogs based on string found in title or description, redirecting to search page
+- Browse books
+- Search and filter books
+- Mock checkout
+- Purchase history
+- Inventory management
+- Customer and order management
 
-### DETAIL SCREEN
+### Tech Stack
 
-- [ ] Detail page shows the same items as list item, but the short description is replaced by formatted long description
-- [ ] Detail text is stored as Markdown, which needs to be converted to HTML
+- **Frontend framework:** Next.js 15, React 19, TypeScript
+- **Backend/API framework:** Next.js App Router API routes
+- **Database:** SQLite
+- **ORM:** Prisma
+- **Authentication:** JWT stored in HTTP-only cookies
+- **Password hashing:** bcryptjs
+- **Styling:** Tailwind CSS and CSS Modules
+- **Testing frameworks:** Vitest and Playwright
+- **Monorepo tooling:** pnpm workspaces and Turborepo
 
-### CATEGORY SCREEN
+### Environment Variables
 
-- [ ] Displays posts from the category from url (e.g. /category/react)
-- [ ] Displays "0 Posts" when search does no posts have that category
+| Variable | Required | Purpose |
+| -------- | -------- | ------- |
+| `DATABASE_URL` | Yes | SQLite database connection string. |
+| `JWT_SECRET` | Yes | Secret used to sign and verify authentication tokens. |
+| `PASSWORD` | Yes | Admin password fallback used by the admin app and seed process. |
+| `ADMIN_NAME` | No | Optional seeded admin display name. |
+| `ADMIN_EMAIL` | No | Optional seeded admin email address. |
+| `ADMIN_PASSWORD` | No | Optional seeded admin password override. |
+| `CUSTOMER_SITE_URL` | No | Customer storefront URL used by the admin preview page. |
+| `NEXT_PUBLIC_ADMIN_URL` | No | Admin dashboard URL used by the customer auth page. |
+| `E2E` | No | Enables the test-only seed API route. |
+| `E2E_WEB_PORT` | No | Customer storefront port used during Playwright tests. |
+| `E2E_ADMIN_PORT` | No | Admin dashboard port used during Playwright tests. |
+| `E2E_WEB_URL` | No | Customer storefront URL used by Playwright tests. |
+| `E2E_ADMIN_URL` | No | Admin dashboard URL used by Playwright tests. |
+| `SKIP_ENV_VALIDATION` | No | Skips environment variable validation when enabled. |
+| `CI` | No | Enables CI-specific Playwright behaviour. |
+| `VERCEL_URL` | No | Optional URL used by Playwright fixtures. |
 
-### HISTORY SCREEN
+### API Endpoints
 
-- [ ] Displays posts from year and month specified in the url (e.g. /history/2024/12)
-- [ ] Displays "0 Posts" when no posts are from that given month and year
+Product browsing, category pages, tag pages, search pages, detail pages, cart pages, and purchase history pages are mostly server-rendered and query the database directly rather than using public JSON API endpoints.
 
-### TAG SCREEN
+#### Customer Authentication
 
-- [ ] Displays posts with the tag url (e.g. /tags/dev-tools)
-- [ ] Displays "0 Posts" when search does no posts have that tag
+| Method | Route | Purpose | Auth |
+| ------ | ----- | ------- | ---- |
+| `POST` | `/api/auth/register` | Register a new customer account. | No |
+| `POST` | `/api/auth/login` | Log in a customer and set the customer auth cookie. | No |
+| `POST` | `/api/auth/logout` | Log out the current customer. | Yes |
+| `GET` | `/api/auth/me` | Return the currently authenticated customer. | Yes |
 
-### SEARCH SCREEN
+#### Checkout
 
-- [ ] Displays results based on search string stored in the query string (e.g. /search?q=Fat)
-- [ ] Displays "0 Posts" when search does not find anything
+| Method | Route | Purpose | Auth |
+| ------ | ----- | ------- | ---- |
+| `POST` | `/api/checkout` | Validate checkout details, create an order, create order items, and update stock. | Yes |
 
-## 👾 Requirements - Assignment 2.2 - Admin
+#### Likes / Wishlist
 
-> 💡Idea! Create a new issue in your repository, where you can track the completion of these items. Just copy paste them into the issue and mark them as complete as you go. Make sure you copy the source from README.md not the preview text.
+| Method | Route | Purpose | Auth |
+| ------ | ----- | ------- | ---- |
+| `POST` | `/api/likes` | Toggle a liked book for the signed-in customer. | Yes |
 
-### ADMIN HOME SCREEN
+#### Product & Inventory Management
 
-- [ ] Shows Login screen if not logged
-- [ ] Shows List screen if logged
-- [ ] There must be a logout button
-- [ ] Clicking the logout button logs the user out
-- [ ] Authenticate the current client using a hard-coded password
-- [ ] Use a httpOnly cookie and name it "auth_token" to remember the signed-in state.
+| Method | Route | Purpose | Auth |
+| ------ | ----- | ------- | ---- |
+| `GET` | `/api/posts` | List admin inventory items with optional filters. | Yes |
+| `POST` | `/api/posts` | Create a new book/product. | Yes |
+| `PUT` | `/api/posts` | Update an existing book/product. | Yes |
+| `PATCH` | `/api/posts/:id` | Toggle a book between active and inactive. | Yes |
+| `DELETE` | `/api/posts/:id` | Delete a book/product. | Yes |
 
-### ADMIN LIST SCREEN
+#### Admin Authentication
 
-- [ ] Shows both active and inactive posts
-- [ ] Article list is only accessible to logged-in users.
-- [ ] There is a filter screen that allows filtering posts by:
-  - [ ] Title or content
-  - [ ] Tags
-  - [ ] Date
-  - [ ] Visibility
-- [ ] You can combine multiple filters
-- [ ] Users can sort posts by name or creation date, both ascending and descending
-- [ ] The post list displays a list of filtered items with the following information:
-  - [ ] The list post item displays the image, title of the post
-  - [ ] The list post items display metadata such as category, tags, and "active" status.
-  - [ ] The active status is a button that, on click, just displays a message
-- [ ] Clicking on the title takes the user to the MODIFY SCREEN, allowing the user to modify the current post
-- [ ] There is a button to create new posts
-- [ ] Clicking on the "Create Post" button takes the user to the CREATE SCREEN
+| Method | Route | Purpose | Auth |
+| ------ | ----- | ------- | ---- |
+| `POST` | `/api/auth` | Log in an admin and set the admin auth cookie. | No |
+| `DELETE` | `/api/auth` | Log out an admin by clearing the admin auth cookie. | Yes |
+| `POST` | `/api/login` | Admin login route re-export used by forms. | No |
+| `POST` | `/api/logout` | Admin logout route used by forms. | Yes |
 
-### ADMIN CREATE and UPDATE screen
+#### Testing Utilities
 
-Both create and update screens display the same UI, but the update screen preloads the data into fields.
+| Method | Route | Purpose | Auth |
+| ------ | ----- | ------- | ---- |
+| `GET` | `/api/seed` | Runs the database seed during E2E testing only. | No |
 
-- [ ] Page is only accessible to logged in user
-- [ ] There must be the following fields which must be validated for errors:
-  - [ ] Title (`input, string`)
-  - [ ] Description (textarea, string, max 200 characters)
-  - [ ] Content (`textarea, markdown string`)
-  - [ ] Tag List (`input, string`) shows a comma-separated list of tags.
-  - [ ] Image URL (`input, URL`)
-- [ ] Under the Description is a "Preview" button that replaces the text area with a rendered markdown string and changes the title to "Close Preview".
-- [ ] When the preview is closed, the cursor must be in the same position as before opening the preview.
-- [ ] Under the image input is an image preview.
-- [ ] User can click on the "Save" button that displays an error ui if one of the fields is not specified or valid.
+### Database Models
 
-## 👾 Requirements: Assignment 2.3
+- **User** - Stores customer and administrator accounts. Users can have many orders.
+- **Post** - Represents a book/product in the catalogue. Posts can have likes and order item records.
+- **Order** - Stores completed customer purchases, payment status, total amount, and customer relationship.
+- **OrderItem** - Stores purchased book snapshots for each order, including title, price, quantity, and line total.
+- **Like** - Stores customer liked books using a composite key of post and customer identifier.
 
-### BACKEND / CLIENT
+### Mock Checkout Flow
 
-- [ ] Data is loaded from the database backend
-- [ ] Data filtering is done server side and only filtered data is sent to client
-- [ ] Each visit of the page increases the post "views" count by one
-- [ ] User can "like" the post on the detail screen, NOT on the list screen (hint, create the `/api/likes/route.ts` route and implement the needed handlers)
-- [ ] Liking the post increases the like count by one
-- [ ] User can like the post only once (use IP)
-- [ ] User can unlike the post, decreasing the like post by one
+1. Customer adds books to cart.
+2. Customer proceeds to checkout.
+3. Checkout information is validated.
+4. Mock payment is processed.
+5. Order and order items are created.
+6. Stock quantities are updated.
+7. Cart is cleared.
+8. Customer is redirected to the confirmation page.
 
-### BACKEND / ADMIN / AUTHORISATION
+Payments are simulated. No Stripe or PayPal integration is used.
 
-> For these two requirements we do not have End 2 End tests and will be checked manually.
+Validation summary:
 
-- [ ] The password is checked on server in the `/api/auth` route
-- [ ] The POST method is used for login
-- [ ] The DELETE method is used for logout
-- [ ] The admin home page checks for the presence of JWT token and verifies it, if the token does not exist or is invalid, displays the login control.
+- Card number must contain exactly 16 digits.
+- Spaces are ignored.
+- Only numeric characters are allowed.
+- CVV must contain exactly 3 digits.
+- Expiry date must follow `MM/YY` format.
+- Checkout fails if stock is insufficient.
 
-### BACKEND / ADMIN / LIST SCREEN
+### Error Handling
 
-- [ ] Logged in user can activate / deactivate a post clicking on the activate button, automatically saving changes
+| Status | Description |
+| ------ | ----------- |
+| 200 | Successful request |
+| 201 | Resource created |
+| 400 | Validation error |
+| 401 | Unauthorized |
+| 404 | Resource not found |
+| 409 | Conflict |
+| 501 | Feature unavailable |
 
-### BACKEND / ADMIN / UPDATE SCREEN
+API errors generally return a JSON object containing an `error` message.
 
-- [ ] Logged in user can save changes to database, if the form is validated
+### Testing
 
-### BACKEND / ADMIN / CREATE SCREEN
+Development commands:
 
-- [ ] Logged in user can create a new post to the database, if the form is validated
-
-## Prerequisites
-
-First, make sure that "pnpm" and "turbo" is installed in your computer. If not, please follow installation instructions for pnpm. If turbo is not installed, please install it using pnpm with the following command:
-
-Then, run the following command to install turborepo.
-
-```
-pnpm add -g turbo
-```
-
-## Installing the project
-
-Once the pnpm is installed, in the root of the project install the packages
-
-```
-pnpm i
-```
-
-To run end to end tests you need to install headless browsers. Please run the following command in the `tests/playwright-web` directory
-
-```
-pnpx playwright install
+```bash
+pnpm dev
+pnpm --filter @repo/web dev
+pnpm --filter @repo/admin dev
 ```
 
-## Environment
+Unit testing:
 
-In all packages `apps/admin` and `packages/db` find `.env.example` files and copy them to `.env`. Set your environment variables accordingly!
-
-## Running the project
-
-To run the project, run the following command in the root directory of your project:
-
-```
-turbo dev
+```bash
+pnpm --filter @repo/web test
+pnpm --filter @repo/ui test
+pnpm --filter @repo/utils test
 ```
 
-This will run:
+Playwright E2E testing:
 
-- Client application at [http://localhost:3001](http://localhost:3001)
-- Admin application at [http://localhost:3002](http://localhost:3002)
-
-## Running tests
-
-To run the tests please run, you have two options.
-
-### Running Tests in Console
-
-If you only wish to visualise the test results in console, please run the following command in the root of your project for the first part of the second assignment (i.e. Assignment 2.1):
-
-```
-turbo test-1
+```bash
+pnpm --filter @repo/playwright test-1
+pnpm --filter @repo/playwright test-2
+pnpm --filter @repo/playwright test-3
 ```
 
-This launches the turbo console UI similar to below, where you can swap between different projects:
+Database commands:
 
-![Turbo UI](https://skillpies.s3.ap-southeast-2.amazonaws.com/courses/full-stack-development/sections/assignment-2-1-blog-client-in-advanced-react/Screenshot%202025-02-05%20at%2014.30.45.png)
-
-> ⚠️⚠️ Make sure that ALL tests pass!
-
-If you want to run the tests for second part (i.e. Assignment 2.2) or third part (i.e. Assignment 2.3), run these commands:
-
-```
-turbo test-2 // or
-turbo test-3
+```bash
+pnpm --filter @repo/db db:generate
+pnpm --filter @repo/db db:push
+pnpm --filter @repo/db db:migrate:dev
 ```
 
-If you want to run all tests, please run
+Manual development uses `dev.db`. Playwright E2E tests use an isolated `test.db` and run the customer storefront and admin dashboard on separate ports so tests do not interfere with manual development.
 
-```
-turbo all:test
-```
+### Example Requests
 
-### Running Tests in UIs
+Customer registration:
 
-The packaged tests framework also have the possibility of visually represent your tests for nicer view of test results. To see the UIs, run this command instead of `turbo test-1`:
-
-```
-turbo dev:test-1
+```bash
+curl -X POST http://localhost:3001/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test Customer","email":"customer@example.com","password":"password123"}'
 ```
 
-This will launch the End to End testing framework Playwright's test UI similar to below, please use the Play buttons to run individual tests:
+Customer login:
 
-![Playwright UI](https://skillpies.s3.ap-southeast-2.amazonaws.com/courses/full-stack-development/sections/assignment-2-1-blog-client-in-advanced-react/Screenshot%202025-02-05%20at%2014.40.35.png)
+```bash
+curl -i -c cookies.txt -X POST http://localhost:3001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"customer@example.com","password":"password123"}'
+```
 
-It also launches the unit and integration test framework Vitest's UI, similar to below. Here, you can also use the play buttons to execute individual tests!
+Mock checkout:
 
-![Vitest UI](https://skillpies.s3.ap-southeast-2.amazonaws.com/courses/full-stack-development/sections/assignment-2-1-blog-client-in-advanced-react/Screenshot%202025-02-05%20at%2014.46.31.png)
+```bash
+curl -i -b cookies.txt -X POST http://localhost:3001/api/checkout \
+  -H "Content-Type: application/json" \
+  -d '{
+    "items":[{"id":1,"quantity":1}],
+    "customer":{
+      "fullName":"Test Customer",
+      "email":"customer@example.com",
+      "phone":"0412345678",
+      "deliveryAddress":"12 Book Lane, Sydney, NSW, 2000"
+    },
+    "payment":{
+      "method":"mock_credit_card",
+      "cardholderName":"Test Customer",
+      "cardNumber":"1234 5678 9012 3456",
+      "expiryDate":"12/28",
+      "cvv":"123"
+    }
+  }'
+```
 
-## Project structure
+Admin create product:
 
-The project is monorepo with the following packages split into three categories:
-
-**Applications**
-
-Contains the following web applications:
-
-- **apps/admin** - Admin Website
-- **apps/web** - Client website
-
-**Packages**
-
-Contains the following packages with shared code and configurations:
-
-- **packages/ui** - Library of UI elements shared between admin and client
-- **packages/utils** - Library of utility functions shared between other projects
-- **packages/db** - Library handling the database connection
-- **packages/eslint-config**, **packages/tailwind-config** and **packages/typescript-config** contain configuration files for build pipelines for this project
-
-**Tests**
-
-Contains the following test applications:
-
-- **tests/playwright-admin** - End to End tests for the admin application
-- **tests/playwright-web** - End to End tests for the client application
-- **tests/storybook** - Configured storybook instance for development and testing of React components in isolation
-
-## Application Structure
-
-The client application comes with pre-defined router (only one route is missing for your learning).
-The client application also comes with pre defined structure of components and utilities for you to complete.
-Tha admin application is much more bare with most functionality AND structure needed to be completed by you.
+```bash
+curl -i -b admin-cookies.txt -X POST http://localhost:3002/api/posts \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title":"Example Book",
+    "description":"Short summary",
+    "content":"# Book details\n\n**Author:** Example Author",
+    "imageUrl":"https://example.com/book.jpg",
+    "category":"Fiction",
+    "priceAud":25,
+    "stockQuantity":10,
+    "active":true
+  }'
+```
