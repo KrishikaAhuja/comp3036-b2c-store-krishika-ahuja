@@ -22,6 +22,8 @@ type CheckoutPayment = {
   cvv?: unknown;
 };
 
+type PaymentMethod = "mock_credit_card" | "pay_on_delivery";
+
 function normalizeItems(value: unknown) {
   if (!Array.isArray(value)) {
     return [];
@@ -37,6 +39,12 @@ function normalizeItems(value: unknown) {
 
 function text(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
+}
+
+function getPaymentMethod(payment: CheckoutPayment): PaymentMethod {
+  const method = text(payment.method);
+
+  return method === "pay_on_delivery" ? "pay_on_delivery" : "mock_credit_card";
 }
 
 function validateCheckoutDetails(customer: CheckoutCustomer, payment: CheckoutPayment) {
@@ -200,14 +208,18 @@ export async function POST(req: NextRequest) {
 
     const totalAud = orderItems.reduce((total, item) => total + item.lineTotalAud, 0);
     const paymentReference = createTransactionId();
+    const paymentMethod = getPaymentMethod(
+      (checkoutBody.payment || {}) as CheckoutPayment,
+    );
+    const orderStatus = paymentMethod === "pay_on_delivery" ? "NOT_PAID" : "PAID";
 
     const orderId = await client.db.$transaction(async (tx) => {
       await tx.$executeRawUnsafe(
         `INSERT INTO "Order" ("userId", "status", "paymentProvider", "paymentReference", "totalAud", "updatedAt")
          VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
         user.id,
-        "PAID",
-        "mock",
+        orderStatus,
+        paymentMethod,
         paymentReference,
         totalAud,
       );
@@ -256,7 +268,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       orderId,
       paymentReference,
-      status: "PAID",
+      status: orderStatus,
       totalAud,
     });
   } catch (error) {

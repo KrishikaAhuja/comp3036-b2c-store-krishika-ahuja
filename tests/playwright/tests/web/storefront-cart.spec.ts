@@ -178,15 +178,23 @@ test.describe("customer book bag", () => {
     await expect(page.getByRole("link", { name: "Book Bag (0)" })).toBeVisible();
 
     const orders = await client.db.$queryRawUnsafe<
-      { totalAud: number; quantity: number; title: string }[]
+      {
+        paymentProvider: string;
+        status: string;
+        totalAud: number;
+        quantity: number;
+        title: string;
+      }[]
     >(
-      `SELECT o."totalAud", oi."quantity", oi."title"
+      `SELECT o."paymentProvider", o."status", o."totalAud", oi."quantity", oi."title"
        FROM "Order" o
        JOIN "OrderItem" oi ON oi."orderId" = o."id"
        ORDER BY o."id" DESC
        LIMIT 1`,
     );
     expect(orders[0]).toEqual({
+      paymentProvider: "mock_credit_card",
+      status: "PAID",
       totalAud: expectedTotal,
       quantity: checkoutQuantity,
       title: product.title,
@@ -251,6 +259,11 @@ test.describe("customer book bag", () => {
     await expect(page.getByText(/TXN-\d{8}-\d{4}/)).toBeVisible();
 
     const latestOrder = await client.db.order.findFirst({
+      where: {
+        user: {
+          email,
+        },
+      },
       orderBy: {
         id: "desc",
       },
@@ -258,6 +271,8 @@ test.describe("customer book bag", () => {
         items: true,
       },
     });
+    expect(latestOrder?.paymentProvider).toBe("pay_on_delivery");
+    expect(latestOrder?.status).toBe("NOT_PAID");
     expect(latestOrder?.totalAud).toBe(product.priceAud);
     expect(latestOrder?.items[0]?.title).toBe(product.title);
   });
