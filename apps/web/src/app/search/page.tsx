@@ -7,9 +7,10 @@ export const dynamic = "force-dynamic";
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; preview?: string }>;
 }) {
-  const { q = "" } = await searchParams;
+  const { q = "", preview: previewParam } = await searchParams;
+  const preview = previewParam === "admin";
   const query = q.toLowerCase();
   // Search runs on the active catalogue only, keeping hidden admin products out of results.
   const posts = await getActiveProducts();
@@ -22,11 +23,11 @@ export default async function Page({
   );
 
   return (
-    <AppLayout>
+    <AppLayout query={q} preview={preview}>
       {filteredPosts.length === 0 ? (
         <div>0 Books</div>
       ) : (
-        <Main posts={filteredPosts} />
+        <Main posts={filteredPosts} readOnly={preview} />
       )}
     </AppLayout>
   );

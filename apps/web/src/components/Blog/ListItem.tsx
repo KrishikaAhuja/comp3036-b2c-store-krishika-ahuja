@@ -29,10 +29,17 @@ function getStockQuantity(post: Post) {
   return post.stockQuantity ?? post.likes;
 }
 
-export function BlogListItem({ post }: { post: Post }) {
+export function BlogListItem({
+  post,
+  readOnly = false,
+}: {
+  post: Post;
+  readOnly?: boolean;
+}) {
   const [opened, setOpened] = useState(false);
   const stockQuantity = getStockQuantity(post);
   const outOfStock = stockQuantity <= 0;
+  const detailHref = `/post/${post.urlId}${readOnly ? "?preview=admin" : ""}`;
 
   return (
     <article
@@ -55,7 +62,7 @@ export function BlogListItem({ post }: { post: Post }) {
           </div>
 
           <Link
-            href={`/post/${post.urlId}`}
+            href={detailHref}
             className="mt-4 text-lg font-semibold leading-snug text-[var(--foreground)] transition hover:text-[var(--accent)]"
           >
             {post.title}
@@ -89,18 +96,20 @@ export function BlogListItem({ post }: { post: Post }) {
           </div>
 
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            <AddToCartButton
-              product={{
-                id: post.id,
-                urlId: post.urlId,
-                title: post.title,
-                price: getProductPrice(post),
-                imageUrl: post.imageUrl,
-                stockQuantity,
-              }}
-            />
+            {readOnly ? null : (
+              <AddToCartButton
+                product={{
+                  id: post.id,
+                  urlId: post.urlId,
+                  title: post.title,
+                  price: getProductPrice(post),
+                  imageUrl: post.imageUrl,
+                  stockQuantity,
+                }}
+              />
+            )}
             <Link
-              href={`/post/${post.urlId}`}
+              href={detailHref}
               className="inline-flex h-10 items-center justify-center rounded-md bg-[var(--accent)] px-4 text-sm font-semibold text-[var(--surface)] transition hover:bg-[var(--accent-hover)]"
             >
               View Book
@@ -115,7 +124,7 @@ export function BlogListItem({ post }: { post: Post }) {
           aria-hidden={opened}
         >
           <Link
-            href={`/post/${post.urlId}`}
+            href={detailHref}
             className="flex min-h-[29rem] items-center justify-center bg-[#f1f1ed] p-4 dark:bg-gray-800"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}

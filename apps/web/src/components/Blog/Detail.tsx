@@ -27,7 +27,13 @@ function getProductPrice(post: Post) {
   return post.priceAud ?? Math.max(post.views, 1);
 }
 
-export async function BlogDetail({ post }: { post: Post }) {
+export async function BlogDetail({
+  post,
+  readOnly = false,
+}: {
+  post: Post;
+  readOnly?: boolean;
+}) {
   const content = await marked.parse(post.content);
   const stockQuantity = getStockQuantity(post);
   const outOfStock = stockQuantity <= 0;
@@ -90,16 +96,18 @@ export async function BlogDetail({ post }: { post: Post }) {
             dangerouslySetInnerHTML={{ __html: content }}
           />
 
-          <AddToCartButton
-            product={{
-              id: post.id,
-              urlId: post.urlId,
-              title: post.title,
-              price: getProductPrice(post),
-              imageUrl: post.imageUrl,
-              stockQuantity,
-            }}
-          />
+          {readOnly ? null : (
+            <AddToCartButton
+              product={{
+                id: post.id,
+                urlId: post.urlId,
+                title: post.title,
+                price: getProductPrice(post),
+                imageUrl: post.imageUrl,
+                stockQuantity,
+              }}
+            />
+          )}
         </div>
       </div>
     </article>

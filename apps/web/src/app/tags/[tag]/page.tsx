@@ -6,10 +6,13 @@ export const dynamic = "force-dynamic";
 
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: Promise<{ tag: string }>;
+  searchParams?: Promise<{ preview?: string }>;
 }) {
   const { tag } = await params;
+  const preview = (await searchParams)?.preview === "admin";
   const posts = await getActiveProducts();
 
   // Normalize route text and stored age ranges so "Ages 12+" matches /tags/ages-12.
@@ -25,11 +28,11 @@ export default async function Page({
   });
 
   return (
-    <AppLayout>
+    <AppLayout preview={preview}>
       {filteredPosts.length === 0 ? (
         <div>0 Books</div>
       ) : (
-        <Main posts={filteredPosts} />
+        <Main posts={filteredPosts} readOnly={preview} />
       )}
     </AppLayout>
   );

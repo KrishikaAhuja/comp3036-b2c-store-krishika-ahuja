@@ -5,9 +5,21 @@ import { HistoryList } from "./HistoryList";
 import { TagList } from "./TagList";
 import Link from "next/link";
 
-export async function LeftMenu({ posts }: { posts: Post[] }) {
+export async function LeftMenu({
+  posts,
+  preview = false,
+}: {
+  posts: Post[];
+  preview?: boolean;
+}) {
   return (
-    <aside className="w-full lg:w-72 lg:flex-shrink-0">
+    <aside
+      className={
+        preview
+          ? "w-full md:w-72 md:flex-shrink-0"
+          : "w-full lg:w-72 lg:flex-shrink-0"
+      }
+    >
       <div className="rounded-2xl border border-[var(--surface-muted)] bg-[var(--surface)] p-6 shadow-sm dark:border-gray-700">
         <div className="mb-8">
           <Link
@@ -35,21 +47,23 @@ export async function LeftMenu({ posts }: { posts: Post[] }) {
           {/* These lists give customers multiple ways to browse the same active product catalogue. */}
           <ul role="list" className="flex flex-col gap-8">
             <li>
-              <CategoryList posts={posts} />
+              <CategoryList posts={posts} preview={preview} />
             </li>
             <li>
-              <HistoryList selectedRange="" posts={posts} />
+              <HistoryList selectedRange="" posts={posts} preview={preview} />
             </li>
             <li>
-              <TagList selectedTag="" posts={posts} />
+              <TagList selectedTag="" posts={posts} preview={preview} />
             </li>
             <li>
-              <Link
-                href="http://localhost:3002"
-                className="block rounded-xl bg-[var(--background)] px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition hover:bg-[var(--surface-muted)] dark:bg-gray-800 dark:hover:bg-gray-700"
-              >
-                Admin
-              </Link>
+              {preview ? null : (
+                <Link
+                  href="http://localhost:3002"
+                  className="block rounded-xl bg-[var(--background)] px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition hover:bg-[var(--surface-muted)] dark:bg-gray-800 dark:hover:bg-gray-700"
+                >
+                  Admin
+                </Link>
+              )}
             </li>
           </ul>
         </nav>

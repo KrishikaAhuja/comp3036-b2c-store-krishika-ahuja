@@ -3,7 +3,7 @@ import { BookOpenIcon } from "@heroicons/react/24/outline";
 import type { ReactNode } from "react";
 
 type AdminShellProps = {
-  active: "dashboard" | "inventory" | "customers" | "orders";
+  active: "dashboard" | "inventory" | "customers" | "orders" | "preview";
   activeBooks: number;
   outOfStockCount: number;
   children: ReactNode;
@@ -14,6 +14,7 @@ const navItems = [
   { key: "inventory", href: "/inventory", label: "Inventory" },
   { key: "customers", href: "/customers", label: "Customers" },
   { key: "orders", href: "/orders", label: "Orders" },
+  { key: "preview", href: "/preview", label: "Preview Store" },
 ] as const;
 
 export function AdminShell({
@@ -45,7 +46,6 @@ export function AdminShell({
               {item.label}
             </a>
           ))}
-          <a href="http://localhost:3001">Customer Site</a>
         </nav>
 
         <div className={styles.sidebarPanel}>

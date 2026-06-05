@@ -25,6 +25,36 @@ test.describe("admin bookstore", () => {
     await expect(atomicRow).toContainText("Oct 16, 2018");
   });
 
+  test("customer site preview stays inside admin", { tag: "@a2" }, async ({ userPage }) => {
+    await userPage.goto("/");
+
+    await userPage.getByRole("link", { name: "Preview Store" }).click();
+
+    await expect(userPage).toHaveURL("/preview");
+    await expect(
+      userPage.getByRole("heading", { name: "Customer Preview" }),
+    ).toBeVisible();
+    await expect(
+      userPage.getByText("Administrative read-only preview of the customer storefront"),
+    ).toBeVisible();
+    await expect(userPage.getByText("Customer browsing")).not.toBeVisible();
+
+    const preview = userPage.frameLocator(
+      'iframe[title="Customer storefront preview"]',
+    );
+    await expect(preview.getByPlaceholder("Search books...")).toBeVisible();
+    await expect(preview.getByText("Browse books by genre")).toBeVisible();
+    await expect(preview.getByRole("link", { name: /Mystery/ })).toBeVisible();
+    await expect(preview.getByRole("button", { name: /theme|mode/i })).toBeVisible();
+    await expect(preview.getByText(/Account:/)).not.toBeVisible();
+    await expect(preview.getByRole("link", { name: /Book Bag/ })).not.toBeVisible();
+    await expect(preview.getByRole("button", { name: "Add to Book Bag" })).not.toBeVisible();
+
+    const card = preview.locator("[data-test-id^='blog-post-']").first();
+    await card.getByRole("button", { name: /Flip .* to details/ }).click();
+    await expect(card.getByRole("button", { name: "Back to cover" })).toBeVisible();
+  });
+
   test("inventory filters and sorts books", { tag: "@a2" }, async ({ userPage }) => {
     await userPage.goto("/inventory");
 

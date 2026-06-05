@@ -6,9 +6,11 @@ import { LinkList } from "./LinkList";
 export async function HistoryList({
   selectedRange,
   posts,
+  preview = false,
 }: {
   selectedRange?: string;
   posts: Post[];
+  preview?: boolean;
 }) {
   // Build arrival archive links from product dates, newest range first.
   const historyItems = history(posts);
@@ -24,7 +26,7 @@ export async function HistoryList({
             name={slug}
             count={item.count}
             isSelected={selectedRange === slug}
-            link={`/history/${slug}`}
+            link={`/history/${slug}${preview ? "?preview=admin" : ""}`}
             title={`Arrivals / ${slug}`}
           />
         );

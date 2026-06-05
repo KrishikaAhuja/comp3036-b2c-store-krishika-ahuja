@@ -11,10 +11,13 @@ export const dynamic = "force-dynamic";
 
 export default async function Page({
   params,
+  searchParams,
 }: {
   params: Promise<{ range: string }>;
+  searchParams?: Promise<{ preview?: string }>;
 }) {
   const { range } = await params;
+  const preview = (await searchParams)?.preview === "admin";
   const parsedRange = parseHistoryRangeSlug(range);
 
   if (!parsedRange) {
@@ -27,11 +30,11 @@ export default async function Page({
   );
 
   return (
-    <AppLayout>
+    <AppLayout preview={preview}>
       {filteredPosts.length === 0 ? (
         <div>0 Books</div>
       ) : (
-        <Main posts={filteredPosts} />
+        <Main posts={filteredPosts} readOnly={preview} />
       )}
     </AppLayout>
   );
