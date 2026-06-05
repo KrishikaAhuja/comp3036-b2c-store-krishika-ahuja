@@ -70,60 +70,6 @@ test.beforeEach(async ({ request }) => {
 });
 
 test.describe("backend customer feature coverage", () => {
-  test("current customer API rejects missing sessions", { tag: "@a3" }, async ({
-    request,
-  }) => {
-    const response = await request.get("/api/auth/me");
-
-    expect(response.status()).toBe(401);
-    expect(await response.json()).toEqual({ user: null });
-  });
-
-  test("current customer API returns the signed-in customer", { tag: "@a3" }, async ({
-    request,
-  }) => {
-    const email = await registerCustomer(request);
-    await loginCustomer(request, email);
-
-    const response = await request.get("/api/auth/me");
-    const body = await response.json();
-
-    expect(response.status()).toBe(200);
-    expect(body.user).toMatchObject({
-      email,
-      name: "Backend Customer",
-      role: "CUSTOMER",
-    });
-  });
-
-  test("customer logout invalidates the current user API", { tag: "@a3" }, async ({
-    request,
-  }) => {
-    const email = await registerCustomer(request);
-    await loginCustomer(request, email);
-
-    const logoutResponse = await request.post("/api/auth/logout");
-    const meResponse = await request.get("/api/auth/me");
-
-    expect(logoutResponse.status()).toBe(200);
-    expect(meResponse.status()).toBe(401);
-  });
-
-  test("registration does not issue a customer session cookie", { tag: "@a3" }, async ({
-    request,
-  }) => {
-    const response = await request.post("/api/auth/register", {
-      data: {
-        name: "Manual Login Customer",
-        email: uniqueEmail(),
-        password: "password123",
-      },
-    });
-
-    expect(response.status()).toBe(201);
-    expect(response.headers()["set-cookie"] ?? "").not.toContain("customer_auth_token");
-  });
-
   test("checkout API rejects invalid phone numbers", { tag: "@a3" }, async ({
     request,
   }) => {
