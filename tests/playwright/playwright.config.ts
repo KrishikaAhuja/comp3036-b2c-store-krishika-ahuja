@@ -11,12 +11,21 @@ import "dotenv/config";
 import path from "path";
 
 const repoRoot = path.resolve(__dirname, "../..");
+const webPort = process.env.E2E_WEB_PORT ?? "3101";
+const adminPort = process.env.E2E_ADMIN_PORT ?? "3102";
+const webUrl = `http://localhost:${webPort}`;
+const adminUrl = `http://localhost:${adminPort}`;
+const testDatabaseUrl = `file:${path
+  .resolve(repoRoot, "packages/db/prisma/test.db")
+  .replace(/\\/g, "/")}`;
 
 process.chdir(repoRoot);
-process.env.DATABASE_URL = `file:${path
-  .resolve(repoRoot, "packages/db/prisma/dev.db")
-  .replace(/\\/g, "/")}`;
+process.env.DATABASE_URL = testDatabaseUrl;
 process.env.JWT_SECRET ??= "secret";
+process.env.E2E_WEB_URL = webUrl;
+process.env.E2E_ADMIN_URL = adminUrl;
+process.env.CUSTOMER_SITE_URL = webUrl;
+process.env.NEXT_PUBLIC_ADMIN_URL = adminUrl;
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -37,7 +46,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: "http://localhost:3002",
+    baseURL: adminUrl,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
@@ -59,7 +68,7 @@ export default defineConfig({
       testDir: "./tests/admin",
       use: {
         ...devices["Desktop Chrome"],
-        baseURL: "http://localhost:3002",
+        baseURL: adminUrl,
       },
     },
     {
@@ -67,7 +76,7 @@ export default defineConfig({
       testDir: "./tests/web",
       use: {
         ...devices["Desktop Chrome"],
-        baseURL: "http://localhost:3001",
+        baseURL: webUrl,
       },
     },
 
@@ -105,20 +114,22 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: process.env.CI
-    ? [
-        {
-          reuseExistingServer: true,
-          command: "pnpm start:admin",
-          url: "http://localhost:3002",
-          // reuseExistingServer: !process.env.CI,
-        },
-        {
-          reuseExistingServer: true,
-          command: "pnpm start:web",
-          url: "http://localhost:3001",
-          // reuseExistingServer: !process.env.CI,
-        },
-      ]
-    : undefined,
+  webServer: [
+    {
+      reuseExistingServer: false,
+      command: process.env.CI
+        ? `pnpm --filter @repo/db db:push:skip-generate && pnpm --filter @repo/admin exec next start -p ${adminPort}`
+        : `pnpm --filter @repo/db db:push:skip-generate && pnpm --filter @repo/admin exec next dev --turbopack -p ${adminPort}`,
+      url: adminUrl,
+      timeout: 120_000,
+    },
+    {
+      reuseExistingServer: false,
+      command: process.env.CI
+        ? `pnpm --filter @repo/web exec next start -p ${webPort}`
+        : `pnpm --filter @repo/web exec next dev --turbopack -p ${webPort}`,
+      url: webUrl,
+      timeout: 120_000,
+    },
+  ],
 });

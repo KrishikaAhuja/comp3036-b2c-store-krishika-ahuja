@@ -49,7 +49,7 @@ test.describe("customer bookstore home", () => {
   });
 
   test("book cards show bookstore details and actions", { tag: "@a1" }, async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/", { waitUntil: "domcontentloaded" });
 
     const item = page.getByTestId("blog-post-5");
     await expect(item).toBeVisible();
@@ -63,6 +63,9 @@ test.describe("customer bookstore home", () => {
     await expect(item.getByRole("link", { name: "View Book" })).toBeVisible();
 
     const outOfStockItem = page.getByTestId("blog-post-3");
+    await outOfStockItem
+      .getByRole("button", { name: "Flip The Hobbit to details" })
+      .click();
     await expect(outOfStockItem.getByText("The Hobbit")).toBeVisible();
     await expect(
       outOfStockItem.getByText("Out of stock", { exact: true }),

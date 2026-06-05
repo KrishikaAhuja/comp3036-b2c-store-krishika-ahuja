@@ -79,7 +79,7 @@ test.describe("CUSTOMER AUTH SCREEN", () => {
   );
 
   test(
-    "registers a customer and signs them in",
+    "registers a customer and returns to sign in",
     { tag: "@a1" },
     async ({ page }) => {
       const email = uniqueCustomerEmail();
@@ -93,11 +93,15 @@ test.describe("CUSTOMER AUTH SCREEN", () => {
       await page.getByLabel("Repeat password").fill("password123");
       await page.getByRole("button", { name: "Create account" }).click();
 
-      await expect(page).toHaveURL("/");
+      await expect(page).toHaveURL("/auth");
+      await expect(
+        page.getByText("Account created. Please sign in to continue."),
+      ).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Reader sign in" })).toBeVisible();
 
       const cookies = await page.context().cookies();
       expect(cookies.some((cookie) => cookie.name === "customer_auth_token")).toBe(
-        true,
+        false,
       );
     },
   );

@@ -1,6 +1,8 @@
 import { expect, test } from "./fixtures";
 import { seed } from "@repo/db/seed";
 
+const adminUrl = process.env.E2E_ADMIN_URL ?? "http://localhost:3002";
+
 test.describe("ADMIN AUTH", () => {
   test.beforeEach(async ({ context }) => {
     await seed();
@@ -13,7 +15,7 @@ test.describe("ADMIN AUTH", () => {
     async ({ page }) => {
       await page.goto("/");
 
-      await page.getByLabel("Email", { exact: true }).fill("admin@example.com");
+      await page.getByLabel("Email", { exact: true }).fill("admin@book.test");
       await page.getByLabel("Password", { exact: true }).fill("wrongpass");
       await page.getByRole("button", { name: "Sign In" }).click();
 
@@ -29,8 +31,8 @@ test.describe("ADMIN AUTH", () => {
     async ({ page }) => {
       await page.goto("/");
 
-      await page.getByLabel("Email", { exact: true }).fill("admin@example.com");
-      await page.getByLabel("Password", { exact: true }).fill("123");
+      await page.getByLabel("Email", { exact: true }).fill("admin@book.test");
+      await page.getByLabel("Password", { exact: true }).fill("AdminPass123!");
       await page.getByRole("button", { name: "Sign In" }).click();
 
       await expect(page.getByText("Admin Dashboard")).toBeVisible();
@@ -66,7 +68,7 @@ test.describe("ADMIN AUTH", () => {
         {
           name: "customer_auth_token",
           value: "not-an-admin-token",
-          url: "http://localhost:3002",
+          url: adminUrl,
         },
       ]);
 
@@ -108,8 +110,8 @@ test.describe("ADMIN AUTH", () => {
     async ({ request }) => {
       const loginResponse = await request.post("/api/auth", {
         data: {
-          email: "admin@example.com",
-          password: "123",
+          email: "admin@book.test",
+          password: "AdminPass123!",
         },
         maxRedirects: 0,
       });
@@ -133,8 +135,8 @@ test.describe("ADMIN AUTH", () => {
     async ({ request }) => {
       const loginResponse = await request.post("/api/auth", {
         data: {
-          email: "admin@example.com",
-          password: "123",
+          email: "admin@book.test",
+          password: "AdminPass123!",
         },
         maxRedirects: 0,
       });
@@ -153,8 +155,8 @@ test.describe("ADMIN AUTH", () => {
     async ({ request }) => {
       const loginResponse = await request.post("/api/auth", {
         data: {
-          email: "admin@example.com",
-          password: "123",
+          email: "admin@book.test",
+          password: "AdminPass123!",
         },
         maxRedirects: 0,
       });

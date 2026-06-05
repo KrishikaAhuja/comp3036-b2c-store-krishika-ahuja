@@ -3,11 +3,18 @@
   "ui": "tui",
   "globalEnv": [
     "PASSWORD",
+    "ADMIN_EMAIL",
+    "ADMIN_PASSWORD",
+    "CUSTOMER_SITE_URL",
     "VITEST",
     "E2E",
+    "E2E_ADMIN_URL",
+    "E2E_WEB_URL",
     "TEST_DATABASE_URL",
     "DATABASE_URL",
-    "JWT_SECRET"
+    "JWT_SECRET",
+    "NEXT_PUBLIC_ADMIN_URL",
+    "NODE_ENV"
   ],
   "tasks": {
     "build": {

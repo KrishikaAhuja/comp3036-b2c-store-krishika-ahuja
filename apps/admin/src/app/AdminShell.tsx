@@ -4,8 +4,6 @@ import type { ReactNode } from "react";
 
 type AdminShellProps = {
   active: "dashboard" | "inventory" | "customers" | "orders" | "preview";
-  activeBooks: number;
-  outOfStockCount: number;
   children: ReactNode;
 };
 
@@ -19,9 +17,7 @@ const navItems = [
 
 export function AdminShell({
   active,
-  activeBooks,
   children,
-  outOfStockCount,
 }: AdminShellProps) {
   return (
     <div className={styles.shell}>
@@ -47,12 +43,6 @@ export function AdminShell({
             </a>
           ))}
         </nav>
-
-        <div className={styles.sidebarPanel}>
-          <span>Store status</span>
-          <strong>{activeBooks} active books</strong>
-          <small>{outOfStockCount} out of stock</small>
-        </div>
 
         <form action="/api/logout" method="post" className={styles.logoutForm}>
           <button type="submit" className={styles.logoutButton}>

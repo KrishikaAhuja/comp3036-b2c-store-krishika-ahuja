@@ -1,5 +1,6 @@
 "use client";
 
+import { UserCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CartNavLink } from "../Cart/CartNavLink";
@@ -63,9 +64,20 @@ export function TopMenu({
       <div className="flex flex-wrap items-center justify-end gap-3">
         {preview ? null : userName ? (
           <>
-            <span className="rounded-md border border-[var(--surface-muted)] px-3 py-2 text-sm font-medium text-[var(--text)] dark:border-gray-700">
-              Account: {userName}
+            <span
+              className="inline-flex items-center gap-2 rounded-md border border-[var(--surface-muted)] px-3 py-2 text-sm font-medium text-[var(--text)] dark:border-gray-700"
+              aria-label={`Signed in as ${userName}`}
+              title={`Signed in as ${userName}`}
+            >
+              <UserCircleIcon className="h-5 w-5" aria-hidden="true" />
+              <span>{userName}</span>
             </span>
+            <Link
+              href="/purchase-history"
+              className="rounded-md border border-[var(--surface-muted)] px-3 py-2 text-sm font-medium text-[var(--text)] hover:border-[var(--accent)] dark:border-gray-700"
+            >
+              Purchase History
+            </Link>
             <button
               type="button"
               onClick={handleLogout}

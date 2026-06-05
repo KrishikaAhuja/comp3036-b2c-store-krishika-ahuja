@@ -1,5 +1,5 @@
 import { AdminShell } from "./AdminShell";
-import type { AdminOrderSummary } from "./adminData";
+import type { AdminOrderSummary, BestSellingBookSummary } from "./adminData";
 import styles from "./admin-list.module.css";
 
 type AdminStats = {
@@ -11,6 +11,7 @@ type AdminPost = {
   title: string;
   content: string;
   urlId: string;
+  imageUrl: string;
   priceAud: number | null;
   stockQuantity: number | null;
   date: Date | string;
@@ -21,10 +22,12 @@ export default function AdminList({
   posts,
   stats,
   recentOrders,
+  bestSellingBooks,
 }: {
   posts: AdminPost[];
   stats: AdminStats;
   recentOrders: AdminOrderSummary[];
+  bestSellingBooks: BestSellingBookSummary[];
 }) {
   const totalStock = posts.reduce(
     (total, post) => total + (post.stockQuantity ?? 0),
@@ -79,8 +82,6 @@ export default function AdminList({
   return (
     <AdminShell
       active="dashboard"
-      activeBooks={activeBooks}
-      outOfStockCount={outOfStockCount}
     >
       <header className={styles.header}>
         <div>
@@ -89,9 +90,6 @@ export default function AdminList({
         </div>
 
         <div className={styles.headerActions}>
-          <a href="/preview" className={styles.secondaryButton}>
-            Preview Customer Site
-          </a>
           <a href="/posts/create" className={styles.createButton}>
             Add Book
           </a>
@@ -182,15 +180,18 @@ export default function AdminList({
                   <a
                     key={post.id}
                     href={`/post/${post.urlId}`}
-                    className={styles.dashboardListItem}
+                    className={styles.alertBookItem}
                   >
-                    <span>
-                      <strong>{post.title}</strong>
-                      <small>{stock} in stock</small>
+                    <img src={post.imageUrl} alt="" />
+                    <span className={styles.alertBookText}>
+                      <span>
+                        <strong>{post.title}</strong>
+                        <small>{stock} in stock</small>
+                      </span>
+                      <em className={stock <= 0 ? styles.outBadge : styles.lowBadge}>
+                        {stock <= 0 ? "Out of stock" : "Low stock"}
+                      </em>
                     </span>
-                    <em className={stock <= 0 ? styles.outBadge : styles.lowBadge}>
-                      {stock <= 0 ? "Out of stock" : "Low stock"}
-                    </em>
                   </a>
                 );
               })}
@@ -203,10 +204,35 @@ export default function AdminList({
             <p className={styles.eyebrow}>Sales</p>
             <h2>Best Selling Books</h2>
           </div>
-          <div className={styles.emptyDashboardState}>
-            <strong>No sales data yet</strong>
-            <span>Top selling books will show here after order items are tracked.</span>
-          </div>
+          {bestSellingBooks.length === 0 ? (
+            <div className={styles.emptyDashboardState}>
+              <strong>No sales data yet</strong>
+              <span>Top selling books will show here after customers place orders.</span>
+            </div>
+          ) : (
+            <div className={styles.simpleTableWrap}>
+              <table className={styles.simpleTable}>
+                <thead>
+                  <tr>
+                    <th>Book</th>
+                    <th>Sold</th>
+                    <th>Revenue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bestSellingBooks.map((book) => (
+                    <tr key={`${book.postId ?? book.urlId}-${book.title}`}>
+                      <td>
+                        <a href={`/post/${book.urlId}`}>{book.title}</a>
+                      </td>
+                      <td>{book.quantitySold}</td>
+                      <td>{formatPrice(book.revenueAud)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
 
         <section className={styles.panel}>

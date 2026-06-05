@@ -5,14 +5,18 @@
   "type": "module",
   "scripts": {
     "db:generate": "prisma generate",
+    "db:generate:postgres": "prisma generate --schema prisma/schema.postgres.prisma",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
     "db:push": "prisma db push",
+    "db:push:postgres": "prisma db push --schema prisma/schema.postgres.prisma",
+    "db:push:skip-generate": "prisma db push --skip-generate",
     "lint": "eslint . --max-warnings 0",
     "prebuild": "pnpm db:generate",
     "predev": "pnpm db:generate",
     "postinstall": "pnpm db:generate",
     "studio": "prisma studio",
+    "seed": "node -e \"import('./dist/seed.js').then(async ({ seed }) => { await seed(); })\"",
     "dev": "tsc --watch",
     "build": "tsc"
   },

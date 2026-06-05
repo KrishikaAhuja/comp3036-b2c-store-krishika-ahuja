@@ -12,10 +12,10 @@ test.describe("admin bookstore", () => {
 
     await expect(userPage.getByRole("heading", { name: "Admin Dashboard" })).toBeVisible();
     await expect(userPage.getByText("Total Books")).toBeVisible();
-    await expect(userPage.getByText("14 active books")).toBeVisible();
+    await expect(userPage.getByText("14 live in store")).toBeVisible();
     await expect(userPage.getByRole("link", { name: "Add Book" }).first()).toBeVisible();
     await expect(
-      userPage.getByRole("link", { name: "Preview Customer Site" }),
+      userPage.getByRole("link", { name: "Preview Store" }),
     ).toHaveAttribute("href", "/preview");
 
     await userPage.getByRole("link", { name: "Inventory", exact: true }).click();
@@ -75,7 +75,7 @@ test.describe("admin bookstore", () => {
     await expect(row).toContainText("Orders Customer");
     await expect(row).toContainText("1 item");
     await expect(row).toContainText("TXN-TEST-1234");
-    await expect(row).toContainText("PAID");
+    await expect(row).toContainText("Paid");
   });
 
   test("customer site preview stays inside admin", { tag: "@a2" }, async ({ userPage }) => {
@@ -165,7 +165,12 @@ test.describe("admin bookstore", () => {
     await userPage.getByRole("button", { name: "Create Book" }).click();
 
     await expect(userPage.getByText("Price must be 0 or more")).toBeVisible();
-    await expect(userPage.getByText("Stock must be a whole number 0 or more")).toBeVisible();
+    await expect(userPage.getByText("Stock must be a whole number")).toBeVisible();
+
+    await userPage.getByLabel("Stock Quantity").fill("-1");
+    await userPage.getByRole("button", { name: "Create Book" }).click();
+
+    await expect(userPage.getByText("Stock cannot be negative")).toBeVisible();
   });
 
   test("admin API updates a book without changing release date", { tag: "@a3" }, async ({ userPage }) => {

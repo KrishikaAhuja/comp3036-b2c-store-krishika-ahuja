@@ -6,6 +6,8 @@ import { getAdminShellStats } from "../adminData";
 import styles from "../admin-list.module.css";
 import { InventoryTable } from "./InventoryTable";
 
+export const dynamic = "force-dynamic";
+
 export default async function InventoryPage() {
   const loggedIn = await isLoggedIn();
 

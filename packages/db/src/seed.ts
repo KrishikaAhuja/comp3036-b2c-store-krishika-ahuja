@@ -2,22 +2,78 @@ import bcrypt from "bcryptjs";
 import { client } from "./client.js"; // imports Prisma client to interact with DB
 import { posts } from "./data.js"; // imports sample posts data
 
+const DEFAULT_ADMIN_EMAIL = "admin@book.test";
+const DEFAULT_ADMIN_PASSWORD = "AdminPass123!";
+
+function isValidAdminPassword(password: string) {
+  return (
+    password.length >= 8 &&
+    /[a-z]/.test(password) &&
+    /[A-Z]/.test(password) &&
+    /\d/.test(password)
+  );
+}
+
 const adminUser = {
   name: process.env.ADMIN_NAME || "Admin User",
-  email: process.env.ADMIN_EMAIL || "admin@example.com",
-  password: process.env.ADMIN_PASSWORD || process.env.PASSWORD || "123",
+  email: process.env.ADMIN_EMAIL || DEFAULT_ADMIN_EMAIL,
+  password: process.env.ADMIN_PASSWORD
+    ? process.env.ADMIN_PASSWORD
+    : process.env.PASSWORD && isValidAdminPassword(process.env.PASSWORD)
+      ? process.env.PASSWORD
+      : DEFAULT_ADMIN_PASSWORD,
 };
+
+function validateAdminUser() {
+  const email = adminUser.email.trim().toLowerCase();
+  const password = adminUser.password;
+
+  if (email.endsWith("@example.com")) {
+    throw new Error(
+      "ADMIN_EMAIL must not use example.com. Set ADMIN_EMAIL to a real admin address before seeding.",
+    );
+  }
+
+  if (password.length < 8) {
+    throw new Error("ADMIN_PASSWORD must be at least 8 characters.");
+  }
+
+  if (!isValidAdminPassword(password)) {
+    throw new Error(
+      "ADMIN_PASSWORD must include uppercase, lowercase, and number characters.",
+    );
+  }
+}
+
+function isPostgresDatabase() {
+  return /^postgres(ql)?:\/\//.test(process.env.DATABASE_URL || "");
+}
 
 const generatedTestCustomerWhere = {
   role: "CUSTOMER" as const,
-  email: {
-    endsWith: "@example.com",
-  },
+  OR: [
+    {
+      email: {
+        endsWith: "@example.com",
+      },
+    },
+    {
+      email: {
+        endsWith: "@book.test",
+      },
+    },
+    {
+      email: {
+        startsWith: "real-customer-",
+      },
+    },
+  ],
 };
 
 // function to seed (insert) data into the database
 export async function seed() {
   console.log("Seeding data"); // log message to show seeding started
+  validateAdminUser();
 
   const adminPasswordHash = await bcrypt.hash(adminUser.password, 10);
 
@@ -83,6 +139,12 @@ export async function seed() {
           })),
         });
       }
+    }
+
+    if (isPostgresDatabase()) {
+      await tx.$executeRawUnsafe(
+        `SELECT setval(pg_get_serial_sequence('"Post"', 'id'), COALESCE((SELECT MAX(id) FROM "Post"), 1), true)`,
+      );
     }
   }, { timeout: 20000 });
 }

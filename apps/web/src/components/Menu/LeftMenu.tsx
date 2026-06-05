@@ -55,16 +55,6 @@ export async function LeftMenu({
             <li>
               <TagList selectedTag="" posts={posts} preview={preview} />
             </li>
-            <li>
-              {preview ? null : (
-                <Link
-                  href="http://localhost:3002"
-                  className="block rounded-xl bg-[var(--background)] px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition hover:bg-[var(--surface-muted)] dark:bg-gray-800 dark:hover:bg-gray-700"
-                >
-                  Admin
-                </Link>
-              )}
-            </li>
           </ul>
         </nav>
       </div>

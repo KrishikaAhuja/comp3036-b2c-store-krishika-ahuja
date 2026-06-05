@@ -3,6 +3,8 @@ import { isLoggedIn } from "../../../utils/auth"; // Checks if the admin is logg
 import UpdateForm from "./UpdateForm";
 import pageStyles from "../../page.module.css";
 
+export const dynamic = "force-dynamic";
+
 export default async function Page({ // This page receives a dynamic route param
   params,
 }: {
@@ -37,6 +39,8 @@ export default async function Page({ // This page receives a dynamic route param
             id="password"
             name="password"
             type="password"
+            minLength={8}
+            required
             className={pageStyles.input}
           />
 

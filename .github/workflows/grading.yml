@@ -90,14 +90,14 @@ jobs:
       ####################
       # ASSIGNMENT 2.1
       ####################
-      - name: Test Assignment 1 with Playwright
+      - name: Test Frontend Storefront with Playwright
         id: npm1
         uses: WesternSydneyUniversity/autograding-command-grader@v2
         continue-on-error: true
         with:
           working-directory: .
-          test-name: Part 1 - Client
-          command: pnpm turbo test-1
+          test-name: Frontend - Customer Storefront
+          command: pnpm --filter @repo/playwright test-1
           timeout: 10
           max-score: 1
       - name: Report Assignment 1 to SkillPies
@@ -112,14 +112,14 @@ jobs:
       ####################
       # ASSIGNMENT 2.2
       ####################
-      - name: Test Assignment 2 with Playwright
+      - name: Test Admin Dashboard with Playwright
         id: npm2
         uses: WesternSydneyUniversity/autograding-command-grader@v2
         continue-on-error: true
         with:
           working-directory: .
-          test-name: Part 2 - Admin
-          command: pnpm turbo test-2
+          test-name: Admin - Dashboard and Inventory
+          command: pnpm --filter @repo/playwright test-2
           timeout: 10
           max-score: 1
 
@@ -135,14 +135,14 @@ jobs:
       ####################
       # ASSIGNMENT 2.3
       ####################
-      - name: Test Assignment 3 with Playwright
+      - name: Test Backend APIs with Playwright
         id: npm3
         uses: WesternSydneyUniversity/autograding-command-grader@v2
         continue-on-error: true
         with:
           working-directory: .
-          test-name: Part 3 - Backend
-          command: pnpm turbo test-3
+          test-name: Backend - Auth and Checkout APIs
+          command: pnpm --filter @repo/playwright test-3
           timeout: 10
           max-score: 1
 

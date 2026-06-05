@@ -20,6 +20,20 @@ async function getUnauthorizedResponse() {
   }
 }
 
+function getStockValidationError(value: unknown) {
+  const parsedStock = Number(value);
+
+  if (!Number.isInteger(parsedStock)) {
+    return "Stock must be a whole number";
+  }
+
+  if (parsedStock < 0) {
+    return "Stock cannot be negative";
+  }
+
+  return "";
+}
+
 // Gets posts from database with optional server-side filters
 export async function GET(req: NextRequest) {
   const unauthorized = await getUnauthorizedResponse();
@@ -68,6 +82,11 @@ export async function PUT(req: NextRequest) {
   }
 
   const body = await req.json();
+  const stockError = getStockValidationError(body.stockQuantity);
+
+  if (stockError) {
+    return NextResponse.json({ error: stockError }, { status: 400 });
+  }
 
   const updated = await client.db.post.update({
     where: { id: Number(body.id) },
@@ -80,7 +99,7 @@ export async function PUT(req: NextRequest) {
       imageUrl: body.imageUrl,
       category: body.category,
       priceAud: Math.max(0, Math.floor(Number(body.priceAud) || 0)),
-      stockQuantity: Math.max(0, Math.floor(Number(body.stockQuantity) || 0)),
+      stockQuantity: Math.floor(Number(body.stockQuantity)),
       active: Boolean(body.active),
     },
   });
@@ -97,6 +116,11 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json();
+  const stockError = getStockValidationError(body.stockQuantity);
+
+  if (stockError) {
+    return NextResponse.json({ error: stockError }, { status: 400 });
+  }
 
   const created = await client.db.post.create({
     data: {
@@ -108,7 +132,7 @@ export async function POST(req: NextRequest) {
       imageUrl: body.imageUrl,
       category: body.category,
       priceAud: Math.max(0, Math.floor(Number(body.priceAud) || 0)),
-      stockQuantity: Math.max(0, Math.floor(Number(body.stockQuantity) || 0)),
+      stockQuantity: Math.floor(Number(body.stockQuantity)),
       active: Boolean(body.active),
     },
   });

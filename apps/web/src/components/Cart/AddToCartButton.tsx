@@ -29,7 +29,7 @@ export function AddToCartButton({ product }: { product: CartProduct }) {
   }, [product.id]);
 
   function handleAddToCart() {
-    if (outOfStock) {
+    if (outOfStock || added) {
       return;
     }
 
@@ -54,10 +54,10 @@ export function AddToCartButton({ product }: { product: CartProduct }) {
   return (
     <button
       type="button"
-      disabled={outOfStock}
+      disabled={outOfStock || added}
       onClick={handleAddToCart}
       className={
-        outOfStock
+        outOfStock || added
           ? "inline-flex h-10 cursor-not-allowed items-center justify-center rounded-md border border-gray-300 bg-gray-100 px-4 text-sm font-semibold text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
           : "inline-flex h-10 items-center justify-center rounded-md border border-[var(--accent)] px-4 text-sm font-semibold text-[var(--accent)] transition hover:bg-[var(--accent)] hover:text-[var(--surface)] dark:border-[var(--accent)]"
       }

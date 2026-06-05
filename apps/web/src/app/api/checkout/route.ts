@@ -22,6 +22,8 @@ type CheckoutPayment = {
   cvv?: unknown;
 };
 
+type PaymentMethod = "mock_credit_card" | "pay_on_delivery";
+
 function normalizeItems(value: unknown) {
   if (!Array.isArray(value)) {
     return [];
@@ -37,6 +39,18 @@ function normalizeItems(value: unknown) {
 
 function text(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
+}
+
+function isValidPhoneNumber(value: string) {
+  const digits = value.replace(/\D/g, "");
+
+  return /^\d{10}$/.test(digits);
+}
+
+function getPaymentMethod(payment: CheckoutPayment): PaymentMethod {
+  const method = text(payment.method);
+
+  return method === "pay_on_delivery" ? "pay_on_delivery" : "mock_credit_card";
 }
 
 function validateCheckoutDetails(customer: CheckoutCustomer, payment: CheckoutPayment) {
@@ -56,6 +70,10 @@ function validateCheckoutDetails(customer: CheckoutCustomer, payment: CheckoutPa
 
   if (!phone) {
     return "Phone number is required.";
+  }
+
+  if (!isValidPhoneNumber(phone)) {
+    return "Enter any 10 digits for the phone number.";
   }
 
   if (!deliveryAddress) {
@@ -200,37 +218,29 @@ export async function POST(req: NextRequest) {
 
     const totalAud = orderItems.reduce((total, item) => total + item.lineTotalAud, 0);
     const paymentReference = createTransactionId();
+    const paymentMethod = getPaymentMethod(
+      (checkoutBody.payment || {}) as CheckoutPayment,
+    );
+    const orderStatus = paymentMethod === "pay_on_delivery" ? "NOT_PAID" : "PAID";
 
     const orderId = await client.db.$transaction(async (tx) => {
-      await tx.$executeRawUnsafe(
-        `INSERT INTO "Order" ("userId", "status", "paymentProvider", "paymentReference", "totalAud", "updatedAt")
-         VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
-        user.id,
-        "PAID",
-        "mock",
-        paymentReference,
-        totalAud,
-      );
-
-      const rows = await tx.$queryRawUnsafe<{ id: number }[]>(
-        `SELECT last_insert_rowid() AS id`,
-      );
-      const createdOrderId = Number(rows[0]?.id);
+      const createdOrder = await tx.order.create({
+        data: {
+          userId: user.id,
+          status: orderStatus,
+          paymentProvider: paymentMethod,
+          paymentReference,
+          totalAud,
+          items: {
+            create: orderItems,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
 
       for (const item of orderItems) {
-        await tx.$executeRawUnsafe(
-          `INSERT INTO "OrderItem" ("orderId", "postId", "title", "urlId", "imageUrl", "unitPriceAud", "quantity", "lineTotalAud")
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-          createdOrderId,
-          item.postId,
-          item.title,
-          item.urlId,
-          item.imageUrl,
-          item.unitPriceAud,
-          item.quantity,
-          item.lineTotalAud,
-        );
-
         const updated = await tx.post.updateMany({
           where: {
             id: item.postId,
@@ -250,13 +260,13 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      return createdOrderId;
+      return createdOrder.id;
     });
 
     return NextResponse.json({
       orderId,
       paymentReference,
-      status: "PAID",
+      status: orderStatus,
       totalAud,
     });
   } catch (error) {
