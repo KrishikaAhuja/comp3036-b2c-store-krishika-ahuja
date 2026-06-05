@@ -122,4 +122,17 @@ test.describe("customer purchase history", () => {
     await expect(page.getByText(product.title).first()).toBeVisible();
     await expect(page.getByText("Qty 2").first()).toBeVisible();
   });
+
+  test("signed-in customers can navigate from the header", { tag: "@a1" }, async ({ page }) => {
+    const email = uniqueCustomerEmail();
+    await registerCustomer(page, email, "password123");
+
+    await page.goto("/");
+    await page.getByRole("link", { name: "Purchase History" }).click();
+
+    await expect(page).toHaveURL("/purchase-history");
+    await expect(
+      page.getByRole("heading", { name: "Purchase History" }),
+    ).toBeVisible();
+  });
 });

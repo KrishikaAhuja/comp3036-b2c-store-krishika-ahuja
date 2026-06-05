@@ -66,6 +66,12 @@ export function TopMenu({
             <span className="rounded-md border border-[var(--surface-muted)] px-3 py-2 text-sm font-medium text-[var(--text)] dark:border-gray-700">
               Account: {userName}
             </span>
+            <Link
+              href="/purchase-history"
+              className="rounded-md border border-[var(--surface-muted)] px-3 py-2 text-sm font-medium text-[var(--text)] hover:border-[var(--accent)] dark:border-gray-700"
+            >
+              Purchase History
+            </Link>
             <button
               type="button"
               onClick={handleLogout}

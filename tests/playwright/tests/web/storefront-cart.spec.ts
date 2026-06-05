@@ -166,8 +166,9 @@ test.describe("customer book bag", () => {
 
     await expect(page).toHaveURL(/\/order-confirmation\?orderId=\d+/);
     await expect(
-      page.getByText("Payment Successful! Thank you for your purchase."),
+      page.getByText("Payment successful. Thank you for your purchase."),
     ).toBeVisible();
+    await expect(page.locator("dl").getByText("Paid", { exact: true })).toBeVisible();
     await expect(page.getByText(/TXN-\d{8}-\d{4}/)).toBeVisible();
     await expect(
       page.locator("dl").getByText("Cart Customer", { exact: true }),
@@ -256,6 +257,12 @@ test.describe("customer book bag", () => {
     await checkoutForm.getByRole("button", { name: "Place Order" }).click();
 
     await expect(page).toHaveURL(/\/order-confirmation\?orderId=\d+/);
+    await expect(
+      page.getByText("Order received. Payment is due on delivery."),
+    ).toBeVisible();
+    await expect(
+      page.locator("dl").getByText("Not paid", { exact: true }),
+    ).toBeVisible();
     await expect(page.getByText(/TXN-\d{8}-\d{4}/)).toBeVisible();
 
     const latestOrder = await client.db.order.findFirst({

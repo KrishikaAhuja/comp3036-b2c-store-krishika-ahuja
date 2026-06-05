@@ -20,6 +20,10 @@ function formatDate(value: Date) {
   }).format(value);
 }
 
+function formatPaymentStatus(status: string) {
+  return status === "PAID" ? "Paid" : "Not paid";
+}
+
 export default async function OrdersPage() {
   const loggedIn = await isLoggedIn();
 
@@ -79,7 +83,15 @@ export default async function OrdersPage() {
                     </td>
                     <td>{formatPrice(order.totalAud)}</td>
                     <td>
-                      <span className={styles.readyBadge}>{order.status}</span>
+                      <span
+                        className={
+                          order.status === "PAID"
+                            ? styles.readyBadge
+                            : styles.lowBadge
+                        }
+                      >
+                        {formatPaymentStatus(order.status)}
+                      </span>
                     </td>
                     <td>{order.paymentReference || "Not recorded"}</td>
                     <td>{formatDate(order.createdAt)}</td>

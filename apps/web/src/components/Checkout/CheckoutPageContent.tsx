@@ -216,6 +216,7 @@ export function CheckoutPageContent({
         JSON.stringify({
           orderId: result.orderId,
           paymentReference: result.paymentReference,
+          status: result.status,
           customerName: submittedForm.fullName.trim(),
           totalAud: result.totalAud,
         }),

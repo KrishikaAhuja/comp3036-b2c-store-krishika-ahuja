@@ -75,7 +75,7 @@ test.describe("admin bookstore", () => {
     await expect(row).toContainText("Orders Customer");
     await expect(row).toContainText("1 item");
     await expect(row).toContainText("TXN-TEST-1234");
-    await expect(row).toContainText("PAID");
+    await expect(row).toContainText("Paid");
   });
 
   test("customer site preview stays inside admin", { tag: "@a2" }, async ({ userPage }) => {
