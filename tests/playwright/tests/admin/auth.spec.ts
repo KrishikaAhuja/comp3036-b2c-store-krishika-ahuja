@@ -1,6 +1,8 @@
 import { expect, test } from "./fixtures";
 import { seed } from "@repo/db/seed";
 
+const adminUrl = process.env.E2E_ADMIN_URL ?? "http://localhost:3002";
+
 test.describe("ADMIN AUTH", () => {
   test.beforeEach(async ({ context }) => {
     await seed();
@@ -66,7 +68,7 @@ test.describe("ADMIN AUTH", () => {
         {
           name: "customer_auth_token",
           value: "not-an-admin-token",
-          url: "http://localhost:3002",
+          url: adminUrl,
         },
       ]);
 

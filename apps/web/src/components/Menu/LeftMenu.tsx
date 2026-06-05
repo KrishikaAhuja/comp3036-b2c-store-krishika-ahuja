@@ -12,6 +12,8 @@ export async function LeftMenu({
   posts: Post[];
   preview?: boolean;
 }) {
+  const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || "http://localhost:3002";
+
   return (
     <aside
       className={
@@ -58,7 +60,7 @@ export async function LeftMenu({
             <li>
               {preview ? null : (
                 <Link
-                  href="http://localhost:3002"
+                  href={adminUrl}
                   className="block rounded-xl bg-[var(--background)] px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition hover:bg-[var(--surface-muted)] dark:bg-gray-800 dark:hover:bg-gray-700"
                 >
                   Admin

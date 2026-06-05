@@ -2,6 +2,9 @@ import { client } from "@repo/db/client";
 import { seed } from "@repo/db/seed";
 import { expect, test, type Browser, type Page } from "./fixtures";
 
+const webUrl = process.env.E2E_WEB_URL ?? "http://localhost:3001";
+const adminUrl = process.env.E2E_ADMIN_URL ?? "http://localhost:3002";
+
 function uniqueCustomerEmail() {
   return `history-${Date.now()}-${Math.random().toString(16).slice(2)}@example.com`;
 }
@@ -34,7 +37,7 @@ async function registerCustomer(page: Page, email: string, password: string) {
     {
       name: "customer_auth_token",
       value: authCookie!,
-      url: "http://localhost:3001",
+      url: webUrl,
       httpOnly: true,
       sameSite: "Lax",
     },
@@ -197,12 +200,12 @@ test.describe("customer purchase history", () => {
     const adminContext = await browser.newContext();
     const adminPage = await adminContext.newPage();
     try {
-      await adminPage.goto("http://localhost:3002/");
+      await adminPage.goto(adminUrl);
       await adminPage.getByLabel("Email", { exact: true }).fill("admin@example.com");
       await adminPage.getByLabel("Password", { exact: true }).fill("123");
       await adminPage.getByText("Sign In", { exact: true }).click();
       await adminPage.getByText("Admin Dashboard", { exact: true }).waitFor();
-      await adminPage.goto("http://localhost:3002/orders");
+      await adminPage.goto(`${adminUrl}/orders`);
 
       const adminOrder = adminPage.getByRole("row", {
         name: new RegExp(`#${orderId}`),

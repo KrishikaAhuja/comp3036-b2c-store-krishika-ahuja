@@ -2,6 +2,8 @@ import { client } from "@repo/db/client";
 import { seed } from "@repo/db/seed";
 import { expect, test, type APIRequestContext, type Page } from "./fixtures";
 
+const webUrl = process.env.E2E_WEB_URL ?? "http://localhost:3001";
+
 function uniqueCustomerEmail() {
   return `cart-${Date.now()}-${Math.random().toString(16).slice(2)}@example.com`;
 }
@@ -42,7 +44,7 @@ async function registerCustomer(page: Page, email: string, password: string) {
     {
       name: "customer_auth_token",
       value: authCookie!,
-      url: "http://localhost:3001",
+      url: webUrl,
       httpOnly: true,
       sameSite: "Lax",
     },
