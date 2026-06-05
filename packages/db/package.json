@@ -8,6 +8,7 @@
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate:dev": "prisma migrate dev",
     "db:push": "prisma db push",
+    "db:push:skip-generate": "prisma db push --skip-generate",
     "lint": "eslint . --max-warnings 0",
     "prebuild": "pnpm db:generate",
     "predev": "pnpm db:generate",

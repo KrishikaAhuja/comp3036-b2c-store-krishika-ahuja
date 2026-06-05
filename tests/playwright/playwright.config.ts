@@ -11,11 +11,12 @@ import "dotenv/config";
 import path from "path";
 
 const repoRoot = path.resolve(__dirname, "../..");
+const testDatabaseUrl = `file:${path
+  .resolve(repoRoot, "packages/db/prisma/test.db")
+  .replace(/\\/g, "/")}`;
 
 process.chdir(repoRoot);
-process.env.DATABASE_URL = `file:${path
-  .resolve(repoRoot, "packages/db/prisma/dev.db")
-  .replace(/\\/g, "/")}`;
+process.env.DATABASE_URL = testDatabaseUrl;
 process.env.JWT_SECRET ??= "secret";
 
 /**
@@ -105,20 +106,20 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: process.env.CI
-    ? [
-        {
-          reuseExistingServer: true,
-          command: "pnpm start:admin",
-          url: "http://localhost:3002",
-          // reuseExistingServer: !process.env.CI,
-        },
-        {
-          reuseExistingServer: true,
-          command: "pnpm start:web",
-          url: "http://localhost:3001",
-          // reuseExistingServer: !process.env.CI,
-        },
-      ]
-    : undefined,
+  webServer: [
+    {
+      reuseExistingServer: false,
+      command: process.env.CI
+        ? "pnpm --filter @repo/db db:push:skip-generate && pnpm start:admin"
+        : "pnpm --filter @repo/db db:push:skip-generate && pnpm --filter admin dev",
+      url: "http://localhost:3002",
+      timeout: 120_000,
+    },
+    {
+      reuseExistingServer: false,
+      command: process.env.CI ? "pnpm start:web" : "pnpm --filter web dev",
+      url: "http://localhost:3001",
+      timeout: 120_000,
+    },
+  ],
 });
